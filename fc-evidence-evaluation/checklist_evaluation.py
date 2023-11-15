@@ -18,11 +18,6 @@ from word2number import w2n
 
 _SPACY_PIPELINE = en_core_web_sm.load()
 _SBERT = SentenceTransformer('all-MiniLM-L6-v2')
-
-# variables
-# test_dataset_path = r"/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/AveritecBaseline/data/date-cleaned.test.json"
-# train_dataset_path = r"/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/AveritecBaseline/data/date-cleaned.train.json"
-
 _WIKIDATA_ENTITIES = {
     'FAC': 'Q41176',
     'GPE': 'Q6256',
@@ -32,17 +27,6 @@ _WIKIDATA_ENTITIES = {
     'ORG': 'Q4830453',
     'PERSON': 'Q5',
 }
-
-# dev_dataset_path = os.path.join("data", "date-cleaned.dev.json")
-train_dataset_path = os.path.join("data", "date-cleaned.train.json")
-test_dataset_path = os.path.join("data", "date-cleaned.test.json")
-
-# load Averitec dataset
-with open(test_dataset_path, "r", encoding="utf-8") as file:
-    test_dataset = json.load(file)
-
-with open(train_dataset_path, "r", encoding="utf-8") as file:
-    train_dataset = json.load(file)
 
 
 def extract_full_comparison_strings(example):
@@ -257,7 +241,6 @@ def informativeness_random_word_order_test(dataset: list):
 def create_sum_test(dataset: list):
     """
     @param dataset:
-    @param t5_summarizer:
     @return: list
     """
     test_samples_list = []
@@ -640,12 +623,3 @@ def informativeness_number_change_test(dataset: list):
         test_samples_list.append(entry_copy)
 
     return test_samples_list
-
-
-# create test
-test_samples = coverage_drop_evidence_part_test(test_dataset, type="all_but_one")
-
-# save
-# with open("/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/AveritecBaseline/data/test_coverage_half.json", "w", encoding="utf-8") as file:
-with open("data/test_coverage_drop_all_but_most_similar.json", "w", encoding="utf-8") as file:
-    json.dump(test_samples, file, indent=4)

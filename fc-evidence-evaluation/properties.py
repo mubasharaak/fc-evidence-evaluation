@@ -1,3 +1,42 @@
+import abc
+import enum
+
+
+class Label(enum.Enum):
+    SUPPORTED = "supported"
+    REFUTED = "refuted"
+    NEI = "not enough evidence"
+    CONFLICTING = "conflicting Evidence/cherrypicking"
+
+
+class AveritecAnswer(abc.ABC):
+    answer: str
+    answer_type: str
+    source_url: str
+    source_medium: str
+
+
+class AveritecQA(abc.ABC):
+    question: str
+    answers: list[AveritecAnswer]
+
+
+class AveritecEntry(abc.ABC):
+    claim: str
+    required_reannotation: bool
+    label: Label
+    justification: str
+    claim_date: str
+    speaker: str
+    original_claim_url: str
+    fact_checking_article: str
+    reporting_source: str
+    location_ISO_code: str
+    claim_types: list[str]
+    fact_checking_strategies: list[str]
+    questions: list[AveritecQA]
+
+
 BASE_PROMPT = """Given a claim and it's associated evidence, decide if the evidence supports the claim, refutes it, 
 doesn't give enough information, or gives conflicting information. Explain the decision. Only use the provided 
 information and no additional sources or background knowledge.

@@ -4,6 +4,7 @@ from enum import Enum
 import checklist_evaluation
 import argparse
 
+
 class TestType(Enum):
     ROBUST_NOISE = "robustness_noise"
     COHERENCE = "coherence"
@@ -21,6 +22,7 @@ class TestType(Enum):
     REDUNDANCY_SENT = "redundancy_sent"
     NUMBER_REPLACE = "number_replace"
 
+
 parser = argparse.ArgumentParser(
     description='Checklist evaluation arguments'
 )
@@ -32,8 +34,8 @@ parser.add_argument(
 )
 parser.add_argument(
     '--output',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/AveritecBaseline/data/date"
-            "-cleaned.train.json",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/AveritecBaseline/data"
+            "/robustness_noise_tests.json",
     help='Output path for created checklist tests.'
 )
 parser.add_argument(
