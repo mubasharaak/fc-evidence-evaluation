@@ -2,11 +2,22 @@ import abc
 import enum
 
 
+class Dataset(enum.Enum):
+    FEVER = "fever"
+    AVERITEC = "averitec"
+
+
 class Label(enum.Enum):
-    SUPPORTED = "supported"
-    REFUTED = "refuted"
-    NEI = "not enough evidence"
-    CONFLICTING = "conflicting Evidence/cherrypicking"
+    REFUTED = "refuted", "refutes", 0, "0", "contradiction", "c"
+    SUPPORTED = "supported", "supports", 1, "1", "entailment", "e"
+    NEI = "not enough evidence", 2, "2", "neutral", "n", "conflicting evidence/cherrypicking"
+
+
+LABEL_DICT = {
+    Label.REFUTED: 0,
+    Label.SUPPORTED: 1,
+    Label.NEI: 2,
+}
 
 
 class AveritecAnswer(abc.ABC):
@@ -36,6 +47,8 @@ class AveritecEntry(abc.ABC):
     fact_checking_strategies: list[str]
     questions: list[AveritecQA]
 
+
+FEVER_DATASET_PATH = "shared_task_test_annotations_evidence.jsonl"
 
 BASE_PROMPT = """Given a claim and it's associated evidence, decide if the evidence supports the claim, refutes it, 
 doesn't give enough information, or gives conflicting information. Explain the decision. Only use the provided 
