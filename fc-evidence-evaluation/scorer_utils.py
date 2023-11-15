@@ -2,6 +2,8 @@ import numpy as np
 import torch
 from sklearn.metrics import f1_score
 from torch import nn
+import typing
+import properties
 
 
 def _confidence_confusion_matrix(actual_values, predicted_values, confidence_values):
@@ -71,3 +73,24 @@ def compute_metrics(eval_preds):
     # f1_micro = f1_score(y_true=labels, y_pred=predictions, average='micro')
     f1_macro = f1_score(y_true=labels, y_pred=predictions, average='macro')
     return {"f1_micro": f1_micro, "f1_macro": f1_macro}
+
+
+def map_label(response: str) -> typing.Optional[properties.Label]:
+    label = None
+    label_str = response.split(".")[0].lower()
+    if label_str in list(properties.LABEL_DICT):
+        return properties.LABEL_DICT[properties.Label(label_str.lower())]
+    else:
+        if "enough information" in label_str or "mostly" in label_str:
+            return properties.LABEL_DICT[properties.Label.NEI]
+        elif "support" in label_str:
+            return properties.LABEL_DICT[properties.Label.SUPPORTED]
+        elif "refute" in label_str or "false" in label_str:
+            return properties.LABEL_DICT[properties.Label.REFUTED]
+        elif "conflict" in label_str:
+            return properties.LABEL_DICT[properties.Label.NEI]
+        elif "cherry" in label_str or "picking" in label_str:
+            return properties.LABEL_DICT[properties.Label.NEI]
+        else:
+            print(f"unknown label_str: {label_str}")
+            return label
