@@ -1,6 +1,7 @@
 import argparse
 import json
-import os
+import properties
+import openai
 
 import prompt_scorer_openai
 
@@ -14,41 +15,43 @@ parser.add_argument(
 )
 parser.add_argument(
     '--test_set_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/AveritecBaseline/data/date"
-            "-cleaned.test.augmented.json",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/averitec_test.json",
     help='Path to testdata.'
 )
 parser.add_argument(
     '--predictions_output_path',
-    default="./results/FEVER_shared_task_gpt3.5_turbo_output.json",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5/averitec_test.jsonl",
     help='Path to output file for predictions.'
 )
 parser.add_argument(
     '--scores_output_path',
-    default="./results/scores.json",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5/averitec_test_scores.json",
     help='Path to output file for scores.'
 )
 args = parser.parse_args()
-_KEY = args.key
 _TEST_SET_PATH = args.test_set_path
 _PREDICTIONS_OUTPUT_PATH = args.predictions_output_path
-_SCORES_OUTPUT_PATH = args.predictions_output_path
+_SCORES_OUTPUT_PATH = args.scores_output_path
+_CLIENT = openai.OpenAI(
+    api_key=args.key,
+)
 
 
 def main():
-    os.environ["OPENAI_API_KEY"] = _KEY
-
     print("Loading test data..")
     with open(_TEST_SET_PATH, encoding="utf-8") as file:
         TESTSET = json.load(file)
 
-    predictions = prompt_scorer_openai.prompt_openai_model(TESTSET)
+    predictions = prompt_scorer_openai.prompt_openai_model(TESTSET[:1], _CLIENT, properties.Dataset.AVERITEC)
     with open(_PREDICTIONS_OUTPUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(predictions, f, indent=4)
+        for entry in predictions:
+            json.dump(entry, f)
+            f.write("\n")
+            # json.dump(predictions, f, indent=4)
 
     scores = prompt_scorer_openai.evaluate_openai_output(predictions)
     with open(_SCORES_OUTPUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(scores, f, indent=4)
+        json.dump(scores, f, indent=5)
 
     # cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix=metrics_dict["confusion_metrics"], display_labels=["support", 'refute', "nei"])
     # cm_display.plot()

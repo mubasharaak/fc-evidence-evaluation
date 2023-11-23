@@ -1,5 +1,8 @@
 import abc
 import enum
+from typing import Optional
+
+from aenum import MultiValueEnum
 
 
 class Dataset(enum.Enum):
@@ -7,7 +10,7 @@ class Dataset(enum.Enum):
     AVERITEC = "averitec"
 
 
-class Label(enum.Enum):
+class Label(MultiValueEnum):
     REFUTED = "refuted", "refutes", 0, "0", "contradiction", "c"
     SUPPORTED = "supported", "supports", 1, "1", "entailment", "e"
     NEI = "not enough evidence", 2, "2", "neutral", "n", "conflicting evidence/cherrypicking"
@@ -21,31 +24,24 @@ LABEL_DICT = {
 
 
 class AveritecAnswer(abc.ABC):
-    answer: str
-    answer_type: str
-    source_url: str
-    source_medium: str
+    def __init__(self, answer, answer_type, boolean_explanation = None):
+        self.answer = answer
+        self.answer_type = answer_type
+        self.boolean_explanation = boolean_explanation
 
 
-class AveritecQA(abc.ABC):
-    question: str
-    answers: list[AveritecAnswer]
+class AveritecQA:
+    def __init__(self, question: str, answers: list[AveritecAnswer]):
+        self.question = question
+        self.answers = answers
 
 
-class AveritecEntry(abc.ABC):
-    claim: str
-    required_reannotation: bool
-    label: Label
-    justification: str
-    claim_date: str
-    speaker: str
-    original_claim_url: str
-    fact_checking_article: str
-    reporting_source: str
-    location_ISO_code: str
-    claim_types: list[str]
-    fact_checking_strategies: list[str]
-    questions: list[AveritecQA]
+class AveritecEntry:
+    def __init__(self, claim: str, label: str, justification: str, evidence: list[AveritecQA]):
+        self.claim = claim
+        self.label = label
+        self.justification = justification
+        self.evidence = evidence
 
 
 FEVER_DATASET_PATH = "shared_task_test_annotations_evidence.jsonl"
