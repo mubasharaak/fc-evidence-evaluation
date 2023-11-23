@@ -35,7 +35,7 @@ annotation.
 Contains additionally the key `bm25_qas` with predicted and BM25 ranked evidence (QA-pairs).  
 
 #### Structure of Averitec dataset files:
-```commandline
+```
 {
         "claim": "In a letter to Steve Jobs, Sean Connery refused to appear in an apple commercial.",
         "required_reannotation": false,
