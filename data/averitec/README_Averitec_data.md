@@ -10,8 +10,7 @@ Averitec paper: https://arxiv.org/pdf/2305.13117.pdf
 
 `averitec_dev.json`: Averitec dev set
 
-#### Structure of Averitec dataset files
-
+Structure of Averitec dataset files:
 ```commandline
 {
         "claim": "In a letter to Steve Jobs, Sean Connery refused to appear in an apple commercial.",
