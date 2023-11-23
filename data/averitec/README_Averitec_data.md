@@ -2,6 +2,15 @@
 
 Averitec paper: https://arxiv.org/pdf/2305.13117.pdf
 
+The dataset was created in five phases as outlined below:
+```
+p1: claims written
+p2: Evidence collected (+QA pairs written)
+p3: Labeling of claims based on QAs from p2
+p4: Additional evidence (QA pairs) collected, edited if errors in QA pairs from p2, etc.
+p5: Reannotation of label from p3
+```
+
 ### Averitec dataset 
 
 `averitec_train.json`: Averitec training set
@@ -10,7 +19,22 @@ Averitec paper: https://arxiv.org/pdf/2305.13117.pdf
 
 `averitec_dev.json`: Averitec dev set
 
-Structure of Averitec dataset files:
+`averitec_w_metadata.json`: Averitec data (train, test, and dev) with additional metadata labels:
+```
+"only_p2_questions": contains only questions added at phase 2
+"p2_with_p4_edit_questions": questions from p2 contained issues, this is the version edited in p4
+"only_p4_questions": questions in p2 were insufficient, additional questions were added in p4
+```
+
+`reannotation_src.json`: Randomly selected dataset entries (from train, test, and dev) for inter-annotator agreement 
+annotation.
+
+`reannotation_tgt.json`: Reannotated version of `reannotation_src.json`; claims unchanged but evidence adjusted.
+
+`baseline_pred_averitec_test.json`: Baseline predictions for Averitec baseline (1st paper version). 
+Contains additionally the key `bm25_qas` with predicted and BM25 ranked evidence (QA-pairs).  
+
+#### Structure of Averitec dataset files:
 ```commandline
 {
         "claim": "In a letter to Steve Jobs, Sean Connery refused to appear in an apple commercial.",
