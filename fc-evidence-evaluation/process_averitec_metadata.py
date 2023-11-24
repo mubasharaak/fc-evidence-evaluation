@@ -37,6 +37,10 @@ def map_answers(answers: list):
     return mapped_answers
 
 
+def map_evidences(dataset_entry: dict, key: str):
+    return [properties.AveritecQA(e["question"], map_answers(e["answers"])) for e in dataset_entry[key]]
+
+
 def extract_entries_requiring_p4_adjustments(dataset: list):
     """Extracts samples that require reannotation and whose labels didn't change after annotation."""
     subset = []
@@ -46,7 +50,7 @@ def extract_entries_requiring_p4_adjustments(dataset: list):
             continue
         if 'p2_with_p4_edit_questions' in entry or 'only_p4_questions' in entry:
             # prepare entry before adding
-            evidences = [properties.AveritecQA(e["question"], map_answers(e["answers"])) for e in entry["only_p2_questions"]]
+            evidences = map_evidences(entry, "only_p2_questions")
             subset.append(properties.AveritecEntry(
                 entry["claim"], entry["phase_3_label"], entry["justification_p5"], evidences
             ))
@@ -63,11 +67,9 @@ def extract_p4_adjusted_entries(dataset: list):
             # prepare entry before adding
             evidences = []
             if 'p2_with_p4_edit_questions' in entry:
-                evidences.extend([properties.AveritecQA(e["question"], map_answers(e["answers"])) for e in
-                             entry["p2_with_p4_edit_questions"]])
+                evidences.extend(map_evidences(entry, "p2_with_p4_edit_questions"))
             elif 'only_p4_questions' in entry:
-                evidences.extend([properties.AveritecQA(e["question"], map_answers(e["answers"])) for e in
-                                  entry["only_p4_questions"]])
+                evidences.extend(map_evidences(entry, "only_p4_questions"))
             subset.append(properties.AveritecEntry(
                 entry["claim"], entry["phase_3_label"], entry["justification_p5"], evidences
             ))
