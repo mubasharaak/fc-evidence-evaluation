@@ -1,6 +1,6 @@
 import json
 import properties
-
+import dacite
 
 def load_data(path: str):
     """Loads data from path."""
@@ -72,3 +72,11 @@ def save_jsonl_file(data, file_path):
         for entry in data:
             json.dump(to_dict(entry), f)
             f.write("\n")
+
+
+def load_jsonl_file(file_path, dataclass=properties.AveritecEntry):
+    content = []
+    with open(file_path, "r", encoding="utf-8") as f:
+        for entry in f.readlines():
+            content.append(dacite.from_dict(data_class=dataclass, data=json.loads(entry)))
+    return content

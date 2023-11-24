@@ -1,10 +1,11 @@
 import argparse
 import json
-import properties
+
 import openai
-import utils
 
 import prompt_scorer_openai
+import properties
+import utils
 
 parser = argparse.ArgumentParser(
     description='Prompt Scorer OpenAI arguments'
@@ -16,17 +17,17 @@ parser.add_argument(
 )
 parser.add_argument(
     '--test_set_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/averitec_test.json",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/averitec_w_metadata_after_p4.jsonl",
     help='Path to testdata.'
 )
 parser.add_argument(
     '--predictions_output_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5/averitec_test.jsonl",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5/averitec_w_metadata_after_p4.jsonl",
     help='Path to output file for predictions.'
 )
 parser.add_argument(
     '--scores_output_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5/averitec_test_scores.json",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5/averitec_w_metadata_after_p4_scores_binary.json",
     help='Path to output file for scores.'
 )
 args = parser.parse_args()
@@ -35,20 +36,22 @@ _PREDICTIONS_OUTPUT_PATH = args.predictions_output_path
 _SCORES_OUTPUT_PATH = args.scores_output_path
 _CLIENT = openai.OpenAI(
     api_key=args.key,
+    timeout=10
 )
 
 
 def main():
     print("Loading test data..")
-    with open(_TEST_SET_PATH, encoding="utf-8") as file:
-        TESTSET = json.load(file)
+    # input_data = utils.load_jsonl_file(_TEST_SET_PATH)
+    # predictions = prompt_scorer_openai.prompt_openai_model(input_data[:100], _CLIENT, properties.Dataset.AVERITEC)
+    # utils.save_jsonl_file(predictions, _PREDICTIONS_OUTPUT_PATH)
 
-    predictions = prompt_scorer_openai.prompt_openai_model(TESTSET[:1], _CLIENT, properties.Dataset.AVERITEC)
-    utils.save_jsonl_file(predictions, _PREDICTIONS_OUTPUT_PATH)
+    predictions = utils.load_jsonl_file(_PREDICTIONS_OUTPUT_PATH, dataclass=properties.OpenAIResponse)
 
-    scores = prompt_scorer_openai.evaluate_openai_output(predictions)
+    scores = prompt_scorer_openai.evaluate_openai_output(predictions, ignore_labels=["not enough evidence",
+                                                                                     "conflicting evidence/cherrypicking"])
     with open(_SCORES_OUTPUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(scores, f, indent=5)
+        json.dump(scores, f, indent=4)
 
     # cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix=metrics_dict["confusion_metrics"], display_labels=["support", 'refute', "nei"])
     # cm_display.plot()

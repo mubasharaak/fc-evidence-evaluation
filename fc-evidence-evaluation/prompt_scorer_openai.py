@@ -1,4 +1,5 @@
 import os
+import time
 
 import openai
 from sklearn import metrics
@@ -7,19 +8,16 @@ from sklearn.metrics import f1_score
 import properties
 import scorer_utils
 
-_DICT_ENTRY = {
-    "claim": "",
-    "response": "",
-    "gold": "",
-}
 _SEED = 10
 _MODEL = "gpt-3.5-turbo-1106"
-_MAX_TOKENS = 300
+_MAX_TOKENS = 150
 _JSON_PROMPT = "{}. Generate the output in json format with the keys {}."
 FEVER_DATASET_PATH = os.path.join("data", "shared_task_test_annotations_evidence.jsonl")
+_IGNORE_LABELS_DEFAULT = ["conflicting evidence/cherrypicking"]
 
 
-def query_openai(prompt: str, client, keys=None, seed=_SEED, model=_MODEL, max_tokens=_MAX_TOKENS, response_format="json_object"):
+def query_openai(prompt: str, client, keys=None, seed=_SEED, model=_MODEL, max_tokens=_MAX_TOKENS,
+                 response_format="json_object"):
     return client.chat.completions.create(
         messages=[
             {
@@ -38,12 +36,10 @@ def _get_response_text(response: openai.types.chat.chat_completion.ChatCompletio
     return response.choices[0].message.content
 
 
-def _process_output(dataset_sample: dict, response: openai.types.chat.chat_completion.ChatCompletion):
-    entry = _DICT_ENTRY.copy()
-    entry["claim"] = dataset_sample["claim"]
-    entry["response"] = _get_response_text(response)
-    entry["gold"] = dataset_sample["label"].lower()
-    return entry
+def _process_output(dataset_sample: properties.AveritecEntry,
+                    response: openai.types.chat.chat_completion.ChatCompletion):
+    return properties.OpenAIResponse(dataset_sample.claim, _get_response_text(response),
+                                     dataset_sample.label.lower())
 
 
 def prompt_openai_model_fever_submissions(claims, evidences, labels):
@@ -62,11 +58,7 @@ def prompt_openai_model_fever_submissions(claims, evidences, labels):
             ],
             max_tokens=_MAX_TOKENS
         )
-        entry = _DICT_ENTRY.copy()
-        entry["claim"] = claim
-        entry["response"] = response
-        entry["gold"] = label.lower()
-        output_dict.append(entry)
+        output_dict.append(properties.OpenAIResponse(claim, response, label.lower()))
     return output_dict
 
 
@@ -93,14 +85,10 @@ def prompt_openai_model_deprecated(dataset):
             ],
             max_tokens=_MAX_TOKENS
         )
-        entry = _DICT_ENTRY.copy()
-        entry["claim"] = test_expl["claim"]
-        entry["response"] = response
-        entry["gold"] = test_expl["label"].lower()
-        output_dict.append(entry)
+        output_dict.append(properties.OpenAIResponse(test_expl["claim"], response, test_expl["label"].lower()))
 
 
-def prepare_averitec_prompt(averitec_sample):
+def prepare_averitec_prompt_deprecated(averitec_sample):
     """Formats prompt using Averitec sample as input."""
     prompt = properties.BASE_PROMPT
     prompt += "Claim: " + averitec_sample["claim"] + "\n"
@@ -116,40 +104,64 @@ def prepare_averitec_prompt(averitec_sample):
     return prompt
 
 
+def averitec_qa_to_str(evidence: properties.AveritecQA):
+    evidence_as_str = (evidence.question + "? ").replace("??", "?")  # sometimes question mark or fullstop missing
+    for a in evidence.answers:
+        evidence_as_str += (a.answer + ". ").replace("..", ".")
+        if a.answer_type.lower() == "boolean":
+            evidence_as_str += (a.boolean_explanation + ". ").replace("..", ".")
+    return evidence_as_str
+
+
+def prepare_averitec_prompt(averitec_sample: properties.AveritecEntry):
+    """Formats prompt using Averitec sample as input."""
+    evidence = " ".join([averitec_qa_to_str(e) for e in averitec_sample.evidence])
+    return properties.BASE_PROMPT.format(averitec_sample.claim, evidence)
+
+
 def prompt_openai_model(dataset: list, client, dataset_name=properties.Dataset):
     """Prompts OpenAI models."""
     responses = []
     for sample in dataset:
         print("running sample")
         # prepare prompt
-        if dataset_name == properties.Dataset.AVERITEC:
-            prompt = prepare_averitec_prompt(sample)
-        elif dataset_name == properties.Dataset.FEVER:
-            return responses
-        else:
-            return responses
-        # query OpenAI
-        responses.append(_process_output(sample, query_openai(prompt, client, response_format="text")))
-        print(responses[-1]["response"])
+        try:
+            if dataset_name == properties.Dataset.AVERITEC:
+                prompt = prepare_averitec_prompt(sample)
+            elif dataset_name == properties.Dataset.FEVER:
+                return responses
+            else:
+                return responses
+            while True:
+                try:
+                    responses.append(_process_output(sample, query_openai(prompt, client, response_format="text")))
+                    break
+                except openai.APITimeoutError as e:
+                    print(e)
+                    time.sleep(10)
+                    pass
+        except Exception:
+            continue
     return responses
 
 
-def evaluate_openai_output(output):
+def evaluate_openai_output(output, ignore_labels=_IGNORE_LABELS_DEFAULT):
     # map output to labels
-    pred = []
-    gold = []
+    pred_labels = []
+    gold_labels = []
     for response in output:
         try:
-            if response["gold"] != "conflicting evidence/cherrypicking":
-                pred.append(scorer_utils.map_label(response["response"]))
-                gold.append(properties.LABEL_DICT[properties.Label(response["gold"].lower())])
+            pred_label = scorer_utils.map_label(response.response)
+            if response.gold.lower() not in ignore_labels and pred_label in range(2):
+                pred_labels.append(pred_label)
+                gold_labels.append(properties.LABEL_DICT[properties.Label(response.gold.lower())])
         except Exception:
             print(f"{scorer_utils.map_label(response['response'])}")
             print(f"{properties.LABEL_DICT[properties.Label(response['gold'].lower())]}")
 
     # calculate metrics (F1 micro/macro) todo replace this by own confusion matrix based on probabilities
-    f1_micro = f1_score(y_true=gold, y_pred=pred, average='micro')
-    f1_macro = f1_score(y_true=gold, y_pred=pred, average='macro')
+    f1_micro = f1_score(y_true=gold_labels, y_pred=pred_labels, average='micro')
+    f1_macro = f1_score(y_true=gold_labels, y_pred=pred_labels, average='macro')
 
-    confusion_matrix = metrics.confusion_matrix(gold, pred)
+    confusion_matrix = metrics.confusion_matrix(gold_labels, pred_labels)
     return {"f1_micro": f1_micro, "f1_macro": f1_macro, "confusion_metrics": confusion_matrix.tolist()}

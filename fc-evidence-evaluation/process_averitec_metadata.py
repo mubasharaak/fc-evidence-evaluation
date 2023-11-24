@@ -47,9 +47,11 @@ def map_evidences(dataset_entry: dict, key: str):
 def is_not_required_entry(entry: dict) -> bool:
     if "phase_5_label" in entry and (
             # only samples interesting for us whose evidence had limitations but label didn't change
-            entry["phase_5_label"] != entry["phase_3_label"] or entry["phase_5_label"] == ""):
+            entry["phase_5_label"] != entry["phase_3_label"] or entry["phase_5_label"] in ["",
+                                                                                           "Conflicting "
+                                                                                           "Evidence/Cherrypicking"]):
         return True
-    elif "phase_5_label" not in entry and entry["phase_3_label"] == "":
+    elif "phase_5_label" not in entry and entry["phase_3_label"] in ["", "Conflicting Evidence/Cherrypicking"]:
         return True
     return False
 

@@ -1,5 +1,6 @@
 import abc
 import enum
+from dataclasses import dataclass
 from typing import Optional
 
 from aenum import MultiValueEnum
@@ -23,20 +24,42 @@ LABEL_DICT = {
 }
 
 
-class AveritecAnswer(abc.ABC):
-    def __init__(self, answer, answer_type, boolean_explanation = None):
+@dataclass
+class OpenAIResponse:
+    claim: str
+    response: str
+    gold: str
+
+
+@dataclass
+class AveritecAnswer:
+    answer: str
+    answer_type: str
+    boolean_explanation: Optional[str]
+
+    def __init__(self, answer, answer_type, boolean_explanation=None):
         self.answer = answer
         self.answer_type = answer_type
         self.boolean_explanation = boolean_explanation
 
 
+@dataclass
 class AveritecQA:
+    question: str
+    answers: list[AveritecAnswer]
+
     def __init__(self, question: str, answers: list[AveritecAnswer]):
         self.question = question
         self.answers = answers
 
 
+@dataclass
 class AveritecEntry:
+    claim: str
+    label: str
+    justification: str
+    evidence: list[AveritecQA]
+
     def __init__(self, claim: str, label: str, justification: str, evidence: list[AveritecQA]):
         self.claim = claim
         self.label = label
@@ -47,7 +70,7 @@ class AveritecEntry:
 FEVER_DATASET_PATH = "shared_task_test_annotations_evidence.jsonl"
 
 BASE_PROMPT = """Given a claim and it's associated evidence, decide if the evidence supports the claim, refutes it, 
-doesn't give enough information, or gives conflicting information. Explain the decision. Only use the provided 
+or doesn't give enough information. Explain the reasoning step-by-step before giving the answer. Only use the provided 
 information and no additional sources or background knowledge.
 
 Examples: 
@@ -58,48 +81,28 @@ education, the Centre told the Parliament today. This statement was given by Min
 Ra mesh Pokhriyal Nishank in the Lok Sabha today in response to Kaushalendra Kumar question on whether it is fact 
 that NITI Aayog has suggested that Primary Education may be given to the private sector to reduce the burden of 
 salary to teachers and other infrastructure. 
-Answer: Refute. There is no plan by the Indian government to privatize 
-primary education as said by the Minister of Human Resource Development
+Answer: There is no plan by the Indian government to privatize primary education as said by the Minister of Human Resource Development. The answer is refute. Refute
 
 Claim: South Africans that drink are amongst the top drinkers in the world. 
 Evidence: What is the global average 
 alcohol consumption in litres of pure alcohol per day? The global averages as of 2016 is 15.1 litres per day. What is 
 the daily average of pure alcohol consumption per day in South africa? 29.9 litres. Where does South Africa rank as a 
 nation in terms of Daily pure Alcohol consumption? 6th out of 189 countries. 
-Answer: support. Is says "amongst the 
-top drinkers" not the top, so since they are 6th, this could be plausible
+Answer: The claim stays "amongst the top drinkers" not the top first, so since they are 6th, this could be plausible. The answer is support. Support
 
-Claim: Anxiety levels among young teenagers dropped during the coronavirus pandemic, a study has suggested 
-Evidence: 
-What study is this based on? The study was based on a survey of around 1,000 year 9 students in the south west of 
-England. It found that students reported lower levels of anxiety when surveyed in April and May of this year compared 
-to October 2019. \n\nIt also found an increase in wellbeing but \u201cno large change in risk of depression. Is this 
-study backed up by further research? There's nothing wrong with this study in terms of its method or what it claims, 
-but it shouldn't necessarily be taken to represent the experience of all children across the country. It can't rule 
-out the possibility that the mental toll of the pandemic may have been different across different parts of the 
-country, and for people of different ages. \n\nFor example, a study out of the University of Oxford, asked parents 
-and carers to report any changes in behavior of their children during a one-month period in lockdown. It found that 
-while parents and carers reported that the emotional difficulties of adolescents decreased, the emotional 
-difficulties of children aged four to ten increased. \n\nAlso a potential contributor to feelings of anxiety among 
-students during the pandemic has been the uncertainty over exam results, which would have primarily affected students 
-in years 11 and 13, not year 9 (as the study itself notes). 
-Answer: conflicting information. One study shows anxiety 
-dropping amongst young teenagers, but another study shows it depends on age and whether child will be receiving exam 
-results.
+Claim: {} 
+Evidence: {}
+Answer:
+"""
 
+NEI_EXAMPLE = """
 Claim: There is a global average for the number of judges and magistrates to number of people in Kenya. 
 Evidence: How 
 many magistrates were their in Kenya in 2020? No answer could be found. Is there a global average for the number of 
 judges compared to population? No answer could be found. What is the population of Kenya? 47.6 million 
-Answer: not 
-enough information. The answers do not support or refute the claim as there is no evidence to look at in reference to 
-the claim.
-
-Claim: {} 
-Evidence: {}
-Answer: {} 
+Answer: The evidence does not support or refute the claim as there is no evidence to look at in reference to 
+the claim. The answer is not enough information. Not enough information
 """
-
 
 COT_PROMPT = """Given a claim and it's associated evidence, decide and give an explanation if the evidence (1) 
 supports the claim, (2) refutes it, (3) does not give enough information, or gives (4) conflicting information. Think 

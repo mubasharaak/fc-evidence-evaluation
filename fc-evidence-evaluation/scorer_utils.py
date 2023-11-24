@@ -75,22 +75,18 @@ def compute_metrics(eval_preds):
     return {"f1_micro": f1_micro, "f1_macro": f1_macro}
 
 
-def map_label(response: str) -> typing.Optional[properties.Label]:
+def map_label(response: str) -> int:
     label = None
-    label_str = response.split(".")[0].lower()
+    label_str = response.split(".")[-1].lower() if response.split(".")[-1]!="" else response.lower()
     if label_str in list(properties.LABEL_DICT):
-        return properties.LABEL_DICT[properties.Label(label_str.lower())]
+        return properties.LABEL_DICT[properties.Label(label_str)]
     else:
-        if "enough information" in label_str or "mostly" in label_str:
-            return properties.LABEL_DICT[properties.Label.NEI]
-        elif "support" in label_str:
+        if "support" in label_str or "true" in label_str:
             return properties.LABEL_DICT[properties.Label.SUPPORTED]
         elif "refute" in label_str or "false" in label_str:
             return properties.LABEL_DICT[properties.Label.REFUTED]
-        elif "conflict" in label_str:
-            return properties.LABEL_DICT[properties.Label.NEI]
-        elif "cherry" in label_str or "picking" in label_str:
+        elif "not enough information" in label_str:
             return properties.LABEL_DICT[properties.Label.NEI]
         else:
             print(f"unknown label_str: {label_str}")
-            return label
+            return -1
