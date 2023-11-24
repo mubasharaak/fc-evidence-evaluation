@@ -2,6 +2,7 @@ import argparse
 import json
 import properties
 import openai
+import utils
 
 import prompt_scorer_openai
 
@@ -43,11 +44,7 @@ def main():
         TESTSET = json.load(file)
 
     predictions = prompt_scorer_openai.prompt_openai_model(TESTSET[:1], _CLIENT, properties.Dataset.AVERITEC)
-    with open(_PREDICTIONS_OUTPUT_PATH, "w", encoding="utf-8") as f:
-        for entry in predictions:
-            json.dump(entry, f)
-            f.write("\n")
-            # json.dump(predictions, f, indent=4)
+    utils.save_jsonl_file(predictions, _PREDICTIONS_OUTPUT_PATH)
 
     scores = prompt_scorer_openai.evaluate_openai_output(predictions)
     with open(_SCORES_OUTPUT_PATH, "w", encoding="utf-8") as f:

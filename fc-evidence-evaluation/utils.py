@@ -61,3 +61,14 @@ def read_averitec_dataset(file_path):
         qa_pairs.append(qa_pair)
 
     return claims, qa_pairs, labels
+
+
+def to_dict(obj):
+    return json.loads(json.dumps(obj, default=lambda o: o.__dict__))
+
+
+def save_jsonl_file(data, file_path):
+    with open(file_path, "w", encoding="utf-8") as f:
+        for entry in data:
+            json.dump(to_dict(entry), f)
+            f.write("\n")
