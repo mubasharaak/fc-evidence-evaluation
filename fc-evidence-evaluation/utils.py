@@ -80,3 +80,21 @@ def load_jsonl_file(file_path, dataclass=properties.AveritecEntry):
         for entry in f.readlines():
             content.append(dacite.from_dict(data_class=dataclass, data=json.loads(entry)))
     return content
+
+
+def load_json_file(file_path):
+    with open(file_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def map_averitec_to_dataclass_format(averitec: dict):
+    """Formats Averitec dataset files to match fields specified in properties.AveritecEntry."""
+    return dacite.from_dict(data_class=properties.AveritecEntry,
+                            data={"claim": averitec["claim"], "label": averitec["label"],
+                                  "justification": averitec["justification"],
+                                  "evidence": averitec["questions"]})
+
+
+def load_averitec_base(path: str) -> list[properties.AveritecEntry]:
+    """Loads and formats Averitec dataset files (train, test, or dev)."""
+    return [map_averitec_to_dataclass_format(entry) for entry in load_json_file(path)]

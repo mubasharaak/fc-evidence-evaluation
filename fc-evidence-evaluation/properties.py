@@ -1,4 +1,3 @@
-import abc
 import enum
 from dataclasses import dataclass
 from typing import Optional
@@ -68,6 +67,11 @@ class AveritecEntry:
 
 
 FEVER_DATASET_PATH = "shared_task_test_annotations_evidence.jsonl"
+AVERITEC_TRAIN_FILENAME = "averitec_train.json"
+AVERITEC_TEST_FILENAME = "averitec_test.json"
+AVERITEC_DEV_FILENAME = "averitec_dev.json"
+
+AVERITEC_INIT_FILES = [AVERITEC_TRAIN_FILENAME, AVERITEC_TEST_FILENAME, AVERITEC_DEV_FILENAME]
 
 BASE_PROMPT = """Given a claim and it's associated evidence, decide if the evidence supports the claim, refutes it, 
 or doesn't give enough information. Explain the reasoning step-by-step before giving the answer. Only use the provided 

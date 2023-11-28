@@ -140,7 +140,8 @@ def prompt_openai_model(dataset: list, client, dataset_name=properties.Dataset):
                     print(e)
                     time.sleep(10)
                     pass
-        except Exception:
+        except Exception as e:
+            print(e)
             continue
     return responses
 
