@@ -11,23 +11,18 @@ parser = argparse.ArgumentParser(
     description='Prompt Scorer OpenAI arguments'
 )
 parser.add_argument(
-    '--key',
-    default="",
-    help='Key for OpenAI API.'
-)
-parser.add_argument(
     '--test_set_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/averitec_dev.json",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/fever/shared_task_test_annotations_evidence.jsonl",
     help='Path to testdata.'
 )
 parser.add_argument(
     '--predictions_output_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5/averitec_dev.jsonl",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5/shared_task_test_annotations_evidence.jsonl",
     help='Path to output file for predictions.'
 )
 parser.add_argument(
     '--scores_output_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5/averitec_dev_scores_binary.json",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5/shared_task_test_annotations_evidence_scores_binary.json",
     help='Path to output file for scores.'
 )
 parser.add_argument(
@@ -41,8 +36,10 @@ _TEST_SET_PATH = args.test_set_path
 _PREDICTIONS_OUTPUT_PATH = args.predictions_output_path
 _SCORES_OUTPUT_PATH = args.scores_output_path
 _ONLY_EVALUATE = args.only_evaluate_no_prediction
+
+_KEY = open('/Users/user/Desktop/openai_key.txt', 'r').read()
 _CLIENT = openai.OpenAI(
-    api_key=args.key,
+    api_key=_KEY,
     timeout=10
 )
 
@@ -53,18 +50,19 @@ def main():
         predictions = utils.load_jsonl_file(_PREDICTIONS_OUTPUT_PATH, dataclass=properties.OpenAIResponse)
     else:
         # predict using OpenAI API and store results
-        if properties.Dataset.AVERITEC.value not in _TEST_SET_PATH.lower():
-            return None
-        elif any(entry in _TEST_SET_PATH for entry in properties.AVERITEC_INIT_FILES):
+        if properties.Dataset.FEVER.value in _TEST_SET_PATH.lower():
+            input_data = utils.load_fever(_TEST_SET_PATH)
+        elif any(entry in _TEST_SET_PATH.lower() for entry in properties.AVERITEC_INIT_FILES):
             input_data = utils.load_averitec_base(_TEST_SET_PATH)
         else:
+            # Averitec with metadata
             input_data = utils.load_jsonl_file(_TEST_SET_PATH, properties.AveritecEntry)
 
-        predictions = prompt_scorer_openai.prompt_openai_model(input_data[:1], _CLIENT, properties.Dataset.AVERITEC)
+        predictions = prompt_scorer_openai.prompt_openai_model(input_data[:10], _CLIENT)
         utils.save_jsonl_file(predictions, _PREDICTIONS_OUTPUT_PATH)
 
-    scores = prompt_scorer_openai.evaluate_openai_output(predictions, ignore_labels=["not enough evidence",
-                                                                                     "conflicting evidence/cherrypicking"])
+    scores = prompt_scorer_openai.evaluate_openai_output(predictions,
+                                                         ignore_labels=["conflicting evidence/cherrypicking"])
     with open(_SCORES_OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(scores, f, indent=4)
 

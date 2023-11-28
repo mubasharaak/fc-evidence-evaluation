@@ -113,36 +113,33 @@ def averitec_qa_to_str(evidence: properties.AveritecQA):
     return evidence_as_str
 
 
-def prepare_averitec_prompt(averitec_sample: properties.AveritecEntry):
+def prepare_prompt(dataset_sample: properties.AveritecEntry):
     """Formats prompt using Averitec sample as input."""
-    evidence = " ".join([averitec_qa_to_str(e) for e in averitec_sample.evidence])
-    return properties.BASE_PROMPT.format(averitec_sample.claim, evidence)
+    if type(dataset_sample.evidence) == properties.AveritecQA:
+        return properties.BASE_PROMPT.format(dataset_sample.claim,
+                                             " ".join([averitec_qa_to_str(e) for e in dataset_sample.evidence]))
+    else:
+        return properties.BASE_PROMPT.format(dataset_sample.claim, dataset_sample.evidence)
 
 
-def prompt_openai_model(dataset: list, client, dataset_name=properties.Dataset):
+def prompt_openai_model(dataset: list, client):
     """Prompts OpenAI models."""
     responses = []
     for sample in dataset:
         print("running sample")
-        # prepare prompt
-        try:
-            if dataset_name == properties.Dataset.AVERITEC:
-                prompt = prepare_averitec_prompt(sample)
-            elif dataset_name == properties.Dataset.FEVER:
-                return responses
-            else:
-                return responses
-            while True:
-                try:
-                    responses.append(_process_output(sample, query_openai(prompt, client, response_format="text")))
-                    break
-                except openai.APITimeoutError as e:
-                    print(e)
-                    time.sleep(10)
-                    pass
-        except Exception as e:
-            print(e)
-            continue
+        # try:
+        prompt = prepare_prompt(sample)
+        while True:
+            try:
+                responses.append(_process_output(sample, query_openai(prompt, client, response_format="text")))
+                break
+            except openai.APITimeoutError as e:
+                print(e)
+                time.sleep(10)
+                pass
+        # except Exception as e:
+        #     print(e)
+        #     continue
     return responses
 
 

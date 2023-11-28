@@ -1,6 +1,6 @@
 import enum
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Union
 
 from aenum import MultiValueEnum
 
@@ -57,7 +57,7 @@ class AveritecEntry:
     claim: str
     label: str
     justification: str
-    evidence: list[AveritecQA]
+    evidence: Union[list[AveritecQA], str]
 
     def __init__(self, claim: str, label: str, justification: str, evidence: list[AveritecQA]):
         self.claim = claim

@@ -74,17 +74,15 @@ def save_jsonl_file(data, file_path):
             f.write("\n")
 
 
-def load_jsonl_file(file_path, dataclass=properties.AveritecEntry):
+def load_jsonl_file(file_path, dataclass=None):
     content = []
     with open(file_path, "r", encoding="utf-8") as f:
         for entry in f.readlines():
-            content.append(dacite.from_dict(data_class=dataclass, data=json.loads(entry)))
+            if dataclass:
+                content.append(dacite.from_dict(data_class=dataclass, data=json.loads(entry)))
+            else:
+                content.append(json.loads(entry))
     return content
-
-
-def load_json_file(file_path):
-    with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
 
 
 def map_averitec_to_dataclass_format(averitec: dict):
@@ -98,3 +96,28 @@ def map_averitec_to_dataclass_format(averitec: dict):
 def load_averitec_base(path: str) -> list[properties.AveritecEntry]:
     """Loads and formats Averitec dataset files (train, test, or dev)."""
     return [map_averitec_to_dataclass_format(entry) for entry in load_json_file(path)]
+
+
+def load_jsonl_file(file_path) -> list:
+    with open(file_path, "r", encoding="utf-8") as f:
+        return [json.loads(entry) for entry in f.readlines()]
+
+
+def map_fever_to_dataclass_format(fever_entry: list):
+    """Formats Averitec dataset files to match fields specified in properties.AveritecEntry."""
+    mapped_entries = []
+    for fever_subentry in iter(fever_entry[1].values()):
+        evidence = ". ".join(e[2].strip() for e in fever_subentry["evidence"] if len(e)>2).replace("..", ".")
+        mapped_entries.append(dacite.from_dict(data_class=properties.AveritecEntry,
+                                               data={"claim": fever_subentry["claim"], "label": fever_subentry["label"],
+                                                     "justification": "",
+                                                     "evidence": evidence}))
+    return mapped_entries
+
+
+def load_fever(path: str) -> list[properties.AveritecEntry]:
+    """Loads and formats Fever files."""
+    fever_entries = []
+    for entry in load_jsonl_file(path):
+        fever_entries.extend(map_fever_to_dataclass_format(entry))
+    return fever_entries
