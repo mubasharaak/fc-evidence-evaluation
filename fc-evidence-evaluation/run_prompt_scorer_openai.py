@@ -31,16 +31,23 @@ parser.add_argument(
     action="store_true",
     help='Given predictions_output_path load predictions for evaluation.'
 )
+parser.add_argument(
+    '--prompt_type',
+    default="atomic",
+    choices=[prompt.value for prompt in properties.PromptTypes],
+    type=str.lower
+)
 args = parser.parse_args()
 _TEST_SET_PATH = args.test_set_path
 _PREDICTIONS_OUTPUT_PATH = args.predictions_output_path
 _SCORES_OUTPUT_PATH = args.scores_output_path
 _ONLY_EVALUATE = args.only_evaluate_no_prediction
+_PROMPT_TYPE = properties.PromptTypes(args.prompt_type)
 
 _KEY = open('/Users/user/Desktop/openai_key.txt', 'r').read()
 _CLIENT = openai.OpenAI(
     api_key=_KEY,
-    timeout=10
+    timeout=10,
 )
 
 
@@ -58,10 +65,11 @@ def main():
             # Averitec with metadata
             input_data = utils.load_jsonl_file(_TEST_SET_PATH, properties.AveritecEntry)
 
-        predictions = prompt_scorer_openai.prompt_openai_model(input_data[:10], _CLIENT)
+        predictions = prompt_scorer_openai.prompt_openai_model(input_data[:3], _PROMPT_TYPE, _CLIENT)
         utils.save_jsonl_file(predictions, _PREDICTIONS_OUTPUT_PATH)
 
-    scores = prompt_scorer_openai.evaluate_openai_output(predictions,
+    # TODO continue by refactoring evaluation, e.g. output of "atomic" prompt
+    scores = prompt_scorer_openai.evaluate_openai_output(predictions, _PROMPT_TYPE,
                                                          ignore_labels=["conflicting evidence/cherrypicking"])
     with open(_SCORES_OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(scores, f, indent=4)

@@ -10,6 +10,14 @@ class Dataset(enum.Enum):
     AVERITEC = "averitec"
 
 
+class PromptTypes(enum.Enum):
+    BASE = "base"
+    COT = "cot"
+    TOT = "tot"
+    ATOMIC_FACTS = "atomic"
+    SCORE = "score"
+
+
 class Label(MultiValueEnum):
     REFUTED = "refuted", "refutes", 0, "0", "contradiction", "c"
     SUPPORTED = "supported", "supports", 1, "1", "entailment", "e"
@@ -74,9 +82,9 @@ AVERITEC_DEV_FILENAME = "averitec_dev.json"
 AVERITEC_INIT_FILES = [AVERITEC_TRAIN_FILENAME, AVERITEC_TEST_FILENAME, AVERITEC_DEV_FILENAME]
 
 BASE_PROMPT = """Given a claim and it's associated evidence, decide if the evidence supports the claim, refutes it, 
-or doesn't give enough information. Explain the reasoning step-by-step before giving the answer. Only use the provided 
-information and no additional sources or background knowledge.
+or doesn't give enough information. Only use the provided information and no additional sources or background knowledge.
 
+------
 Examples: 
 Claim: All government schools in India are being privatised. 
 Evidence: What did India's Union Education 
@@ -85,14 +93,55 @@ education, the Centre told the Parliament today. This statement was given by Min
 Ra mesh Pokhriyal Nishank in the Lok Sabha today in response to Kaushalendra Kumar question on whether it is fact 
 that NITI Aayog has suggested that Primary Education may be given to the private sector to reduce the burden of 
 salary to teachers and other infrastructure. 
-Answer: There is no plan by the Indian government to privatize primary education as said by the Minister of Human Resource Development. The answer is refute. Refute
+Answer: refute.
 
 Claim: South Africans that drink are amongst the top drinkers in the world. 
 Evidence: What is the global average 
 alcohol consumption in litres of pure alcohol per day? The global averages as of 2016 is 15.1 litres per day. What is 
 the daily average of pure alcohol consumption per day in South africa? 29.9 litres. Where does South Africa rank as a 
 nation in terms of Daily pure Alcohol consumption? 6th out of 189 countries. 
-Answer: The claim stays "amongst the top drinkers" not the top first, so since they are 6th, this could be plausible. The answer is support. Support
+Answer: support
+
+Claim: There is a global average for the number of judges and magistrates to number of people in Kenya. 
+Evidence: How 
+many magistrates were their in Kenya in 2020? No answer could be found. Is there a global average for the number of 
+judges compared to population? No answer could be found. What is the population of Kenya? 47.6 million 
+Answer: not enough information
+------
+The answer should be a json with a key named label
+Claim: {} 
+Evidence: {}
+Answer:
+"""
+
+COT_PROMPT = """Given a claim and it's associated evidence, decide if the evidence supports the claim, refutes it, 
+or doesn't give enough information. Explain the reasoning step-by-step before giving the answer. Only use the provided 
+information and no additional sources or background knowledge.
+-----
+Examples: 
+Claim: All government schools in India are being privatised. 
+Evidence: What did India's Union Education 
+Minister say about the privatisation of governments schools? New Delhi: There is no plan to privatise primary 
+education, the Centre told the Parliament today. This statement was given by Minister of Human Resource Development, 
+Ra mesh Pokhriyal Nishank in the Lok Sabha today in response to Kaushalendra Kumar question on whether it is fact 
+that NITI Aayog has suggested that Primary Education may be given to the private sector to reduce the burden of 
+salary to teachers and other infrastructure. 
+Answer: There is no plan by the Indian government to privatize primary education as said by the Minister of Human Resource Development. The answer is refute. refute.
+
+Claim: South Africans that drink are amongst the top drinkers in the world. 
+Evidence: What is the global average 
+alcohol consumption in litres of pure alcohol per day? The global averages as of 2016 is 15.1 litres per day. What is 
+the daily average of pure alcohol consumption per day in South africa? 29.9 litres. Where does South Africa rank as a 
+nation in terms of Daily pure Alcohol consumption? 6th out of 189 countries. 
+Answer: The claim stays "amongst the top drinkers" not the top first, so since they are 6th, this could be plausible. The answer is support. support.
+
+Claim: There is a global average for the number of judges and magistrates to number of people in Kenya. 
+Evidence: How 
+many magistrates were their in Kenya in 2020? No answer could be found. Is there a global average for the number of 
+judges compared to population? No answer could be found. What is the population of Kenya? 47.6 million 
+Answer: The evidence does not support or refute the claim as there is no evidence to look at in reference to the claim. The answer is not enough information. not enough information
+-----
+The answer should be a json with two keys: explanation, label.
 
 Claim: {} 
 Evidence: {}
@@ -108,37 +157,6 @@ Answer: The evidence does not support or refute the claim as there is no evidenc
 the claim. The answer is not enough information. Not enough information
 """
 
-COT_PROMPT = """Given a claim and it's associated evidence, decide and give an explanation if the evidence (1) 
-supports the claim, (2) refutes it, (3) does not give enough information, or gives (4) conflicting information. Think 
-step-by-step and provide the reasoning steps. Only use the provided information and no additional sources or 
-background knowledge.
-
-Claim: South Africans that drink are amongst the top drinkers in the world. 
-Evidence: The global average alcohol 
-consumption in litres of pure alcohol per day is 15.1 litres. The daily average of pure alcohol consumption per day 
-in South africa is 29.9 litres. South Africa ranks as a nation in terms of Daily pure Alcohol consumption 6th out of 
-189 countries. 
-Answer: 
-1. Understand the Claim:
-The claim asserts that "South Africans that drink are amongst the top drinkers in the world."
-2. Break Down the Evidence:
-Three central points from the evidence:
-The global daily average for alcohol consumption is 15.1 litres of pure alcohol.
-The daily average of pure alcohol consumption in South Africa stands at 29.9 litres.
-On a global scale, considering daily pure alcohol consumption, South Africa is ranked 6th out of 189 countries.
-3. Evaluate the Claim in Light of the Evidence:
-The claim posits that South Africans are among the top global consumers of alcohol.
-Evidence shows South Africans consume alcohol at a rate almost double the global average (29.9 litres compared to 15.1 
-litres). The ranking of South Africa as 6th out of 189 countries accentuates the idea that they are "amongst the top" 
-alcohol consumers worldwide.
-4. Draw a Conclusion:The evidence unequivocally supports the claim that South Africans that drink are amongst the top 
-drinkers in the world.
-
-Claim: {} 
-Evidence: {}
-Answer: {} 
-"""
-
 TOT_PROMPT = """Imagine three different experts are answering this question. All experts will write down 1 step of 
 their thinking, then share it with the group. Then all experts will go on to the next step, etc. If any expert 
 realises they're wrong at any point then they leave.
@@ -147,6 +165,8 @@ Given a claim and it's associated evidence, the task is to decide and explain if
 (2) refutes it, (3) does not give enough information, or gives (4) conflicting information. The experts should only 
 use the provided information and no additional sources or background knowledge. Finally, summarize the output and 
 explain why the experts arrive to a certain conclusion in few sentences.
+-----
+Example:
 
 Claim: South Africans that drink are amongst the top drinkers in the world. 
 Evidence: The global average alcohol 
@@ -194,11 +214,13 @@ the claim.
 Summary: All three experts concur that the evidence provided supports the claim that South Africans that drink are 
 amongst the top drinkers in the world. Their conclusion is based on the significantly higher daily average alcohol 
 consumption in South Africa compared to the global average, as well as South Africa's high ranking (6th out of 189 
-countries) in global alcohol consumption.
+countries) in global alcohol consumption. support.
+-----
+The answer should be a json with two keys: summary, label.
 
 Claim: {} 
 Evidence: {}
-Answer: {} 
+Answer:
 """
 
 PROMPT_SHOTS = """Claim: After losing the defamation case held against them by Jay Shah, the son of the India Home 
@@ -307,3 +329,86 @@ Answer:  Refute. Mr Washington's words were taken out of context as it is eviden
 label is refuted
 
 """
+
+ATOMIC_PROMPT = """
+You will get as input a claim and evidence. 
+Please verify the correctness of the claim following the following steps.
+1. Break down the claim in independent facts. Each fact should be a separate sentence. 
+2. Only break down the claim into facts, not the evidence!
+3. Evaluate each fact individually using the given evidence only. Do not use additional sources or background knowledge.
+4. Finally summarise how many facts are (1.) supported by the evidence, (2.) contradict with the evidence, (3.) are not verifiable given the evidence. Therefore, generate a dictionary with three keys: supports, contradicts, not enough information.
+
+-----
+Examples:
+
+Claim: Mukesh Ambani, richest man in Asia had surgery for pancreatic cancer at Sloan Kettering, New York, US cancer speciality hospital on October 30, 2020.
+Evidence: When was the photograph taken of Mukesh Ambani on the Facebook post claiming he had been diagnosed with pancreatic cancer and had undergone surgery? The photograph was taken on September 5, 2020. When was a video filmed of  Mukesh Ambani at the virtual launch of NK Singh's book Portrait of Power? The video was filmed on October 19, 2020. What date was the  Facebook post which confirmed Mukesh Ambani had lost 30 kgs, been diagnosed with pancreatic cancer and had had liver transplant surgery? The Facebook post was dated November 2, 2020. Where was Mukesh's photo of him supposedly recieving surgery actually taken? It was taken by Manushree Vijayvergiya who shared her experience of meeting Mukesh and Isha Ambani in a cafe in Liechtenstein.
+Facts: - Mukesh Ambani is the richest man in Asia.
+- Mukesh Ambani had surgery for pancreatic cancer.
+- The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US.
+- The surgery occurred on October 30, 2020.
+Fact check: - Mukesh Ambani is the richest man in Asia. Not enough information given.
+- Mukesh Ambani had surgery for pancreatic cancer. Not enough information given.
+- The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US. Not enough information given.
+- The surgery occurred on October 30, 2020. The evidence shows other appearances by Ambani shortly before and after October 30, 2020. This conflicts with the fact “The surgery occurred on October 30, 2020”.
+Output: 0 facts have the label support, 1 fact has the label contradicts, 3 facts have the label not enough information
+
+Claim: Millions of jobs in the US were lost during Donald Trump's US presidency.
+Evidence: How many people were in employment in 2017? 145,627,000 people as of January 2017. How many people were in employment in 2020? 141,735,000 people in September 2020. How many people in employment did the economy lose under Trump's presidency? The economy lost an estimate of 3,892,000 people in employment.
+Facts: - Donald Trump was US president. 
+ - Millions of jobs in the US were lost during his US presidency.
+Fact check: 
+- Donald Trump was US president. Supported, the evidence mentions Trump’s presidency indicating that he was president of the US.
+ - Millions of jobs in the US were lost during his US presidency. The evidence supports this statement.
+Output: 2 facts have the label support, 0 facts has the label contradicts, 0 facts have the label not enough information
+
+-----
+The answer should be a json with three keys: support, refute, not enough information. The label should be the number of facts falling into this category.
+
+Claim: {}
+Evidence: {}
+Fact check:
+Output:
+"""
+
+SCORE_PROMPT = """
+Score the following claim given evidence on a continual scale from 0 (worst) to 100 (best).
+A score of 0 means “The evidence is completely unrelated to the claim.”
+A score of 50 means “Approximately half of the claim is supported by the evidence. For the remaining part not enough information is given in the evidence.”
+A score of 100 means “The claim is fully supported by the evidence text” or “Evidence clearly contradicts something stated in the claim.”
+
+-----
+Examples:
+
+Claim: Mukesh Ambani, richest man in Asia had surgery for pancreatic cancer at Sloan Kettering, New York, US cancer speciality hospital on October 30, 2020.
+Evidence: When was the photograph taken of Mukesh Ambani on the Facebook post claiming he had been diagnosed with pancreatic cancer and had undergone surgery? The photograph was taken on September 5, 2020. When was a video filmed of  Mukesh Ambani at the virtual launch of NK Singh's book Portrait of Power? The video was filmed on October 19, 2020. What date was the  Facebook post which confirmed Mukesh Ambani had lost 30 kgs, been diagnosed with pancreatic cancer and had had liver transplant surgery? The Facebook post was dated November 2, 2020. Where was Mukesh's photo of him supposedly recieving surgery actually taken? It was taken by Manushree Vijayvergiya who shared her experience of meeting Mukesh and Isha Ambani in a cafe in Liechtenstein.
+Score: 100. The evidence clearly contradicts with the surgery occurred on “October 30, 2020”. The evidence shows other appearances by Ambani shortly before and after October 30, 2020. 
+
+Claim: Millions of jobs in the US were lost during Donald Trump's US presidency.
+Evidence: How many people were in employment in 2017? 145,627,000 people as of January 2017. How many people were in employment in 2020? 141,735,000 people in September 2020. How many people in employment did the economy lose under Trump's presidency? The economy lost an estimate of 3,892,000 people in employment.
+Score: 100. The evidence mentions Trump’s presidency indicating that he was president of the US. The evidence supports that millions of jobs in the US were lost during his US presidency.
+
+Claim: In 1963, Collins became one of the third group of astronauts selected by NASA and he  served as the back-up Command Module Pilot for the Gemini 7 mission. 
+Evidence: What was the profession of Collins? Collins was an astronaut at NASA?
+Was he one of the astronauts selected for the third group by NASA? Yes. Collins became one of the third group of astronauts selected by NASA.
+When did NASA select a third group of astronauts? The third group of astronauts was selected by NASA in 1963.
+Score: 75. While the evidence supports three facts mentioned in the claim (collins was astronaut, selected by NASA for third group, selection was in 1963), it doesn’t mention that he was part of the Gemini 7 mission as back-up Command Module Pilot. 
+
+Claim: The government of the Solomon Islands has decided to ban social media platform Facebook.
+Evidence: Who is  the judge who had a trial regarding Epstein and the Deutsche Bank, whose son has been killed now and her husband has been shot? Deutsche Bank also connects Epstein to Judge Esther Salas, a federal judge whose son was killed and her husband injured in a shooting at their New Jersey home in July. \n\nSalas has presided over a class action lawsuit brought against the bank by investors who claim it made false and misleading statements about its anti-money laundering policies, according to the Associated Press, and because it failed to monitor \"high-risk\" customers like Epstein.\n\nThe lawyer suspected in the shooting at Salas\u2019 home was Roy Den Hollander, a self-described \"anti-feminist\" who had compiled a dossier on her and her family and arrived at their home that morning carrying a FedEx package.
+Score: 0. The evidence is complete unrelated to the claim. The evidence neither refutes nor supports the claim.
+
+-----
+
+Claim: {}
+Evidence: {}
+Score:
+"""
+
+PROMPT_MAPPING = {
+    PromptTypes.BASE: BASE_PROMPT,
+    PromptTypes.COT: COT_PROMPT,
+    PromptTypes.TOT: TOT_PROMPT,
+    PromptTypes.ATOMIC_FACTS: ATOMIC_PROMPT,
+    PromptTypes.SCORE: SCORE_PROMPT
+}

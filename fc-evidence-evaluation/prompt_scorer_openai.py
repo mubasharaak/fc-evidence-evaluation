@@ -1,4 +1,3 @@
-import os
 import time
 
 import openai
@@ -10,9 +9,8 @@ import scorer_utils
 
 _SEED = 10
 _MODEL = "gpt-3.5-turbo-1106"
-_MAX_TOKENS = 150
+_MAX_TOKENS = 1500
 _JSON_PROMPT = "{}. Generate the output in json format with the keys {}."
-FEVER_DATASET_PATH = os.path.join("data", "shared_task_test_annotations_evidence.jsonl")
 _IGNORE_LABELS_DEFAULT = ["conflicting evidence/cherrypicking"]
 
 
@@ -22,7 +20,8 @@ def query_openai(prompt: str, client, keys=None, seed=_SEED, model=_MODEL, max_t
         messages=[
             {
                 "role": "user",
-                "content": _JSON_PROMPT.format(prompt, ", ".join(keys)) if response_format == "json_object" else prompt,
+                # "content": _JSON_PROMPT.format(prompt, ", ".join(keys)) if response_format == "json_object" else prompt,
+                "content": prompt,
             }
         ],
         model=model,
@@ -113,25 +112,26 @@ def averitec_qa_to_str(evidence: properties.AveritecQA):
     return evidence_as_str
 
 
-def prepare_prompt(dataset_sample: properties.AveritecEntry):
-    """Formats prompt using Averitec sample as input."""
+def prepare_prompt(dataset_sample: properties.AveritecEntry, prompt_type: properties.PromptTypes):
+    """Formats prompt using dataset sample as input."""
     if type(dataset_sample.evidence) == properties.AveritecQA:
-        return properties.BASE_PROMPT.format(dataset_sample.claim,
-                                             " ".join([averitec_qa_to_str(e) for e in dataset_sample.evidence]))
+        return properties.PROMPT_MAPPING[prompt_type].format(dataset_sample.claim,
+                                                             " ".join([averitec_qa_to_str(e) for e in
+                                                                       dataset_sample.evidence]))
     else:
-        return properties.BASE_PROMPT.format(dataset_sample.claim, dataset_sample.evidence)
+        return properties.PROMPT_MAPPING[prompt_type].format(dataset_sample.claim, dataset_sample.evidence)
 
 
-def prompt_openai_model(dataset: list, client):
+def prompt_openai_model(dataset: list, prompt_type: properties.PromptTypes, client):
     """Prompts OpenAI models."""
     responses = []
     for sample in dataset:
         print("running sample")
         # try:
-        prompt = prepare_prompt(sample)
+        prompt = prepare_prompt(sample, prompt_type)
         while True:
             try:
-                responses.append(_process_output(sample, query_openai(prompt, client, response_format="text")))
+                responses.append(_process_output(sample, query_openai(prompt, client, response_format="json_object")))
                 break
             except openai.APITimeoutError as e:
                 print(e)
@@ -143,7 +143,9 @@ def prompt_openai_model(dataset: list, client):
     return responses
 
 
-def evaluate_openai_output(output, ignore_labels=_IGNORE_LABELS_DEFAULT):
+def evaluate_openai_output(output, prompt_type: properties.PromptTypes, ignore_labels=_IGNORE_LABELS_DEFAULT):
+    if prompt_type == properties.PromptTypes.ATOMIC_FACTS:
+        return None
     # map output to labels
     pred_labels = []
     gold_labels = []
