@@ -1,5 +1,5 @@
 import json
-from utils import load_data
+from utils import load_json_file
 from enum import Enum
 import checklist_evaluation
 import argparse
@@ -88,7 +88,7 @@ def create_checklist_tests(input_data):
 
 
 def main():
-    base_data = load_data(_INPUT_PATH)
+    base_data = load_json_file(_INPUT_PATH)
     test_samples = create_checklist_tests(base_data)
 
     with open(_OUTPUT_PATH, "w", encoding="utf-8") as file:

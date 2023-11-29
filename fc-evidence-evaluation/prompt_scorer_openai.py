@@ -8,19 +8,17 @@ import properties
 import scorer_utils
 
 _SEED = 10
-_MODEL = "gpt-3.5-turbo-1106"
+_MODEL = "gpt-3.5-turbo-1106"  # TODO evaluate with GPT4
 _MAX_TOKENS = 1500
-_JSON_PROMPT = "{}. Generate the output in json format with the keys {}."
 _IGNORE_LABELS_DEFAULT = ["conflicting evidence/cherrypicking"]
 
 
-def query_openai(prompt: str, client, keys=None, seed=_SEED, model=_MODEL, max_tokens=_MAX_TOKENS,
-                 response_format="json_object"):
+def _query_openai(prompt: str, client, keys=None, seed=_SEED, model=_MODEL, max_tokens=_MAX_TOKENS,
+                  response_format="json_object"):
     return client.chat.completions.create(
         messages=[
             {
                 "role": "user",
-                # "content": _JSON_PROMPT.format(prompt, ", ".join(keys)) if response_format == "json_object" else prompt,
                 "content": prompt,
             }
         ],
@@ -41,69 +39,7 @@ def _process_output(dataset_sample: properties.AveritecEntry,
                                      dataset_sample.label.lower())
 
 
-def prompt_openai_model_fever_submissions(claims, evidences, labels):
-    # iterate over test examples (first 10 for testing purposes)
-    output_dict = []
-    for claim, evidence, label in zip(claims, evidences, labels):
-        prompt = properties.BASE_PROMPT
-        prompt += "Claim: " + claim + "\n"
-        prompt += "Evidence: " + evidence + "\n"
-        prompt += "Answer: "
-
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": prompt},
-            ],
-            max_tokens=_MAX_TOKENS
-        )
-        output_dict.append(properties.OpenAIResponse(claim, response, label.lower()))
-    return output_dict
-
-
-def prompt_openai_model_deprecated(dataset):
-    # iterate over test examples (first 10 for testing purposes)
-    output_dict = []
-    for test_expl in dataset:
-        prompt = properties.BASE_PROMPT
-        prompt += "Claim: " + test_expl["claim"] + "\n"
-        qa_pair = ""
-        for qa in test_expl["questions"]:
-            qa_pair += (qa["question"] + " ")
-            for a in qa["answers"]:
-                qa_pair += (a["answer"] + " ")
-                if a["answer_type"] == "Boolean":
-                    qa_pair += (a["boolean_explanation"] + ". ")
-        prompt += "Evidence: " + qa_pair + "\n"
-        prompt += "Answer: "
-
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": prompt},
-            ],
-            max_tokens=_MAX_TOKENS
-        )
-        output_dict.append(properties.OpenAIResponse(test_expl["claim"], response, test_expl["label"].lower()))
-
-
-def prepare_averitec_prompt_deprecated(averitec_sample):
-    """Formats prompt using Averitec sample as input."""
-    prompt = properties.BASE_PROMPT
-    prompt += "Claim: " + averitec_sample["claim"] + "\n"
-    qa_pair = ""
-    for qa in averitec_sample["questions"]:
-        qa_pair += (qa["question"] + " ")
-        for a in qa["answers"]:
-            qa_pair += (a["answer"] + " ")
-            if a["answer_type"] == "Boolean":
-                qa_pair += (a["boolean_explanation"] + ". ")
-    prompt += "Evidence: " + qa_pair + "\n"
-    prompt += "Answer: "
-    return prompt
-
-
-def averitec_qa_to_str(evidence: properties.AveritecQA):
+def _averitec_qa_to_str(evidence: properties.AveritecQA):
     evidence_as_str = (evidence.question + "? ").replace("??", "?")  # sometimes question mark or fullstop missing
     for a in evidence.answers:
         evidence_as_str += (a.answer + ". ").replace("..", ".")
@@ -112,11 +48,11 @@ def averitec_qa_to_str(evidence: properties.AveritecQA):
     return evidence_as_str
 
 
-def prepare_prompt(dataset_sample: properties.AveritecEntry, prompt_type: properties.PromptTypes):
+def _prepare_prompt(dataset_sample: properties.AveritecEntry, prompt_type: properties.PromptTypes):
     """Formats prompt using dataset sample as input."""
     if type(dataset_sample.evidence) == properties.AveritecQA:
         return properties.PROMPT_MAPPING[prompt_type].format(dataset_sample.claim,
-                                                             " ".join([averitec_qa_to_str(e) for e in
+                                                             " ".join([_averitec_qa_to_str(e) for e in
                                                                        dataset_sample.evidence]))
     else:
         return properties.PROMPT_MAPPING[prompt_type].format(dataset_sample.claim, dataset_sample.evidence)
@@ -128,10 +64,10 @@ def prompt_openai_model(dataset: list, prompt_type: properties.PromptTypes, clie
     for sample in dataset:
         print("running sample")
         # try:
-        prompt = prepare_prompt(sample, prompt_type)
+        prompt = _prepare_prompt(sample, prompt_type)
         while True:
             try:
-                responses.append(_process_output(sample, query_openai(prompt, client, response_format="json_object")))
+                responses.append(_process_output(sample, _query_openai(prompt, client, response_format="json_object")))
                 break
             except openai.APITimeoutError as e:
                 print(e)

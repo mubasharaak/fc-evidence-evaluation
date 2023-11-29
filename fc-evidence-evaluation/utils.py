@@ -2,7 +2,8 @@ import json
 import properties
 import dacite
 
-def load_data(path: str):
+
+def load_json_file(path: str):
     """Loads data from path."""
     with open(path, "r", encoding="utf-8") as file:
         test_dataset = json.load(file)
@@ -96,11 +97,6 @@ def map_averitec_to_dataclass_format(averitec: dict):
 def load_averitec_base(path: str) -> list[properties.AveritecEntry]:
     """Loads and formats Averitec dataset files (train, test, or dev)."""
     return [map_averitec_to_dataclass_format(entry) for entry in load_json_file(path)]
-
-
-def load_jsonl_file(file_path) -> list:
-    with open(file_path, "r", encoding="utf-8") as f:
-        return [json.loads(entry) for entry in f.readlines()]
 
 
 def map_fever_to_dataclass_format(fever_entry: list):
