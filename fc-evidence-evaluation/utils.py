@@ -6,9 +6,7 @@ import dacite
 def load_json_file(path: str):
     """Loads data from path."""
     with open(path, "r", encoding="utf-8") as file:
-        test_dataset = json.load(file)
-
-    return test_dataset
+        return json.load(file)
 
 
 def read_fever_dataset(file_path: str):

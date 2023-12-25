@@ -1,3 +1,4 @@
+import json
 import time
 
 import openai
@@ -79,9 +80,26 @@ def prompt_openai_model(dataset: list, prompt_type: properties.PromptTypes, clie
     return responses
 
 
-def evaluate_openai_output(output, prompt_type: properties.PromptTypes, ignore_labels=_IGNORE_LABELS_DEFAULT):
+def calculate_atomic_score(response: dict):
+    try:
+        if ("refute" in response and response["refute"] > 0) or (
+                "contradicts" in response and response["contradicts"] > 0):
+            # evidence clearly contradicts a sub-fact of the claim
+            return 1
+        elif "supports" in response:
+            return response["supports"] / (response["supports"] + response["not enough information"])
+        else:
+            return response["support"] / (response["support"] + response["not enough information"])
+    except Exception as e:
+        return 0
+
+
+def evaluate_openai_output(output_all, prompt_type: properties.PromptTypes, ignore_labels=_IGNORE_LABELS_DEFAULT):
+    output = [response for response in output_all if response.gold.lower() not in ignore_labels]
     if prompt_type == properties.PromptTypes.ATOMIC_FACTS:
-        return None
+        # calculate output score
+        scores = [calculate_atomic_score(json.loads(pred.response)) for pred in output]
+        return sum(scores) / len(scores)
     # map output to labels
     pred_labels = []
     gold_labels = []

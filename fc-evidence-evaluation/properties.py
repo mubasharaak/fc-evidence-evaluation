@@ -351,6 +351,9 @@ Fact check: - Mukesh Ambani is the richest man in Asia. Not enough information g
 - Mukesh Ambani had surgery for pancreatic cancer. Not enough information given.
 - The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US. Not enough information given.
 - The surgery occurred on October 30, 2020. The evidence shows other appearances by Ambani shortly before and after October 30, 2020. This conflicts with the fact “The surgery occurred on October 30, 2020”.
+Output: {"support": 0, "refute": 0, "not enough info": 3}
+
+
 Output: 0 facts have the label support, 1 fact has the label contradicts, 3 facts have the label not enough information
 
 Claim: Millions of jobs in the US were lost during Donald Trump's US presidency.
@@ -403,6 +406,10 @@ Score: 0. The evidence is complete unrelated to the claim. The evidence neither 
 Claim: {}
 Evidence: {}
 Score:
+"""
+
+REFERENCE_PROMPT = """
+TODO compare Averitec prediction to Averitec annotated evidence for reference based evaluation.
 """
 
 PROMPT_MAPPING = {

@@ -12,17 +12,17 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument(
     '--test_set_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/fever/shared_task_test_annotations_evidence.jsonl",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/averitec_test.json",
     help='Path to testdata.'
 )
 parser.add_argument(
     '--predictions_output_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5/shared_task_test_annotations_evidence.jsonl",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_atomic/averitec_test.jsonl",
     help='Path to output file for predictions.'
 )
 parser.add_argument(
     '--scores_output_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5/shared_task_test_annotations_evidence_scores_binary.json",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_atomic/averitec_test_scores.json",
     help='Path to output file for scores.'
 )
 parser.add_argument(
@@ -64,13 +64,14 @@ def main():
         else:
             # Averitec with metadata
             input_data = utils.load_jsonl_file(_TEST_SET_PATH, properties.AveritecEntry)
-
-        predictions = prompt_scorer_openai.prompt_openai_model(input_data[:3], _PROMPT_TYPE, _CLIENT)
+        predictions = prompt_scorer_openai.prompt_openai_model(input_data[:100], _PROMPT_TYPE, _CLIENT)
         utils.save_jsonl_file(predictions, _PREDICTIONS_OUTPUT_PATH)
 
     # TODO continue by refactoring evaluation, e.g. output of "atomic" prompt
     scores = prompt_scorer_openai.evaluate_openai_output(predictions, _PROMPT_TYPE,
-                                                         ignore_labels=["conflicting evidence/cherrypicking"])
+                                                         ignore_labels=["conflicting evidence/cherrypicking",
+                                                                        "not enough information", "nei",
+                                                                        "not enough info"])
     with open(_SCORES_OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(scores, f, indent=4)
 
