@@ -1,6 +1,8 @@
 import json
 import properties
 import dacite
+import sqlite3
+import unicodedata
 
 
 def load_json_file(path: str):
@@ -115,3 +117,37 @@ def load_fever(path: str) -> list[properties.AveritecEntry]:
     for entry in load_jsonl_file(path):
         fever_entries.extend(map_fever_to_dataclass_format(entry))
     return fever_entries
+
+
+def _load_hover_evidence(evidences: list, wiki_db):
+    evidence_text = ""
+    for e in evidences:
+        # e of format: [
+        #         "Life Goes On (Fergie song)",
+        #         2
+        #       ]
+        doc = wiki_db.execute("SELECT * FROM documents WHERE id=(?)", (unicodedata.normalize('NFD', e[0]),)).fetchall()[0]
+        # retrieve relevant sentence as evidence
+        evidence_text += doc.split()[e[1]]
+    return evidence_text
+
+
+def _map_hover_to_dataclass_format(hover_entry: dict, wiki_db) -> properties.AveritecEntry:
+    """Formats Hover dataset files to match fields specified in properties.AveritecEntry."""
+    return dacite.from_dict(data_class=properties.AveritecEntry,
+                            data={"claim": hover_entry["claim"], "label": hover_entry["label"],
+                                  "evidence": _load_hover_evidence(hover_entry["supporting_facts"], wiki_db)})
+
+
+def load_hover(path: str, wiki_db) -> list[properties.AveritecEntry]:
+    """Loads and formats Hover dataset."""
+    entries = []
+    for entry in load_json_file(path):
+        entries.append(_map_hover_to_dataclass_format(entry, wiki_db))
+    return entries
+
+
+def connect_to_db(db_path):
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    return c
