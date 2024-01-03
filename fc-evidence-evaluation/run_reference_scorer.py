@@ -59,7 +59,7 @@ _SAMPLES_FILENAME = args.samples_filename
 _DATASET = args.dataset
 _HG_MODEL_HUB_NAME = args.hf_model
 
-_BATCH_SIZE = 32
+_BATCH_SIZE = 4
 _EPOCHS = 15
 
 
