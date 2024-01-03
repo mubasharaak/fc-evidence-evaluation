@@ -28,7 +28,7 @@ def _load_data(path):
 
     references = [entry['reference'] for entry in data]
     targets = [entry['target'] for entry in data]
-    labels = [entry['label'] for entry in data]
+    labels = [entry['score'] for entry in data]
     return references, targets, labels
 
 
