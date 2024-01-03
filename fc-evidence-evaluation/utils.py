@@ -2,14 +2,17 @@ import json
 import sqlite3
 import unicodedata
 from typing import List
-import evaluate
 
 import dacite
+import evaluate
 import torch
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from torch.utils.data import DataLoader
 
 import properties
-import numpy as np
+
+metric = evaluate.load("f1")
+
 
 class CustomDataset(torch.utils.data.Dataset):
     def __init__(self, encodings, labels):
@@ -26,11 +29,26 @@ class CustomDataset(torch.utils.data.Dataset):
         return len(self.labels)
 
 
-def compute_metrics(eval_preds):
-    metric = evaluate.load("f1")
-    logits, labels = eval_preds
-    predictions = np.argmax(logits, axis=-1)
-    return metric.compute(predictions=predictions, references=labels, average="macro")
+def compute_metrics(pred):
+    labels = pred.label_ids
+    preds = pred.predictions.argmax(-1)
+
+    # Calculate accuracy
+    accuracy = accuracy_score(labels, preds)
+
+    # Calculate precision, recall, and F1-score
+    precision = precision_score(labels, preds, average='weighted')
+    recall = recall_score(labels, preds, average='weighted')
+    f1_macro = f1_score(labels, preds, average='macro')
+    f1_micro = f1_score(labels, preds, average='micro')
+
+    return {
+        'accuracy': accuracy,
+        'precision': precision,
+        'recall': recall,
+        'f1_macro': f1_macro,
+        'f1_micro': f1_micro
+    }
 
 
 def load_json_file(path: str):
