@@ -1,11 +1,15 @@
 import json
-import properties
-import dacite
 import sqlite3
 import unicodedata
-import torch
-
 from typing import List
+import evaluate
+
+import dacite
+import torch
+from torch.utils.data import DataLoader
+
+import properties
+import numpy as np
 
 class CustomDataset(torch.utils.data.Dataset):
     def __init__(self, encodings, labels):
@@ -20,6 +24,13 @@ class CustomDataset(torch.utils.data.Dataset):
 
     def __len__(self):
         return len(self.labels)
+
+
+def compute_metrics(eval_preds):
+    metric = evaluate.load("f1")
+    logits, labels = eval_preds
+    predictions = np.argmax(logits, axis=-1)
+    return metric.compute(predictions=predictions, references=labels, average="macro")
 
 
 def load_json_file(path: str):
@@ -120,7 +131,7 @@ def map_fever_to_dataclass_format(fever_entry: list):
     """Formats Averitec dataset files to match fields specified in properties.AveritecEntry."""
     mapped_entries = []
     for fever_subentry in iter(fever_entry[1].values()):
-        evidence = ". ".join(e[2].strip() for e in fever_subentry["evidence"] if len(e)>2).replace("..", ".")
+        evidence = ". ".join(e[2].strip() for e in fever_subentry["evidence"] if len(e) > 2).replace("..", ".")
         mapped_entries.append(dacite.from_dict(data_class=properties.AveritecEntry,
                                                data={"claim": fever_subentry["claim"], "label": fever_subentry["label"],
                                                      "justification": "",
@@ -143,7 +154,8 @@ def _load_hover_evidence(evidences: list, wiki_db):
         #         "Life Goes On (Fergie song)",
         #         2
         #       ]
-        doc = wiki_db.execute("SELECT * FROM documents WHERE id=(?)", (unicodedata.normalize('NFD', e[0]),)).fetchall()[0]
+        doc = wiki_db.execute("SELECT * FROM documents WHERE id=(?)", (unicodedata.normalize('NFD', e[0]),)).fetchall()[
+            0]
         # retrieve relevant sentence as evidence
         evidence_text += doc.split()[e[1]]
     return evidence_text

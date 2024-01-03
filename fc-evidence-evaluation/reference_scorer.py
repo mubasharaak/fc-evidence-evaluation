@@ -1,15 +1,13 @@
 import json
 import os
-
 import numpy as np
 import torch
+from bleurt_pytorch import BleurtForSequenceClassification, BleurtTokenizer
 from transformers import Trainer
 from transformers import TrainingArguments
-from bleurt_pytorch import BleurtForSequenceClassification, BleurtTokenizer
 
 import properties
 import utils
-
 
 _MAX_LENGTH = 512
 
