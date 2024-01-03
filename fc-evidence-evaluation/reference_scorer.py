@@ -32,7 +32,6 @@ def _load_data(path):
 
     references = [entry['reference'] for entry in data]
     targets = [entry['target'] for entry in data]
-    print(f"First score: {data[0]['score']}")
     labels = [_LABELS[entry['score']] for entry in data]
     return references, targets, labels
 
