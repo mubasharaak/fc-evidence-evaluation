@@ -32,7 +32,8 @@ def _load_data(path):
     return references, targets, labels
 
 
-def _prepare_dataset(references, targets, labels, tokenizer):
+def _prepare_dataset(path, tokenizer):
+    references, targets, labels = _load_data(path)
     data_tokenized = tokenizer(references, targets,
                                max_length=_MAX_LENGTH,
                                return_token_type_ids=True, truncation=True,
@@ -85,9 +86,9 @@ def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
         load_best_model_at_end=True,
         learning_rate=lr,
     )
-    train_dataset = _prepare_dataset(_load_data(train_dataset_path), tokenizer=tokenizer)
-    test_dataset = _prepare_dataset(_load_data(test_dataset_path), tokenizer=tokenizer)
-    dev_dataset = _prepare_dataset(_load_data(dev_dataset_path), tokenizer=tokenizer)
+    train_dataset = _prepare_dataset(train_dataset_path, tokenizer=tokenizer)
+    test_dataset = _prepare_dataset(test_dataset_path, tokenizer=tokenizer)
+    dev_dataset = _prepare_dataset(dev_dataset_path, tokenizer=tokenizer)
 
     results = _train(model, training_args, train_dataset=train_dataset,
                      dev_dataset=dev_dataset, test_dataset=test_dataset, output_path=output_path,
