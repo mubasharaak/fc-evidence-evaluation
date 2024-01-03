@@ -3,15 +3,15 @@ import os
 import re
 
 import evaluate
+import nli_scorer_utils
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer
+from transformers import TrainingArguments
 
-import nli_scorer_utils
 import properties
 import utils
-from transformers import TrainingArguments
 
 _MAX_LENGTH = 1024
 # fever_dataset_path = os.path.join("data", "shared_task_test_annotations_evidence.jsonl")
@@ -158,7 +158,7 @@ def run_nli_scorer(hg_model_hub_name: str, dataset: str, train_dataset_path: str
     else:
         results = train(model, training_args, train_dataset=train_dataset,
                         dev_dataset=dev_dataset, test_dataset=test_dataset, output_path=output_path,
-                        only_test=True)
+                            only_test=True)
         with open(os.path.join(output_path, results_filename), "w") as f:
             json.dump(results.metrics, f, indent=2)
 

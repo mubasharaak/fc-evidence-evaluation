@@ -413,9 +413,9 @@ TODO compare Averitec prediction to Averitec annotated evidence for reference ba
 """
 
 PROMPT_MAPPING = {
-    PromptTypes.BASE: BASE_PROMPT,
-    PromptTypes.COT: COT_PROMPT,
+    PromptTypes.BASE: BASE_PROMPT,  # is the PSEUDO prompt
+    PromptTypes.COT: COT_PROMPT,  # is the PSEUDO prompt that uses COT prompting
     PromptTypes.TOT: TOT_PROMPT,
-    PromptTypes.ATOMIC_FACTS: ATOMIC_PROMPT,
+    PromptTypes.ATOMIC_FACTS: ATOMIC_PROMPT,  # is the REFERENCE LESS prompt
     PromptTypes.SCORE: SCORE_PROMPT
 }
