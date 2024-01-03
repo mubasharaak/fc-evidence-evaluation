@@ -5,6 +5,7 @@ import sqlite3
 import unicodedata
 import torch
 
+from typing import List
 
 class CustomDataset(torch.utils.data.Dataset):
     def __init__(self, encodings, labels):
@@ -110,7 +111,7 @@ def map_averitec_to_dataclass_format(averitec: dict):
                                   "evidence": averitec["questions"]})
 
 
-def load_averitec_base(path: str) -> list[properties.AveritecEntry]:
+def load_averitec_base(path: str) -> List[properties.AveritecEntry]:
     """Loads and formats Averitec dataset files (train, test, or dev)."""
     return [map_averitec_to_dataclass_format(entry) for entry in load_json_file(path)]
 
@@ -127,7 +128,7 @@ def map_fever_to_dataclass_format(fever_entry: list):
     return mapped_entries
 
 
-def load_fever(path: str) -> list[properties.AveritecEntry]:
+def load_fever(path: str) -> List[properties.AveritecEntry]:
     """Loads and formats Fever files."""
     fever_entries = []
     for entry in load_jsonl_file(path):
@@ -155,7 +156,7 @@ def _map_hover_to_dataclass_format(hover_entry: dict, wiki_db) -> properties.Ave
                                   "evidence": _load_hover_evidence(hover_entry["supporting_facts"], wiki_db)})
 
 
-def load_hover(path: str, wiki_db) -> list[properties.AveritecEntry]:
+def load_hover(path: str, wiki_db) -> List[properties.AveritecEntry]:
     """Loads and formats Hover dataset."""
     entries = []
     for entry in load_json_file(path):
