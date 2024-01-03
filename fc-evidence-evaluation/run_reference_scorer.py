@@ -65,7 +65,8 @@ _EPOCHS = 15
 
 def main():
     reference_scorer.run_reference_scorer(_TRAIN_DATASET_PATH, _DEV_DATASET_PATH, _TEST_DATASET_PATH, _OUTPUT_DIR,
-                                          _RESULTS_FILENAME, _SAMPLES_FILENAME, _HG_MODEL_HUB_NAME, train=True)
+                                          _RESULTS_FILENAME, _SAMPLES_FILENAME, _HG_MODEL_HUB_NAME, train=True,
+                                          train_bs=_BATCH_SIZE, test_bs=_BATCH_SIZE, epoch=_EPOCHS)
 
 
 if __name__ == '__main__':
