@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import Optional, Union
 
 from aenum import MultiValueEnum
+from typing import List
 
 
 class Dataset(enum.Enum):
@@ -53,7 +54,7 @@ class AveritecAnswer:
 @dataclass
 class AveritecQA:
     question: str
-    answers: list[AveritecAnswer]
+    answers: List[AveritecAnswer]
 
     # def __init__(self, question: str, answers: list[AveritecAnswer]):
     #     self.question = question
@@ -65,7 +66,7 @@ class AveritecEntry:
     claim: str
     label: str
     justification: str
-    evidence: Union[list[AveritecQA], str]
+    evidence: Union[List[AveritecQA], str]
 
     # def __init__(self, claim: str, label: str, justification: str, evidence: list[AveritecQA]):
     #     self.claim = claim
