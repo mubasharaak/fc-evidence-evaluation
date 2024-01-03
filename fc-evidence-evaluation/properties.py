@@ -44,10 +44,10 @@ class AveritecAnswer:
     answer_type: str
     boolean_explanation: Optional[str]
 
-    def __init__(self, answer, answer_type, boolean_explanation=None):
-        self.answer = answer
-        self.answer_type = answer_type
-        self.boolean_explanation = boolean_explanation
+    # def __init__(self, answer, answer_type, boolean_explanation=None):
+    #     self.answer = answer
+    #     self.answer_type = answer_type
+    #     self.boolean_explanation = boolean_explanation
 
 
 @dataclass
@@ -55,9 +55,9 @@ class AveritecQA:
     question: str
     answers: list[AveritecAnswer]
 
-    def __init__(self, question: str, answers: list[AveritecAnswer]):
-        self.question = question
-        self.answers = answers
+    # def __init__(self, question: str, answers: list[AveritecAnswer]):
+    #     self.question = question
+    #     self.answers = answers
 
 
 @dataclass
@@ -67,11 +67,11 @@ class AveritecEntry:
     justification: str
     evidence: Union[list[AveritecQA], str]
 
-    def __init__(self, claim: str, label: str, justification: str, evidence: list[AveritecQA]):
-        self.claim = claim
-        self.label = label
-        self.justification = justification
-        self.evidence = evidence
+    # def __init__(self, claim: str, label: str, justification: str, evidence: list[AveritecQA]):
+    #     self.claim = claim
+    #     self.label = label
+    #     self.justification = justification
+    #     self.evidence = evidence
 
 
 FEVER_DATASET_PATH = "shared_task_test_annotations_evidence.jsonl"
