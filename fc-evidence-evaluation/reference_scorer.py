@@ -9,9 +9,6 @@ from transformers import TrainingArguments
 import properties
 import utils
 
-_SCORER_TRAINING_DATA_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/reference_scorer_training_data/fever_train_based.jsonl"
-_SCORER_EVAL_DATA_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/reference_scorer_training_data/fever_dev_based.jsonl"
-_SCORER_TEST_DATA_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/reference_scorer_training_data/fever_test_based.jsonl"
 
 _MAX_LENGTH = 512
 
