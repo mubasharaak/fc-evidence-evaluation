@@ -23,7 +23,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--output_dir',
-    default="./results/reference_scorer",
+    default="/scratch/users/k20116188/fc_evidence_evaluation/results/reference_scorer",
     help='Output path for reference scorer evaluation results.'
 )
 parser.add_argument(
