@@ -3,8 +3,9 @@ import os
 
 import numpy as np
 import torch
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer
+from transformers import Trainer
 from transformers import TrainingArguments
+from bleurt_pytorch import BleurtForSequenceClassification, BleurtTokenizer
 
 import properties
 import utils
@@ -59,8 +60,8 @@ def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
                          test_dataset_path: str, output_path: str, results_filename: str, samples_filenames: str,
                          hg_model_hub_name="lucadiliello/BLEURT-20", train=False, epoch=5, train_bs=32, test_bs=64,
                          lr=1e-5):
-    tokenizer = AutoTokenizer.from_pretrained(hg_model_hub_name)
-    model = AutoModelForSequenceClassification.from_pretrained(hg_model_hub_name, torch_dtype="auto")
+    tokenizer = BleurtTokenizer.from_pretrained(hg_model_hub_name)
+    model = BleurtForSequenceClassification.from_pretrained(hg_model_hub_name, torch_dtype="auto")
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     model.to(device)
 
