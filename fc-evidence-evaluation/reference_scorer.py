@@ -39,6 +39,10 @@ def _load_data(path):
 
 def _prepare_dataset(path, tokenizer):
     references, targets, labels = _load_data(path)
+    print("First reference: {}".format(references[0]))
+    print("First target: {}".format(targets[0]))
+    print("First label: {}".format(labels[0]))
+
     data_tokenized = tokenizer(references, targets,
                                # max_length=_MAX_LENGTH,
                                return_tensors='pt',
