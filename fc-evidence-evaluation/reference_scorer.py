@@ -3,6 +3,7 @@ import os
 import numpy as np
 import torch
 from bleurt_pytorch import BleurtForSequenceClassification, BleurtTokenizer
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from transformers import Trainer
 from transformers import TrainingArguments
 
@@ -65,8 +66,11 @@ def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
                          test_dataset_path: str, output_path: str, results_filename: str, samples_filenames: str,
                          hg_model_hub_name="lucadiliello/BLEURT-20", train=True, epoch=5, train_bs=32, test_bs=64,
                          lr=1e-5):
-    tokenizer = BleurtTokenizer.from_pretrained(hg_model_hub_name)
-    model = BleurtForSequenceClassification.from_pretrained(hg_model_hub_name, torch_dtype="auto")
+    # tokenizer = BleurtTokenizer.from_pretrained(hg_model_hub_name)
+    # model = BleurtForSequenceClassification.from_pretrained(hg_model_hub_name, torch_dtype="auto")
+    tokenizer = AutoTokenizer.from_pretrained(hg_model_hub_name)
+    model = AutoModelForSequenceClassification.from_pretrained(hg_model_hub_name)
+
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     model.to(device)
 
@@ -80,8 +84,8 @@ def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
         per_device_train_batch_size=train_bs,  # batch size per device during training
         per_device_eval_batch_size=test_bs,  # batch size for evaluation
         # todo check if parameters below need to be changed for BLEURT
-        # warmup_steps=50,  # number of warmup steps for learning rate scheduler
-        # weight_decay=0.01,  # strength of weight decay
+        warmup_steps=50,  # number of warmup steps for learning rate scheduler
+        weight_decay=0.01,  # strength of weight decay
         # gradient_accumulation_steps=2,
         evaluation_strategy="steps",
         eval_steps=100,

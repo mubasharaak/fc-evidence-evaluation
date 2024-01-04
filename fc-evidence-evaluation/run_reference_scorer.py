@@ -44,7 +44,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--hf_model',
-    default="lucadiliello/BLEURT-20",
+    default="Elron/bleurt-base-512",
     help='Path to HG bleurt model.'
 )
 
