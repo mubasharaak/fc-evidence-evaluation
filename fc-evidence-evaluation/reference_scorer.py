@@ -71,6 +71,7 @@ def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
     model.to(device)
 
     if train:
+        print("Log: Model will be trained!")
         model.train()
 
     training_args = TrainingArguments(
