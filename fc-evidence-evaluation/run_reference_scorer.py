@@ -45,7 +45,7 @@ parser.add_argument(
 parser.add_argument(
     '--hf_model',
     default="lucadiliello/BLEURT-20",
-    help='Dataset that is used for evaluation.'
+    help='Path to HG bleurt model.'
 )
 
 args = parser.parse_args()
@@ -64,8 +64,10 @@ _EPOCHS = 15
 
 
 def main():
-    reference_scorer.run_reference_scorer(_TRAIN_DATASET_PATH, _DEV_DATASET_PATH, _TEST_DATASET_PATH, _OUTPUT_DIR,
-                                          _RESULTS_FILENAME, _SAMPLES_FILENAME, _HG_MODEL_HUB_NAME, train=True,
+    reference_scorer.run_reference_scorer(train_dataset_path=_TRAIN_DATASET_PATH, dev_dataset_path=_DEV_DATASET_PATH,
+                                          test_dataset_path=_TEST_DATASET_PATH, output_path=_OUTPUT_DIR,
+                                          results_filename=_RESULTS_FILENAME, samples_filenames=_SAMPLES_FILENAME,
+                                          hg_model_hub_name=_HG_MODEL_HUB_NAME, train=True,
                                           train_bs=_BATCH_SIZE, test_bs=_BATCH_SIZE, epoch=_EPOCHS)
 
 

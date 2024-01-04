@@ -39,13 +39,13 @@ def _load_data(path):
 def _prepare_dataset(path, tokenizer):
     references, targets, labels = _load_data(path)
     data_tokenized = tokenizer(references, targets,
-                               max_length=_MAX_LENGTH,
-                               return_token_type_ids=True, truncation=True,
-                               padding=True)
+                               # max_length=_MAX_LENGTH,
+                               return_tensors='pt',
+                               padding='longest')
     return utils.CustomDataset(data_tokenized, labels)
 
 
-def _train(model, training_args, train_dataset, dev_dataset, test_dataset, output_path, do_training=False):
+def _train(model, training_args, train_dataset, dev_dataset, test_dataset, output_path, do_training=True):
     trainer = Trainer(
         model=model,  # the instantiated 🤗 Transformers model to be trained
         args=training_args,  # training arguments, defined above
@@ -63,7 +63,7 @@ def _train(model, training_args, train_dataset, dev_dataset, test_dataset, outpu
 
 def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
                          test_dataset_path: str, output_path: str, results_filename: str, samples_filenames: str,
-                         hg_model_hub_name="lucadiliello/BLEURT-20", train=False, epoch=5, train_bs=32, test_bs=64,
+                         hg_model_hub_name="lucadiliello/BLEURT-20", train=True, epoch=5, train_bs=32, test_bs=64,
                          lr=1e-5):
     tokenizer = BleurtTokenizer.from_pretrained(hg_model_hub_name)
     model = BleurtForSequenceClassification.from_pretrained(hg_model_hub_name, torch_dtype="auto")
