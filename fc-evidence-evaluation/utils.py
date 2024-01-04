@@ -5,6 +5,7 @@ from typing import List
 
 import dacite
 import evaluate
+import numpy as np
 import torch
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from torch.utils.data import DataLoader
@@ -31,7 +32,7 @@ class CustomDataset(torch.utils.data.Dataset):
 
 def compute_metrics(pred):
     labels = pred.label_ids
-    preds = pred.predictions.argmax(-1)
+    preds = np.rint(pred.predictions)
 
     # Calculate accuracy
     accuracy = accuracy_score(labels, preds)
