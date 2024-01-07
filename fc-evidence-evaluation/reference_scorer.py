@@ -46,7 +46,8 @@ def _prepare_dataset(path, tokenizer):
     data_tokenized = tokenizer(references, targets,
                                max_length=_MAX_LENGTH,
                                return_tensors='pt',
-                               padding='longest')
+                               padding='longest',
+                               truncation=True)
     return utils.CustomDataset(data_tokenized, labels)
 
 
