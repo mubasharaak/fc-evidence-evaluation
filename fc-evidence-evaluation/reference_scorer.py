@@ -44,7 +44,7 @@ def _prepare_dataset(path, tokenizer):
     print("First label: {}".format(labels[0]))
 
     data_tokenized = tokenizer(references, targets,
-                               # max_length=_MAX_LENGTH,
+                               max_length=_MAX_LENGTH,
                                return_tensors='pt',
                                padding='longest')
     return utils.CustomDataset(data_tokenized, labels)
