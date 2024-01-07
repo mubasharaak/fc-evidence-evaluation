@@ -5,9 +5,7 @@ from typing import List
 
 import dacite
 import evaluate
-import numpy as np
 import torch
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from torch.utils.data import DataLoader
 
 import properties
@@ -28,28 +26,6 @@ class CustomDataset(torch.utils.data.Dataset):
 
     def __len__(self):
         return len(self.labels)
-
-
-def compute_metrics(pred):
-    labels = pred.label_ids
-    preds = np.rint(pred.predictions)
-
-    # Calculate accuracy
-    accuracy = accuracy_score(labels, preds)
-
-    # Calculate precision, recall, and F1-score
-    precision = precision_score(labels, preds, average='weighted')
-    recall = recall_score(labels, preds, average='weighted')
-    f1_macro = f1_score(labels, preds, average='macro')
-    f1_micro = f1_score(labels, preds, average='micro')
-
-    return {
-        'accuracy': accuracy,
-        'precision': precision,
-        'recall': recall,
-        'f1_macro': f1_macro,
-        'f1_micro': f1_micro
-    }
 
 
 def load_json_file(path: str):

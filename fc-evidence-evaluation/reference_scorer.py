@@ -1,8 +1,9 @@
 import json
 import os
+
 import numpy as np
 import torch
-from bleurt_pytorch import BleurtForSequenceClassification, BleurtTokenizer
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from transformers import Trainer
 from transformers import TrainingArguments
@@ -50,13 +51,37 @@ def _prepare_dataset(path, tokenizer):
     return utils.CustomDataset(data_tokenized, labels)
 
 
+def _compute_metrics(pred):
+    labels = pred.label_ids
+    preds = np.rint(pred.predictions)
+    avg_bleurt = np.average(pred.predictions)
+
+    # Calculate accuracy
+    accuracy = accuracy_score(labels, preds)
+
+    # Calculate precision, recall, and F1-score
+    precision = precision_score(labels, preds, average='weighted')
+    recall = recall_score(labels, preds, average='weighted')
+    f1_macro = f1_score(labels, preds, average='macro')
+    f1_micro = f1_score(labels, preds, average='micro')
+
+    return {
+        'accuracy': accuracy,
+        'precision': precision,
+        'recall': recall,
+        'f1_macro': f1_macro,
+        'f1_micro': f1_micro,
+        'avg_bleurt': avg_bleurt
+    }
+
+
 def _train(model, training_args, train_dataset, dev_dataset, test_dataset, output_path, do_training=True):
     trainer = Trainer(
         model=model,  # the instantiated 🤗 Transformers model to be trained
         args=training_args,  # training arguments, defined above
         train_dataset=train_dataset,  # training dataset
         eval_dataset=dev_dataset,  # evaluation dataset
-        compute_metrics=utils.compute_metrics,
+        compute_metrics=_compute_metrics,
     )
     if do_training:
         trainer.train()
@@ -111,8 +136,8 @@ def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
 
     with open(os.path.join(output_path, samples_filenames), "w") as f:
         for i, logits in enumerate(results.predictions.tolist()):
-            predictions = np.argmax(logits, axis=-1)
-            if predictions != results.label_ids.tolist()[i]:
-                f.write(f"input: {tokenizer.decode(test_dataset[i]['input_ids'])}\n")
-                f.write(f"label: {properties.LABEL_DICT[properties.Label(results.label_ids.tolist()[i])]}\n")
-                f.write(f"prediction: {properties.LABEL_DICT[properties.Label(predictions)]}\n\n")
+            # prediction = min(1, max(0, np.rint(np.array(logits))[0]))
+            prediction = np.array(logits)[0]
+            f.write(f"input: {tokenizer.decode(test_dataset[i]['input_ids'])}\n")
+            f.write(f"label: {_LABELS[results.label_ids.tolist()[i]]}\n")
+            f.write(f"prediction: {prediction}\n\n")
