@@ -8,7 +8,6 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from transformers import Trainer
 from transformers import TrainingArguments
 
-import properties
 import utils
 
 _MAX_LENGTH = 512
@@ -117,8 +116,8 @@ def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
         weight_decay=0.01,  # strength of weight decay
         # gradient_accumulation_steps=2,
         evaluation_strategy="steps",
-        eval_steps=100,
-        save_steps=100,
+        eval_steps=1000,
+        save_steps=1000,
         metric_for_best_model="eval_f1_micro",
         save_total_limit=1,
         load_best_model_at_end=True,

@@ -8,17 +8,17 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument(
     '--training_data_path',
-    default="/scratch/users/k20116188/fc_evidence_evaluation/reference_scorer_training_data/fever_train_based.jsonl",
+    default="/scratch/users/k20116188/fc_evidence_evaluation/reference_scorer_training_data/bleurt_finetune_train.jsonl",
     help='Path to training data for reference scorer'
 )
 parser.add_argument(
     '--dev_data_path',
-    default="/scratch/users/k20116188/fc_evidence_evaluation/reference_scorer_training_data/fever_dev_based.jsonl",
+    default="/scratch/users/k20116188/fc_evidence_evaluation/reference_scorer_training_data/bleurt_finetune_dev.jsonl",
     help='Path to dev data for reference scorer'
 )
 parser.add_argument(
     '--test_data_path',
-    default="/scratch/users/k20116188/fc_evidence_evaluation/reference_scorer_training_data/fever_test_based.jsonl",
+    default="/scratch/users/k20116188/fc_evidence_evaluation/reference_scorer_training_data/bleurt_finetune_test.jsonl",
     help='Path to test data for evaluating fine-tuned reference scorer'
 )
 parser.add_argument(
@@ -56,11 +56,10 @@ _DEV_DATASET_PATH = args.test_data_path
 _OUTPUT_DIR = args.output_dir
 _RESULTS_FILENAME = args.results_filename
 _SAMPLES_FILENAME = args.samples_filename
-_DATASET = args.dataset
 _HG_MODEL_HUB_NAME = args.hf_model
 
 _BATCH_SIZE = 4
-_EPOCHS = 15
+_EPOCHS = 5
 
 
 def main():
