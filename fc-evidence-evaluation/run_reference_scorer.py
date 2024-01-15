@@ -37,12 +37,6 @@ parser.add_argument(
     help='Output path for reference scorer evaluation results.'
 )
 parser.add_argument(
-    '--dataset',
-    default="fever",
-    choices=list(properties.Dataset),
-    help='Dataset that is used for evaluation.'
-)
-parser.add_argument(
     '--hf_model',
     default="Elron/bleurt-base-512",
     help='Path to HG bleurt model.'

@@ -64,6 +64,7 @@ def main():
         else:
             # Averitec with metadata
             input_data = utils.load_jsonl_file(_TEST_SET_PATH, properties.AveritecEntry)
+        # todo randomly select (w/ seed) a subset and not first 100 samples!!
         predictions = prompt_scorer_openai.prompt_openai_model(input_data[:100], _PROMPT_TYPE, _CLIENT)
         utils.save_jsonl_file(predictions, _PREDICTIONS_OUTPUT_PATH)
 
