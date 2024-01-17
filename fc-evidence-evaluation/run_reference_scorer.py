@@ -41,6 +41,13 @@ parser.add_argument(
     default="Elron/bleurt-base-512",
     help='Path to HG bleurt model.'
 )
+parser.add_argument(
+    '--train',
+    default=True,
+    action="store_false",
+    help='If set, fine-tunes scorer with data specified through --training_data_path'
+)
+
 
 args = parser.parse_args()
 _TRAIN_DATASET_PATH = args.training_data_path
@@ -52,6 +59,8 @@ _RESULTS_FILENAME = args.results_filename
 _SAMPLES_FILENAME = args.samples_filename
 _HG_MODEL_HUB_NAME = args.hf_model
 
+_TRAIN = args.train
+
 _BATCH_SIZE = 4
 _EPOCHS = 5
 
@@ -60,7 +69,7 @@ def main():
     reference_scorer.run_reference_scorer(train_dataset_path=_TRAIN_DATASET_PATH, dev_dataset_path=_DEV_DATASET_PATH,
                                           test_dataset_path=_TEST_DATASET_PATH, output_path=_OUTPUT_DIR,
                                           results_filename=_RESULTS_FILENAME, samples_filenames=_SAMPLES_FILENAME,
-                                          hg_model_hub_name=_HG_MODEL_HUB_NAME, train=True,
+                                          hg_model_hub_name=_HG_MODEL_HUB_NAME, train=_TRAIN,
                                           train_bs=_BATCH_SIZE, test_bs=_BATCH_SIZE, epoch=_EPOCHS)
 
 
