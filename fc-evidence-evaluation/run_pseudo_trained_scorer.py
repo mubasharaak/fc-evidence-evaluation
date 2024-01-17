@@ -2,8 +2,8 @@ import argparse
 
 import evaluate
 
-import nli_scorer
 import properties
+import pseudo_trained_scorer
 
 parser = argparse.ArgumentParser(
     description='NLI Scorer arguments'
@@ -49,9 +49,9 @@ parser.add_argument(
 )
 parser.add_argument(
     '--hf_model',
-    default="stanleychu2/roberta-fever",
+    default="MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
     # hg_model_hub_name = "ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli"
-    # hg_model_hub_name = "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli"
+    # hg_model_hub_name = "stanleychu2/roberta-fever"
     help='Dataset that is used for evaluation.'
 )
 
@@ -72,8 +72,8 @@ _METRIC = evaluate.load("glue", "mrpc")
 
 
 def main():
-    nli_scorer.run_nli_scorer(_HG_MODEL_HUB_NAME, _DATASET, _TRAIN_DATASET_PATH, _DEV_DATASET_PATH,
-                              _TEST_DATASET_PATH, _OUTPUT_DIR, _RESULTS_FILENAME, _SAMPLES_FILENAME)
+    pseudo_trained_scorer.run_nli_scorer(_HG_MODEL_HUB_NAME, _DATASET, _TRAIN_DATASET_PATH, _DEV_DATASET_PATH,
+                                         _TEST_DATASET_PATH, _OUTPUT_DIR, _RESULTS_FILENAME, _SAMPLES_FILENAME)
 
 
 if __name__ == '__main__':

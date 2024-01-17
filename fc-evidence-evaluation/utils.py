@@ -7,7 +7,7 @@ import dacite
 import evaluate
 import torch
 from torch.utils.data import DataLoader
-
+from nltk.tokenize import sent_tokenize
 import properties
 
 metric = evaluate.load("f1")
@@ -43,10 +43,7 @@ def read_fever_dataset(file_path: str):
             line_loaded = json.loads(line)
             for val in list(line_loaded[1].values()):
                 claim = val["claim"]
-                if val["label"] == 'NOT ENOUGH INFO':
-                    continue
-                else:
-                    label = properties.LABEL_DICT[properties.Label(val["label"].lower())]
+                label = properties.LABEL_DICT[properties.Label(val["label"].lower())]
                 for evidence_tuple in val["evidence"]:
                     if len(evidence_tuple) == 3:
                         evidence = evidence_tuple[2]
@@ -55,6 +52,35 @@ def read_fever_dataset(file_path: str):
                         evidences.append(evidence)
                     else:
                         continue
+
+    return claims, evidences, labels
+
+
+def read_vitaminc_dataset(file_path: str):
+    claims = []
+    evidences = []
+    labels = []
+    with open(file_path) as f:
+        for line in f:
+            line_loaded = json.loads(line)
+            claims.append(line_loaded['claim'])
+            evidences.append(line_loaded['evidence'])
+            labels.append(properties.LABEL_DICT[properties.Label(line_loaded["label"].lower())])
+
+    return claims, evidences, labels
+
+
+def read_hover_dataset(file_path: str, wiki_db):
+    claims = []
+    evidences = []
+    labels = []
+    with open(file_path) as f:
+        hover_data = json.load(f)
+
+    for entry in hover_data:
+        claims.append(entry['claim'])
+        labels.append(properties.LABEL_DICT[properties.Label(entry['label'].lower())])
+        evidences.append(_load_hover_evidence(entry['supporting_facts'], wiki_db))
 
     return claims, evidences, labels
 
@@ -145,14 +171,14 @@ def load_fever(path: str) -> List[properties.AveritecEntry]:
 def _load_hover_evidence(evidences: list, wiki_db):
     evidence_text = ""
     for e in evidences:
-        # e of format: [
-        #         "Life Goes On (Fergie song)",
-        #         2
-        #       ]
-        doc = wiki_db.execute("SELECT * FROM documents WHERE id=(?)", (unicodedata.normalize('NFD', e[0]),)).fetchall()[
-            0]
-        # retrieve relevant sentence as evidence
-        evidence_text += doc.split()[e[1]]
+        try:
+            doc = wiki_db.execute("SELECT * FROM documents WHERE id=(?)", (unicodedata.normalize('NFD', e[0]),)).fetchall()[
+                0]
+            # retrieve relevant sentence as evidence
+            evidence_text += sent_tokenize(doc[1])[e[1]-1]
+        except Exception as e:
+            print(e)
+            continue
     return evidence_text
 
 
