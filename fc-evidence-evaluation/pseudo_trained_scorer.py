@@ -3,7 +3,7 @@ import os
 import re
 
 import evaluate
-import nli_scorer_utils
+import scorer_utils
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
@@ -17,9 +17,8 @@ _MAX_LENGTH = 1024
 # fever_dataset_path = os.path.join("data", "shared_task_test_annotations_evidence.jsonl")
 _TBL_DELIM = " ; "
 _ENTITY_LINKING_PATTERN = re.compile('#.*?;-*[0-9]+,(-*[0-9]+)#')
+_WIKI_DB_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data"
 
-_BATCH_SIZE = 2
-_EPOCHS = 15
 _METRIC = evaluate.load("glue", "mrpc")
 
 _TEST_CLAIM = "The high blood pressure medication hydrochlorothiazide can cause skin cancer"
@@ -57,16 +56,16 @@ class AveritecDataset(torch.utils.data.Dataset):
         return len(self.labels)
 
 
-def train(model, training_args, train_dataset, dev_dataset, test_dataset, output_path, only_test=False):
+def train(model, training_args, train_dataset, dev_dataset, test_dataset, output_path, do_training=False):
     trainer = Trainer(
         model=model,  # the instantiated 🤗 Transformers model to be trained
         args=training_args,  # training arguments, defined above
         train_dataset=train_dataset,  # training dataset
         eval_dataset=dev_dataset,  # evaluation dataset
-        compute_metrics=nli_scorer_utils.compute_metrics,
+        compute_metrics=scorer_utils.compute_metrics,
     )
 
-    if not only_test:
+    if do_training:
         trainer.train()
         trainer.save_model(output_path)
 
@@ -80,7 +79,7 @@ def continue_training(model, training_args, train_dataset, dev_dataset, test_dat
         args=training_args,  # training arguments, defined above
         train_dataset=train_dataset,  # training dataset
         eval_dataset=dev_dataset,  # evaluation dataset
-        compute_metrics=nli_scorer_utils.compute_metrics,
+        compute_metrics=scorer_utils.compute_metrics,
     )
 
     trainer.train(resume_from_checkpoint=True)
@@ -100,19 +99,25 @@ def prepare_dataset(claims, evidence, labels, tokenizer):
     return AveritecDataset(data_tokenized, labels)
 
 
-def run_nli_scorer(hg_model_hub_name: str, dataset: str, train_dataset_path: str, dev_dataset_path: str,
-                   test_dataset_path: str, output_path: str, results_filename: str, samples_filenames: str):
-    tokenizer = AutoTokenizer.from_pretrained(hg_model_hub_name)
-    model = AutoModelForSequenceClassification.from_pretrained(hg_model_hub_name, torch_dtype="auto")
+def run_nli_scorer(model_path: str, dataset: str, train_dataset_path: str, dev_dataset_path: str,
+                   test_dataset_path: str, output_path: str, results_filename: str, samples_filenames: str,
+                   train_model: bool, train_bs: int, test_bs: int, epoch: int):
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
+    model = AutoModelForSequenceClassification.from_pretrained(model_path, torch_dtype="auto")
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     model.to(device)
-    # model.train()
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    model.to(device)
+
+    if train_model:
+        print("Model will be trained!")
+        model.train()
 
     training_args = TrainingArguments(
         output_dir=output_path,  # output directory
-        num_train_epochs=_EPOCHS,  # total number of training epochs
-        per_device_train_batch_size=_BATCH_SIZE,  # batch size per device during training
-        per_device_eval_batch_size=64,  # batch size for evaluation
+        num_train_epochs=epoch,  # total number of training epochs
+        per_device_train_batch_size=train_bs,  # batch size per device during training
+        per_device_eval_batch_size=test_bs,  # batch size for evaluation
         warmup_steps=50,  # number of warmup steps for learning rate scheduler
         weight_decay=0.01,  # strength of weight decay
         gradient_accumulation_steps=2,
@@ -126,46 +131,40 @@ def run_nli_scorer(hg_model_hub_name: str, dataset: str, train_dataset_path: str
         fp16=True,  # mixed precision training
     )
 
-    if dataset == properties.Dataset.FEVER:
-        train_claims, train_qa_pairs, train_labels = utils.read_fever_dataset(train_dataset_path)
-        test_claims, test_qa_pairs, test_labels = utils.read_fever_dataset(test_dataset_path)
-        eval_claims, dev_qa_pairs, eval_labels = utils.read_fever_dataset(dev_dataset_path)
-    elif dataset == properties.Dataset.AVERITEC:
-        train_claims, train_qa_pairs, train_labels = utils.read_averitec_dataset(train_dataset_path)
-        test_claims, test_qa_pairs, test_labels = utils.read_averitec_dataset(test_dataset_path)
-        eval_claims, dev_qa_pairs, eval_labels = utils.read_averitec_dataset(dev_dataset_path)
+    if dataset in [properties.Dataset.FEVER, properties.Dataset.FEVER_REANNOTATION]:
+        train_claims, train_evidences, train_labels = utils.read_fever_dataset(train_dataset_path)
+        test_claims, test_evidences, test_labels = utils.read_fever_dataset(test_dataset_path)
+        eval_claims, dev_evidences, eval_labels = utils.read_fever_dataset(dev_dataset_path)
+    elif dataset in [properties.Dataset.AVERITEC, properties.Dataset.AVERITEC_AFTER_P4]:
+        train_claims, train_evidences, train_labels = utils.read_averitec_dataset(train_dataset_path)
+        test_claims, test_evidences, test_labels = utils.read_averitec_dataset(test_dataset_path)
+        eval_claims, dev_evidences, eval_labels = utils.read_averitec_dataset(dev_dataset_path)
+    elif dataset == properties.Dataset.HOVER:
+        wiki_db = utils.connect_to_db(os.path.join(_WIKI_DB_PATH, "hover", 'wiki_wo_links.db'))
+        train_claims, train_evidences, train_labels = utils.read_hover_dataset(train_dataset_path, wiki_db)
+        test_claims, test_evidences, test_labels = utils.read_hover_dataset(test_dataset_path, wiki_db)
+        eval_claims, dev_evidences, eval_labels = utils.read_hover_dataset(dev_dataset_path, wiki_db)
+    elif dataset == properties.Dataset.VITAMINC:
+        train_claims, train_evidences, train_labels = utils.read_vitaminc_dataset(train_dataset_path)
+        test_claims, test_evidences, test_labels = utils.read_vitaminc_dataset(test_dataset_path)
+        eval_claims, dev_evidences, eval_labels = utils.read_vitaminc_dataset(dev_dataset_path)
     else:
         raise Exception("Dataset provided does not match available datasets: {}".format(properties.Dataset))
 
-    train_dataset = prepare_dataset(train_claims, train_qa_pairs, train_labels, tokenizer)
-    dev_dataset = prepare_dataset(eval_claims, dev_qa_pairs, eval_labels, tokenizer)
-    test_dataset = prepare_dataset(test_claims, test_qa_pairs, test_labels, tokenizer)
+    train_dataset = prepare_dataset(train_claims, train_evidences, train_labels, tokenizer)
+    dev_dataset = prepare_dataset(eval_claims, dev_evidences, eval_labels, tokenizer)
+    test_dataset = prepare_dataset(test_claims, test_evidences, test_labels, tokenizer)
 
-    only_sample = False
-    if only_sample:
-        encoding = tokenizer([_TEST_CLAIM], [_TEST_EVID], max_length=_MAX_LENGTH,
-                             return_token_type_ids=True, truncation=True,
-                             padding=True)
-        dataset = AveritecDataset(encoding, [1])
-        trainer = Trainer(
-            model=model,  # the instantiated 🤗 Transformers model to be trained
-            args=training_args,  # training arguments, defined above
-            train_dataset=train_dataset,  # training dataset
-            eval_dataset=dev_dataset,  # evaluation dataset
-            compute_metrics=nli_scorer_utils.compute_metrics,
-        )
-        return trainer.predict(dataset)
-    else:
-        results = train(model, training_args, train_dataset=train_dataset,
-                        dev_dataset=dev_dataset, test_dataset=test_dataset, output_path=output_path,
-                            only_test=True)
-        with open(os.path.join(output_path, results_filename), "w") as f:
-            json.dump(results.metrics, f, indent=2)
+    results = train(model, training_args, train_dataset=train_dataset,
+                    dev_dataset=dev_dataset, test_dataset=test_dataset, output_path=output_path,
+                    do_training=train)
+    with open(os.path.join(output_path, results_filename), "w") as f:
+        json.dump(results.metrics, f, indent=2)
 
-        with open(os.path.join(output_path, samples_filenames), "w") as f:
-            for i, logits in enumerate(results.predictions.tolist()):
-                predictions = np.argmax(logits, axis=-1)
-                if predictions != results.label_ids.tolist()[i]:
-                    f.write(f"input: {tokenizer.decode(test_dataset[i]['input_ids'])}\n")
-                    f.write(f"label: {properties.LABEL_DICT[properties.Label(results.label_ids.tolist()[i])]}\n")
-                    f.write(f"prediction: {properties.LABEL_DICT[properties.Label(predictions)]}\n\n")
+    with open(os.path.join(output_path, samples_filenames), "w") as f:
+        for i, logits in enumerate(results.predictions.tolist()):
+            predictions = np.argmax(logits, axis=-1)
+            if predictions != results.label_ids.tolist()[i]:
+                f.write(f"input: {tokenizer.decode(test_dataset[i]['input_ids'])}\n")
+                f.write(f"label: {properties.LABEL_DICT[properties.Label(results.label_ids.tolist()[i])]}\n")
+                f.write(f"prediction: {properties.LABEL_DICT[properties.Label(predictions)]}\n\n")

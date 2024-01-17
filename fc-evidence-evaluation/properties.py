@@ -8,7 +8,11 @@ from typing import List
 
 class Dataset(enum.Enum):
     FEVER = "fever"
+    FEVER_REANNOTATION = "fever_reannotation"
     AVERITEC = "averitec"
+    AVERITEC_AFTER_P4 = "averitec_after_p4"
+    HOVER = "hover"
+    VITAMINC = "vitaminc"
 
 
 class PromptTypes(enum.Enum):
