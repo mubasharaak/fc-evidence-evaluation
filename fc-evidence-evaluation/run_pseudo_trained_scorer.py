@@ -57,8 +57,8 @@ parser.add_argument(
 
 args = parser.parse_args()
 _TRAIN_DATASET_PATH = args.training_data_path
-_TEST_DATASET_PATH = args.dev_data_path
-_DEV_DATASET_PATH = args.test_data_path
+_TEST_DATASET_PATH = args.test_data_path
+_DEV_DATASET_PATH = args.dev_data_path
 
 _OUTPUT_DIR = args.output_dir
 _RESULTS_FILENAME = args.results_filename
