@@ -123,8 +123,8 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
         weight_decay=0.01,  # strength of weight decay
         gradient_accumulation_steps=2,
         evaluation_strategy="steps",
-        eval_steps=100,
-        save_steps=100,
+        eval_steps=1000,
+        save_steps=1000,
         metric_for_best_model="eval_f1_micro",
         save_total_limit=1,
         load_best_model_at_end=True,
