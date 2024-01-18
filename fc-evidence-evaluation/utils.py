@@ -179,7 +179,12 @@ def load_jsonl_file(file_path, dataclass=None):
             if dataclass:
                 content.append(dacite.from_dict(data_class=dataclass, data=json.loads(entry)))
             else:
-                content.append(json.loads(entry))
+                entry = json.loads(entry)
+                if type(entry) == dict:
+                    content.append(entry)
+                elif type(entry) == list:
+                    for e in entry:
+                        content.append(e)
     return content
 
 
