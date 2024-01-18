@@ -75,7 +75,7 @@ _DEV_DATASET_PATH = os.path.join(_DATA_DIR, args.dev_data_file)
 _TEST_DATASET_PATH = args.test_data_path
 
 _OUTPUT_DIR = args.output_dir
-test_file_name = args.test_data_file.split("/")[-1].split(".")[0]
+test_file_name = args.test_data_path.split("/")[-1].split(".")[0]
 _RESULTS_FILENAME = args.results_filename.format(test_file_name)
 _SAMPLES_FILENAME = args.samples_filename.format(test_file_name)
 
