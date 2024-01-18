@@ -30,7 +30,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--output_dir',
-    default="./results/nli_scorer",
+    default="/scratch/users/k20116188/fc_evidence_evaluation/results/pseudo_trained_scorer",
     help='Output path for NLI scorer evaluation results.'
 )
 parser.add_argument(
