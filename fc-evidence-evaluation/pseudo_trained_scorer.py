@@ -129,7 +129,7 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
         save_total_limit=1,
         load_best_model_at_end=True,
         learning_rate=1e-06,
-        # fp16=True,  # mixed precision training
+        fp16=False,  # mixed precision training
     )
 
     if dataset in [properties.Dataset.FEVER, properties.Dataset.FEVER_REANNOTATION]:
