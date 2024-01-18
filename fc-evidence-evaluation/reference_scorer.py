@@ -25,14 +25,10 @@ def _load_data(path):
     :return:
     """
     data = utils.load_jsonl_file(path)
-    references = []
-    targets = []
-    labels = []
-    for entry in data:
-        entry = json.loads(entry)
-        references.append(entry['reference'])
-        targets.append(entry['target'])
-        labels.append(entry['score'])
+
+    references = [entry['reference'] for entry in data]
+    targets = [entry['target'] for entry in data]
+    labels = [_LABELS[entry['score']] for entry in data]
     return references, targets, labels
 
 
