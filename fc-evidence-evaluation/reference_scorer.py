@@ -25,13 +25,15 @@ def _load_data(path):
     :return:
     """
     data = utils.load_jsonl_file(path)
-    for entry in data:
-        try:
-            entry['reference']
-        except Exception as e:
-            print(e)
-            print(entry)
-            continue
+    print("first entries data:")
+    print(data[:5])
+    # for entry in data:
+    #     try:
+    #         entry['reference']
+    #     except Exception as e:
+    #         print(e)
+    #         print(entry)
+    #         continue
 
     references = [entry['reference'] for entry in data]
     targets = [entry['target'] for entry in data]
