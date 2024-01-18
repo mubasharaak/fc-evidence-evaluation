@@ -41,7 +41,7 @@ _TEST_EVID = "What disease was hyrochlorothiazide associated with in 2017? Lip c
              "hydrochlorothiazide and non-melanoma skin cancer. The known photosensitising actions of " \
              "hydrochlorothiazide could act as possible mechanism for this risk."
 
-_FEVER_DB_PW = open('/Users/user/Desktop/fever_db_pw.txt', 'r').read()
+_FEVER_DB_PW = open('/scratch/users/k20116188/fc_evidence_evaluation/credentials/fever_db_pw.txt', 'r').read()
 
 
 class AveritecDataset(torch.utils.data.Dataset):
