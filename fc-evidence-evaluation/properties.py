@@ -1,9 +1,12 @@
 import enum
 from dataclasses import dataclass
+from typing import List
 from typing import Optional, Union
 
+import torch
 from aenum import MultiValueEnum
-from typing import List
+from torch import nn
+from transformers import Trainer
 
 
 class Dataset(enum.Enum):
@@ -83,6 +86,18 @@ class AveritecEntry:
     #     self.label = label
     #     self.justification = justification
     #     self.evidence = evidence
+
+
+class CustomTrainer(Trainer):
+    def compute_loss(self, model, inputs, return_outputs=False):
+        labels = inputs.get("labels")
+        # forward pass
+        outputs = model(**inputs)
+        logits = outputs.get('logits')
+        # compute custom loss
+        loss_fct = nn.CrossEntropyLoss(weight=torch.tensor([0.2, 1]))
+        loss = loss_fct(logits.view(-1, self.model.config.num_labels), labels.view(-1))
+        return (loss, outputs) if return_outputs else loss
 
 
 FEVER_DATASET_PATH = "shared_task_test_annotations_evidence.jsonl"
