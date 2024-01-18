@@ -81,7 +81,7 @@ _SAMPLES_FILENAME = args.samples_filename.format(test_file_name)
 
 print("Results saved in: {}".format(_RESULTS_FILENAME))
 
-_DATASET = args.dataset
+_DATASET = properties.Dataset(args.dataset)
 
 _TRAIN = args.train
 if _TRAIN:

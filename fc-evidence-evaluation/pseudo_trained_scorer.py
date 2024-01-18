@@ -102,7 +102,7 @@ def prepare_dataset(claims, evidence, labels, tokenizer):
     return AveritecDataset(data_tokenized, labels)
 
 
-def run_nli_scorer(model_path: str, dataset: str, train_dataset_path: str, dev_dataset_path: str,
+def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_path: str, dev_dataset_path: str,
                    test_dataset_path: str, output_path: str, results_filename: str, samples_filenames: str,
                    train_model: bool, train_bs: int, test_bs: int, epoch: int):
     tokenizer = AutoTokenizer.from_pretrained(model_path)
