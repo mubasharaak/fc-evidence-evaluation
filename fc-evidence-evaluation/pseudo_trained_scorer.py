@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import pymysql
 
 import evaluate
 import scorer_utils
@@ -39,6 +40,8 @@ _TEST_EVID = "What disease was hyrochlorothiazide associated with in 2017? Lip c
              "Prescription Registry) have shown a cumulative, dose-dependent, association between " \
              "hydrochlorothiazide and non-melanoma skin cancer. The known photosensitising actions of " \
              "hydrochlorothiazide could act as possible mechanism for this risk."
+
+_FEVER_DB_PW = open('/Users/user/Desktop/fever_db_pw.txt', 'r').read()
 
 
 class AveritecDataset(torch.utils.data.Dataset):
@@ -132,9 +135,10 @@ def run_nli_scorer(model_path: str, dataset: str, train_dataset_path: str, dev_d
     )
 
     if dataset in [properties.Dataset.FEVER, properties.Dataset.FEVER_REANNOTATION]:
-        train_claims, train_evidences, train_labels = utils.read_fever_dataset(train_dataset_path)
-        test_claims, test_evidences, test_labels = utils.read_fever_dataset(test_dataset_path)
-        eval_claims, dev_evidences, eval_labels = utils.read_fever_dataset(dev_dataset_path)
+        wiki_db = pymysql.connect(host="localhost", port=3306, user="root", password=_FEVER_DB_PW, db="fever").cursor()
+        train_claims, train_evidences, train_labels = utils.read_fever_dataset(train_dataset_path, wiki_db)
+        test_claims, test_evidences, test_labels = utils.read_fever_dataset(test_dataset_path, wiki_db)
+        eval_claims, dev_evidences, eval_labels = utils.read_fever_dataset(dev_dataset_path, wiki_db)
     elif dataset in [properties.Dataset.AVERITEC, properties.Dataset.AVERITEC_AFTER_P4]:
         train_claims, train_evidences, train_labels = utils.read_averitec_dataset(train_dataset_path)
         test_claims, test_evidences, test_labels = utils.read_averitec_dataset(test_dataset_path)

@@ -1,24 +1,29 @@
 import argparse
+import os
 
-import properties
 import reference_scorer
 
 parser = argparse.ArgumentParser(
     description='Reference Scorer arguments'
 )
 parser.add_argument(
-    '--training_data_path',
-    default="/scratch/users/k20116188/fc_evidence_evaluation/reference_scorer_training_data/bleurt_finetune_train.jsonl",
+    '--data_dir',
+    default="/scratch/users/k20116188/fc_evidence_evaluation/reference_scorer_training_data",
     help='Path to training data for reference scorer'
 )
 parser.add_argument(
-    '--dev_data_path',
-    default="/scratch/users/k20116188/fc_evidence_evaluation/reference_scorer_training_data/bleurt_finetune_dev.jsonl",
+    '--training_data_file',
+    default="bleurt_finetune_train.jsonl",
+    help='Path to training data for reference scorer'
+)
+parser.add_argument(
+    '--dev_data_file',
+    default="bleurt_finetune_dev.jsonl",
     help='Path to dev data for reference scorer'
 )
 parser.add_argument(
-    '--test_data_path',
-    default="/scratch/users/k20116188/fc_evidence_evaluation/reference_scorer_training_data/fever_test_gpt_score_zero.jsonl",
+    '--test_data_file',
+    default="bleurt_finetune_test.jsonl",
     help='Path to test data for evaluating fine-tuned reference scorer'
 )
 parser.add_argument(
@@ -28,12 +33,12 @@ parser.add_argument(
 )
 parser.add_argument(
     '--results_filename',
-    default="results_fever_test_gpt_score_zero.json",
+    default="results_{}.json",
     help='Output path for reference scorer evaluation results.'
 )
 parser.add_argument(
     '--samples_filename',
-    default="prediction_samples_fever_test_gpt_score_zero.txt",
+    default="prediction_{}.txt",
     help='Output path for reference scorer evaluation results.'
 )
 parser.add_argument(
@@ -53,15 +58,18 @@ parser.add_argument(
     help='If set, fine-tunes scorer with data specified through --training_data_path'
 )
 
-
 args = parser.parse_args()
-_TRAIN_DATASET_PATH = args.training_data_path
-_TEST_DATASET_PATH = args.dev_data_path
-_DEV_DATASET_PATH = args.test_data_path
+_DATA_DIR = args.data_dir
+_TRAIN_DATASET_PATH = os.path.join(_DATA_DIR, args.training_data_file)
+_DEV_DATASET_PATH = os.path.join(_DATA_DIR, args.dev_data_file)
+_TEST_DATASET_PATH = os.path.join(_DATA_DIR, args.test_data_file)
 
 _OUTPUT_DIR = args.output_dir
-_RESULTS_FILENAME = args.results_filename
-_SAMPLES_FILENAME = args.samples_filename
+_RESULTS_FILENAME = args.results_filename.format(args.test_data_file.split(".")[0])
+_SAMPLES_FILENAME = args.samples_filename.format(args.test_data_file.split(".")[0])
+
+print("Results filename is {}".format(_RESULTS_FILENAME))
+print("Samples filename is {}".format(_SAMPLES_FILENAME))
 
 _TRAIN = args.train
 if _TRAIN:

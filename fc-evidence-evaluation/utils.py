@@ -1,3 +1,7 @@
+import os
+
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
+
 import json
 import sqlite3
 import unicodedata
@@ -11,6 +15,11 @@ from nltk.tokenize import sent_tokenize
 import properties
 
 metric = evaluate.load("f1")
+SAMPLE_DICT = {
+    'claim': None,
+    'evidence': None,
+    'label': None,
+}
 
 
 class CustomDataset(torch.utils.data.Dataset):
@@ -34,17 +43,32 @@ def load_json_file(path: str):
         return json.load(file)
 
 
-def read_fever_dataset(file_path: str):
+def _load_fever_evidence(evidences: list, wiki_db):
+    evidence_text = ""
+    for e in evidences:
+        try:
+            evid = wiki_db[wiki_db['id'] == e[2]]["lines"].values[0]
+            # wiki_db.execute("SELECT * FROM fever.wiki_pages WHERE id = (%s)", [unicodedata.normalize('NFD', e[2])])
+            # for doc in wiki_db:
+            #     # retrieve relevant sentence as evidence
+            evidence_text += evid.split("\n")[e[3]].split("\t")[1]
+        except Exception as e:
+            print(e)
+            continue
+    return evidence_text
+
+
+def read_fever_shared(file_path):
     claims = []
     evidences = []
     labels = []
     with open(file_path) as f:
         for line in f:
             line_loaded = json.loads(line)
-            for val in list(line_loaded[1].values()):
-                claim = val["claim"]
-                label = properties.LABEL_DICT[properties.Label(val["label"].lower())]
-                for evidence_tuple in val["evidence"]:
+            for entry in list(line_loaded[1].values()):
+                claim = entry["claim"]
+                label = properties.LABEL_DICT[properties.Label(entry["label"].lower())]
+                for evidence_tuple in entry["evidence"]:
                     if len(evidence_tuple) == 3:
                         evidence = evidence_tuple[2]
                         labels.append(label)
@@ -54,6 +78,30 @@ def read_fever_dataset(file_path: str):
                         continue
 
     return claims, evidences, labels
+
+
+def read_fever_base(file_path, wiki_db):
+    claims = []
+    evidences = []
+    labels = []
+    with open(file_path) as f:
+        for entry in f:
+            entry = json.loads(entry)
+            claim = entry["claim"]
+            label = properties.LABEL_DICT[properties.Label(entry["label"].lower())]
+            for evidence in entry["evidence"]:
+                evidences.append(_load_fever_evidence(evidence, wiki_db))
+                labels.append(label)
+                claims.append(claim)
+
+    return claims, evidences, labels
+
+
+def read_fever_dataset(file_path: str, wiki_db):
+    if "shared_" in file_path:
+        return read_fever_shared(file_path)
+    else:
+        return read_fever_base(file_path, wiki_db)
 
 
 def read_vitaminc_dataset(file_path: str):
@@ -175,7 +223,7 @@ def _load_hover_evidence(evidences: list, wiki_db):
             doc = wiki_db.execute("SELECT * FROM documents WHERE id=(?)", (unicodedata.normalize('NFD', e[0]),)).fetchall()[
                 0]
             # retrieve relevant sentence as evidence
-            evidence_text += sent_tokenize(doc[1])[e[1]-1]
+            evidence_text += sent_tokenize(doc[1])[e[1]-1]  # sentence id is 1 or larger (excl. 0)
         except Exception as e:
             print(e)
             continue
@@ -201,3 +249,19 @@ def connect_to_db(db_path):
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
     return c
+
+
+def prepare_df_sample(claims, evidences, labels):
+    ds_entries = []
+    for claim, evid, label in zip(claims, evidences, labels):
+        ds_entry = SAMPLE_DICT.copy()
+        ds_entry['claim'] = claim
+        ds_entry['evidence'] = evid
+        ds_entry['label'] = properties.LABEL_DICT_REVERSE[label]
+        ds_entries.append(ds_entry)
+    return ds_entries
+
+
+def prepare_and_save(claims, evidences, labels, path):
+    data_formatted = prepare_df_sample(claims, evidences, labels)
+    save_jsonl_file(data_formatted, path)
