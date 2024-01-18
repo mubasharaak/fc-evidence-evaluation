@@ -109,8 +109,6 @@ def run_nli_scorer(model_path: str, dataset: str, train_dataset_path: str, dev_d
     model = AutoModelForSequenceClassification.from_pretrained(model_path, torch_dtype="auto")
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     model.to(device)
-    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-    model.to(device)
 
     if train_model:
         print("Model will be trained!")
@@ -149,6 +147,7 @@ def run_nli_scorer(model_path: str, dataset: str, train_dataset_path: str, dev_d
         test_claims, test_evidences, test_labels = utils.read_hover_dataset(test_dataset_path, wiki_db)
         eval_claims, dev_evidences, eval_labels = utils.read_hover_dataset(dev_dataset_path, wiki_db)
     elif dataset == properties.Dataset.VITAMINC:
+        # also used for train.jsonl and dev.jsonl => all
         train_claims, train_evidences, train_labels = utils.read_vitaminc_dataset(train_dataset_path)
         test_claims, test_evidences, test_labels = utils.read_vitaminc_dataset(test_dataset_path)
         eval_claims, dev_evidences, eval_labels = utils.read_vitaminc_dataset(dev_dataset_path)

@@ -1,5 +1,5 @@
 import argparse
-
+import os
 import evaluate
 
 import properties
@@ -9,22 +9,24 @@ parser = argparse.ArgumentParser(
     description='NLI Scorer arguments'
 )
 parser.add_argument(
-    '--training_data_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/AveritecBaseline/data/date"
-            "-cleaned.train.augmented.json",
-    help='Path to training data for fine-tuning NLI scorer'
+    '--data_dir',
+    default="/scratch/users/k20116188/fc_evidence_evaluation",
+    help='Path to training data for reference scorer'
 )
 parser.add_argument(
-    '--dev_data_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/AveritecBaseline/data/date"
-            "-cleaned.dev.augmented.json",
-    help='Path to dev data for fine-tuning NLI scorer'
+    '--training_data_file',
+    default="",
+    help='Path to training data for reference scorer'
 )
 parser.add_argument(
-    '--test_data_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/AveritecBaseline/data/date"
-            "-cleaned.test.augmented.json",
-    help='Path to test data for evaluating fine-tuned NLI scorer'
+    '--dev_data_file',
+    default="",
+    help='Path to dev data for reference scorer'
+)
+parser.add_argument(
+    '--test_data_file',
+    default="",
+    help='Path to test data for evaluating fine-tuned reference scorer'
 )
 parser.add_argument(
     '--output_dir',
@@ -33,17 +35,17 @@ parser.add_argument(
 )
 parser.add_argument(
     '--results_filename',
-    default="results.json",
-    help='Output path for NLI scorer evaluation results.'
+    default="results_{}.json",
+    help='Output path for reference scorer evaluation results.'
 )
 parser.add_argument(
     '--samples_filename',
-    default="prediction_samples.txt",
-    help='Output path for NLI scorer evaluation results.'
+    default="prediction_{}.txt",
+    help='Output path for reference scorer evaluation results.'
 )
 parser.add_argument(
     '--dataset',
-    default="averitec",
+    default="vitaminc",
     choices=list(properties.Dataset),
     help='Dataset that is used for evaluation.'
 )
@@ -67,13 +69,15 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
-_TRAIN_DATASET_PATH = args.training_data_path
-_TEST_DATASET_PATH = args.test_data_path
-_DEV_DATASET_PATH = args.dev_data_path
+_DATA_DIR = args.data_dir
+_TRAIN_DATASET_PATH = os.path.join(_DATA_DIR, args.training_data_file)
+_DEV_DATASET_PATH = os.path.join(_DATA_DIR, args.dev_data_file)
+_TEST_DATASET_PATH = os.path.join(_DATA_DIR, args.test_data_file)
 
 _OUTPUT_DIR = args.output_dir
-_RESULTS_FILENAME = args.results_filename
-_SAMPLES_FILENAME = args.samples_filename
+_RESULTS_FILENAME = args.results_filename.format(args.test_data_file.split(".")[0])
+_SAMPLES_FILENAME = args.samples_filename.format(args.test_data_file.split(".")[0])
+
 _DATASET = args.dataset
 
 _TRAIN = args.train
@@ -82,8 +86,8 @@ if _TRAIN:
 else:
     _MODEL_PATH = args.finetuned_model
 
-_BATCH_SIZE = 2
-_EPOCHS = 15
+_BATCH_SIZE = 4
+_EPOCHS = 5
 _METRIC = evaluate.load("glue", "mrpc")
 
 
