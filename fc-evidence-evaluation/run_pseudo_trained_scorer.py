@@ -10,22 +10,22 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument(
     '--data_dir',
-    default="/scratch/users/k20116188/fc_evidence_evaluation",
+    default="/scratch/users/k20116188/fc_evidence_evaluation/pseudo_trained_scorer_training_data",
     help='Path to training data for reference scorer'
 )
 parser.add_argument(
     '--training_data_file',
-    default="",
+    default="train.jsonl",
     help='Path to training data for reference scorer'
 )
 parser.add_argument(
     '--dev_data_file',
-    default="",
+    default="dev.jsonl",
     help='Path to dev data for reference scorer'
 )
 parser.add_argument(
-    '--test_data_file',
-    default="",
+    '--test_data_path',
+    default="/scratch/users/k20116188/fc_evidence_evaluation/datasets/averitec/averitec_test.jsonl",
     help='Path to test data for evaluating fine-tuned reference scorer'
 )
 parser.add_argument(
@@ -45,7 +45,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--dataset',
-    default="vitaminc",
+    default="vitaminc",     # set to vitaminc if jsonl file with claim, evidence, label entries in dicts.
     choices=list(properties.Dataset),
     help='Dataset that is used for evaluation.'
 )
@@ -72,11 +72,14 @@ args = parser.parse_args()
 _DATA_DIR = args.data_dir
 _TRAIN_DATASET_PATH = os.path.join(_DATA_DIR, args.training_data_file)
 _DEV_DATASET_PATH = os.path.join(_DATA_DIR, args.dev_data_file)
-_TEST_DATASET_PATH = os.path.join(_DATA_DIR, args.test_data_file)
+_TEST_DATASET_PATH = args.test_data_path
 
 _OUTPUT_DIR = args.output_dir
-_RESULTS_FILENAME = args.results_filename.format(args.test_data_file.split(".")[0])
-_SAMPLES_FILENAME = args.samples_filename.format(args.test_data_file.split(".")[0])
+test_file_name = args.test_data_file.split("/")[-1].split(".")[0]
+_RESULTS_FILENAME = args.results_filename.format(test_file_name)
+_SAMPLES_FILENAME = args.samples_filename.format(test_file_name)
+
+print("Results saved in: {}".format(_RESULTS_FILENAME))
 
 _DATASET = args.dataset
 
