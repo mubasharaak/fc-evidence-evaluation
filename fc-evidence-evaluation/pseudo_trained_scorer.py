@@ -160,7 +160,7 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
 
     results = train(model, training_args, train_dataset=train_dataset,
                     dev_dataset=dev_dataset, test_dataset=test_dataset, output_path=output_path,
-                    do_training=train)
+                    do_training=train_model)
     with open(os.path.join(output_path, results_filename), "w") as f:
         json.dump(results.metrics, f, indent=2)
 
