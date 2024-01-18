@@ -24,16 +24,15 @@ def _load_data(path):
     Loads data for finetuning BLEURT model for FC evidence evaluation.
     :return:
     """
-    # Data used for finetuning:
-    # - FEVER train: different evidence sets for same claim
-    # Later
-    # - Averitec train: QA pairs and justification
-    # - Synthetic data
     data = utils.load_jsonl_file(path)
-
-    references = [entry['reference'] for entry in data]
-    targets = [entry['target'] for entry in data]
-    labels = [_LABELS[entry['score']] for entry in data]
+    references = []
+    targets = []
+    labels = []
+    for entry in data:
+        entry = json.loads(entry)
+        references.append(entry['reference'])
+        targets.append(entry['target'])
+        labels.append(entry['score'])
     return references, targets, labels
 
 
