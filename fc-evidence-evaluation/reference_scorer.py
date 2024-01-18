@@ -5,7 +5,8 @@ import numpy as np
 import torch
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
-from transformers import Trainer
+# from transformers import Trainer
+from properties import CustomTrainer
 from transformers import TrainingArguments
 
 import utils
@@ -70,7 +71,7 @@ def _compute_metrics(pred):
 
 
 def _train(model, training_args, train_dataset, dev_dataset, test_dataset, output_path, do_training=True):
-    trainer = Trainer(
+    trainer = CustomTrainer(
         model=model,  # the instantiated 🤗 Transformers model to be trained
         args=training_args,  # training arguments, defined above
         train_dataset=train_dataset,  # training dataset
