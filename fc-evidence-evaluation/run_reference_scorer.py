@@ -13,7 +13,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--training_data_file',
-    default="bleurt_finetune_train.jsonl",
+    default="bleurt_finetune_train_balanced.jsonl",
     help='Path to training data for reference scorer'
 )
 parser.add_argument(
