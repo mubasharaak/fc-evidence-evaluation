@@ -23,7 +23,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--test_data_file',
-    default="bleurt_finetune_test.jsonl",
+    default="fever_test_based.jsonl",
     help='Path to test data for evaluating fine-tuned reference scorer'
 )
 parser.add_argument(
@@ -48,13 +48,13 @@ parser.add_argument(
 )
 parser.add_argument(
     '--finetuned_model',
-    default="",
+    default="/scratch/users/k20116188/fc_evidence_evaluation/results/reference_scorer/checkpoint-13000",
     help='Path to fine-tuned model.'
 )
 parser.add_argument(
     '--train',
-    default=True,
-    action="store_false",
+    default=False,
+    action="store_true",
     help='If set, fine-tunes scorer with data specified through --training_data_path'
 )
 
