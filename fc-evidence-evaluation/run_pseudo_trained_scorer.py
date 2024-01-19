@@ -25,7 +25,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--test_data_path',
-    default="/scratch/users/k20116188/fc_evidence_evaluation/datasets/vitaminc/vitaminc_test.jsonl",
+    default="/scratch/users/k20116188/fc_evidence_evaluation/datasets/fever/paper_test_evidence.jsonl",
     help='Path to test data for evaluating fine-tuned reference scorer'
 )
 parser.add_argument(
