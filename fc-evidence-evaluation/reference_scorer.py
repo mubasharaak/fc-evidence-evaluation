@@ -82,7 +82,7 @@ def _train(model, training_args, train_dataset, dev_dataset, test_dataset, outpu
         trainer.save_model(output_path)
 
     result_dict = trainer.predict(test_dataset)
-    print("Result_dict: {}".format(result_dict))
+    print("Result_dict: {}".format(result_dict.metrics))
     return result_dict
 
 
