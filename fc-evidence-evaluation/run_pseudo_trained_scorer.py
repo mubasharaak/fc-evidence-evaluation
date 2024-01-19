@@ -26,7 +26,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--test_data_path',
-    default="/scratch/users/k20116188/fc_evidence_evaluation/datasets/fever/fever_shared_task_test_annotations_evidence.jsonl",
+    default="/scratch/users/k20116188/fc_evidence_evaluation/datasets/hover/hover_test.jsonl",
     help='Path to test data for evaluating fine-tuned reference scorer'
 )
 parser.add_argument(
