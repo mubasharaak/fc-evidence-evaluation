@@ -9,6 +9,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from transformers import TrainingArguments
 
 import properties
@@ -60,13 +61,37 @@ class AveritecDataset(torch.utils.data.Dataset):
         return len(self.labels)
 
 
+def _compute_metrics(pred):
+    labels = pred.label_ids
+    preds = np.rint(pred.predictions)
+    avg_bleurt = np.average(pred.predictions)
+
+    # Calculate accuracy
+    accuracy = accuracy_score(labels, preds)
+
+    # Calculate precision, recall, and F1-score
+    precision = precision_score(labels, preds, average='weighted')
+    recall = recall_score(labels, preds, average='weighted')
+    f1_macro = f1_score(labels, preds, average='macro')
+    f1_micro = f1_score(labels, preds, average='micro')
+
+    return {
+        'accuracy': accuracy,
+        'precision': precision,
+        'recall': recall,
+        'f1_macro': f1_macro,
+        'f1_micro': f1_micro,
+        'avg_bleurt': avg_bleurt
+    }
+
+
 def train(model, training_args, train_dataset, dev_dataset, test_dataset, output_path, do_training=False):
     trainer = Trainer(
         model=model,  # the instantiated 🤗 Transformers model to be trained
         args=training_args,  # training arguments, defined above
         train_dataset=train_dataset,  # training dataset
         eval_dataset=dev_dataset,  # evaluation dataset
-        compute_metrics=scorer_utils.compute_metrics,
+        compute_metrics=_compute_metrics,
     )
 
     if do_training:
