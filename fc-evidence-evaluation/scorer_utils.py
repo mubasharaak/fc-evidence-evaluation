@@ -64,10 +64,7 @@ def _confidence_confusion_matrix(actual_values, predicted_values, confidence_val
 
 def compute_metrics(eval_preds):
     logits, labels = eval_preds
-    print(f"logits: {logits}")
-    print(f"labels: {labels}")
     confidence = nn.functional.softmax((torch.from_numpy(logits)).float(), dim=-1)
-    print(confidence)
 
     predictions = np.argmax(logits, axis=-1)
     MCM, f1_micro = _confidence_confusion_matrix(labels, predictions, confidence)

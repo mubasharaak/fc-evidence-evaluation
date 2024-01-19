@@ -123,8 +123,8 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
         weight_decay=0.01,  # strength of weight decay
         gradient_accumulation_steps=2,
         evaluation_strategy="steps",
-        eval_steps=10,
-        save_steps=10,
+        eval_steps=2000,
+        save_steps=2000,
         metric_for_best_model="eval_f1_micro",
         save_total_limit=1,
         load_best_model_at_end=True,
@@ -155,7 +155,7 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
         raise Exception("Dataset provided does not match available datasets: {}".format(properties.Dataset))
 
     train_dataset = prepare_dataset(train_claims, train_evidences, train_labels, tokenizer)
-    dev_dataset = prepare_dataset(eval_claims[:10], dev_evidences[:10], eval_labels[:10], tokenizer)
+    dev_dataset = prepare_dataset(eval_claims, dev_evidences, eval_labels, tokenizer)
     test_dataset = prepare_dataset(test_claims, test_evidences, test_labels, tokenizer)
 
     results = train(model, training_args, train_dataset=train_dataset,
