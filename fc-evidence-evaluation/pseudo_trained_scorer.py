@@ -106,7 +106,7 @@ def prepare_dataset(claims, evidence, labels, tokenizer):
 
 def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_path: str, dev_dataset_path: str,
                    test_dataset_path: str, output_path: str, results_filename: str, samples_filenames: str,
-                   train_model: bool, train_bs: int, test_bs: int, epoch: int):
+                   train_model: bool, train_bs: int, test_bs: int, epoch: int, label_dict: dict):
     tokenizer = AutoTokenizer.from_pretrained(_PATH_TOKENIZER)
     model = AutoModelForSequenceClassification.from_pretrained(model_path, torch_dtype="auto")
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -136,27 +136,27 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
 
     if dataset == properties.Dataset.FEVER:
         wiki_db = pymysql.connect(host="localhost", port=3306, user="root", password=_FEVER_DB_PW, db="fever").cursor()
-        train_claims, train_evidences, train_labels = utils.read_fever_dataset(train_dataset_path, wiki_db)
-        test_claims, test_evidences, test_labels = utils.read_fever_dataset(test_dataset_path, wiki_db)
-        eval_claims, dev_evidences, eval_labels = utils.read_fever_dataset(dev_dataset_path, wiki_db)
+        train_claims, train_evidences, train_labels = utils.read_fever_dataset(train_dataset_path, wiki_db, label_dict)
+        test_claims, test_evidences, test_labels = utils.read_fever_dataset(test_dataset_path, wiki_db, label_dict)
+        eval_claims, dev_evidences, eval_labels = utils.read_fever_dataset(dev_dataset_path, wiki_db, label_dict)
     elif dataset == properties.Dataset.FEVER_REANNOTATION:
-        train_claims, train_evidences, train_labels = utils.read_fever_dataset_reannotation(train_dataset_path)
-        test_claims, test_evidences, test_labels = utils.read_fever_dataset_reannotation(test_dataset_path)
-        eval_claims, dev_evidences, eval_labels = utils.read_fever_dataset_reannotation(dev_dataset_path)
+        train_claims, train_evidences, train_labels = utils.read_fever_dataset_reannotation(train_dataset_path, label_dict)
+        test_claims, test_evidences, test_labels = utils.read_fever_dataset_reannotation(test_dataset_path, label_dict)
+        eval_claims, dev_evidences, eval_labels = utils.read_fever_dataset_reannotation(dev_dataset_path, label_dict)
     elif dataset in [properties.Dataset.AVERITEC, properties.Dataset.AVERITEC_AFTER_P4]:
-        train_claims, train_evidences, train_labels = utils.read_averitec_dataset(train_dataset_path)
-        test_claims, test_evidences, test_labels = utils.read_averitec_dataset(test_dataset_path)
-        eval_claims, dev_evidences, eval_labels = utils.read_averitec_dataset(dev_dataset_path)
+        train_claims, train_evidences, train_labels = utils.read_averitec_dataset(train_dataset_path, label_dict)
+        test_claims, test_evidences, test_labels = utils.read_averitec_dataset(test_dataset_path, label_dict)
+        eval_claims, dev_evidences, eval_labels = utils.read_averitec_dataset(dev_dataset_path, label_dict)
     elif dataset == properties.Dataset.HOVER:
         wiki_db = utils.connect_to_db(os.path.join(_WIKI_DB_PATH, "hover", 'wiki_wo_links.db'))
-        train_claims, train_evidences, train_labels = utils.read_hover_dataset(train_dataset_path, wiki_db)
-        test_claims, test_evidences, test_labels = utils.read_hover_dataset(test_dataset_path, wiki_db)
-        eval_claims, dev_evidences, eval_labels = utils.read_hover_dataset(dev_dataset_path, wiki_db)
+        train_claims, train_evidences, train_labels = utils.read_hover_dataset(train_dataset_path, wiki_db, label_dict)
+        test_claims, test_evidences, test_labels = utils.read_hover_dataset(test_dataset_path, wiki_db, label_dict)
+        eval_claims, dev_evidences, eval_labels = utils.read_hover_dataset(dev_dataset_path, wiki_db, label_dict)
     elif dataset == properties.Dataset.VITAMINC:
         # also used for train.jsonl and dev.jsonl => all
-        train_claims, train_evidences, train_labels = utils.read_vitaminc_dataset(train_dataset_path)
-        test_claims, test_evidences, test_labels = utils.read_vitaminc_dataset(test_dataset_path)
-        eval_claims, dev_evidences, eval_labels = utils.read_vitaminc_dataset(dev_dataset_path)
+        train_claims, train_evidences, train_labels = utils.read_vitaminc_dataset(train_dataset_path, label_dict)
+        test_claims, test_evidences, test_labels = utils.read_vitaminc_dataset(test_dataset_path, label_dict)
+        eval_claims, dev_evidences, eval_labels = utils.read_vitaminc_dataset(dev_dataset_path, label_dict)
     else:
         raise Exception("Dataset provided does not match available datasets: {}".format(properties.Dataset))
 

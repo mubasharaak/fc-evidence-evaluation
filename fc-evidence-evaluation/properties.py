@@ -24,15 +24,20 @@ class PromptTypes(enum.Enum):
 
 
 class Label(MultiValueEnum):
-    REFUTED = "refuted", "refutes", 0, "0", "contradiction", "c", "not_supported"
-    SUPPORTED = "supported", "supports", 1, "1", "entailment", "e"
-    NEI = "not enough evidence", 2, "2", "neutral", "n", "conflicting evidence/cherrypicking", "not enough info", "not enough information"
+    REFUTED = "refuted", "refutes", 0, "0", "contradiction", "c", "not_supported", "contradict"
+    SUPPORTED = "supported", "supports", 1, "1", "entailment", "e", "entail"
+    NEI = "not enough evidence", 2, "2", "neutral", "n", "conflicting evidence/cherrypicking", "not enough info", "not enough information", "nei"
 
 
 LABEL_DICT = {
     Label.REFUTED: 0,
     Label.SUPPORTED: 1,
     Label.NEI: 2,
+}
+LABEL_DICT_deberta_old = {
+    Label.SUPPORTED: 0,
+    Label.NEI: 1,
+    Label.REFUTED: 2,
 }
 
 LABEL_DICT_REVERSE = {
