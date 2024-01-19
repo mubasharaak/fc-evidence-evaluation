@@ -17,7 +17,7 @@ _LABELS = {
     1: 1.0,
     0: 0.0,
 }
-
+_PATH_TOKENIZER = "Elron/bleurt-base-512"
 
 def _load_data(path):
     """
@@ -87,11 +87,11 @@ def _train(model, training_args, train_dataset, dev_dataset, test_dataset, outpu
 
 def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
                          test_dataset_path: str, output_path: str, results_filename: str, samples_filenames: str,
-                         _model_path="lucadiliello/BLEURT-20", train=True, epoch=5, train_bs=32, test_bs=64,
+                         _model_path: str, train=True, epoch=5, train_bs=32, test_bs=64,
                          lr=1e-5):
     # tokenizer = BleurtTokenizer.from_pretrained(hg_model_hub_name)
     # model = BleurtForSequenceClassification.from_pretrained(hg_model_hub_name, torch_dtype="auto")
-    tokenizer = AutoTokenizer.from_pretrained(_model_path)
+    tokenizer = AutoTokenizer.from_pretrained(_PATH_TOKENIZER)
     model = AutoModelForSequenceClassification.from_pretrained(_model_path)
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     model.to(device)
