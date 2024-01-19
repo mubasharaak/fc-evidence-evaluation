@@ -118,6 +118,8 @@ def read_vitaminc_dataset(file_path: str, label_dict):
             claims.append(line_loaded['claim'])
             evidences.append(line_loaded['evidence'])
             labels.append(label_dict[properties.Label(line_loaded["label"].lower())])
+            print("Initial label: {}".format(line_loaded["label"].lower()))
+            print("Mapped label: {}".format(label_dict[properties.Label(line_loaded["label"].lower())]))
 
     return claims, evidences, labels
 
