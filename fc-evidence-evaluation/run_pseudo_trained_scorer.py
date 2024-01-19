@@ -46,7 +46,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--dataset',
-    default="hover",  # set to vitaminc if jsonl file with claim, evidence, label entries in dicts.
+    default="vitaminc",  # set to vitaminc if jsonl file with claim, evidence, label entries in dicts.
     choices=list(properties.Dataset),
     help='Dataset that is used for evaluation.'
 )
