@@ -25,7 +25,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--test_data_path',
-    default="/scratch/users/k20116188/fc_evidence_evaluation/datasets/averitec/averitec_test.jsonl",
+    default="/scratch/users/k20116188/fc_evidence_evaluation/datasets/averitec/averitec_w_metadata_before_p4.jsonl",
     help='Path to test data for evaluating fine-tuned reference scorer'
 )
 parser.add_argument(
