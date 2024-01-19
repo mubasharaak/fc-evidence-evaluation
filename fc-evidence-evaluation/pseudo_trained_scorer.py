@@ -61,27 +61,21 @@ class AveritecDataset(torch.utils.data.Dataset):
         return len(self.labels)
 
 
-def _compute_metrics(pred):
-    labels = pred.label_ids
-    preds = np.rint(pred.predictions)
-    avg_bleurt = np.average(pred.predictions)
+def _compute_metrics(eval_preds):
+    logits, labels = eval_preds
+    predictions = np.argmax(logits, axis=-1)
 
-    # Calculate accuracy
-    accuracy = accuracy_score(labels, preds)
-
-    # Calculate precision, recall, and F1-score
-    precision = precision_score(labels, preds, average='weighted')
-    recall = recall_score(labels, preds, average='weighted')
-    f1_macro = f1_score(labels, preds, average='macro')
-    f1_micro = f1_score(labels, preds, average='micro')
-
+    accuracy = accuracy_score(y_true=labels, y_pred=predictions)
+    precision = precision_score(y_true=labels, y_pred=predictions, average='weighted')
+    recall = recall_score(y_true=labels, y_pred=predictions, average='weighted')
+    f1_micro = f1_score(y_true=labels, y_pred=predictions, average='micro')
+    f1_macro = f1_score(y_true=labels, y_pred=predictions, average='macro')
     return {
         'accuracy': accuracy,
         'precision': precision,
         'recall': recall,
         'f1_macro': f1_macro,
         'f1_micro': f1_micro,
-        'avg_bleurt': avg_bleurt
     }
 
 
