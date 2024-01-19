@@ -69,6 +69,23 @@ def _compute_metrics(pred):
     }
 
 
+def _continue_training(model, training_args, train_dataset, dev_dataset, test_dataset, output_path):
+    trainer = Trainer(
+        model=model,  # the instantiated 🤗 Transformers model to be trained
+        args=training_args,  # training arguments, defined above
+        train_dataset=train_dataset,  # training dataset
+        eval_dataset=dev_dataset,  # evaluation dataset
+        compute_metrics=_compute_metrics,
+    )
+
+    trainer.train(resume_from_checkpoint=True)
+    trainer.save_model(output_path)
+
+    result_dict = trainer.predict(test_dataset)
+    print(result_dict.metrics)
+    return result_dict
+
+
 def _train(model, training_args, train_dataset, dev_dataset, test_dataset, output_path, do_training=True):
     trainer = Trainer(
         model=model,  # the instantiated 🤗 Transformers model to be trained
@@ -88,7 +105,7 @@ def _train(model, training_args, train_dataset, dev_dataset, test_dataset, outpu
 
 def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
                          test_dataset_path: str, output_path: str, results_filename: str, samples_filenames: str,
-                         _model_path: str, train=True, epoch=5, train_bs=32, test_bs=64,
+                         _model_path: str, train=bool, continue_train=bool, epoch=5, train_bs=32, test_bs=64,
                          lr=1e-5):
     # tokenizer = BleurtTokenizer.from_pretrained(hg_model_hub_name)
     # model = BleurtForSequenceClassification.from_pretrained(hg_model_hub_name, torch_dtype="auto")
@@ -97,7 +114,7 @@ def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     model.to(device)
 
-    if train:
+    if train or continue_train:
         print("Log: Model will be trained!")
         model.train()
 
@@ -122,9 +139,13 @@ def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
     test_dataset = _prepare_dataset(test_dataset_path, tokenizer=tokenizer)
     dev_dataset = _prepare_dataset(dev_dataset_path, tokenizer=tokenizer)
 
-    results = _train(model, training_args, train_dataset=train_dataset,
-                     dev_dataset=dev_dataset, test_dataset=test_dataset, output_path=output_path,
-                     do_training=train)
+    if continue_train:
+        results = _continue_training(model=model, training_args=training_args, train_dataset=train_dataset,
+                                     dev_dataset=dev_dataset, test_dataset=test_dataset, output_path=output_path)
+    else:
+        results = _train(model=model, training_args=training_args, train_dataset=train_dataset,
+                         dev_dataset=dev_dataset, test_dataset=test_dataset, output_path=output_path,
+                         do_training=train)
     with open(os.path.join(output_path, results_filename), "w") as f:
         json.dump(results.metrics, f, indent=2)
 

@@ -57,6 +57,12 @@ parser.add_argument(
     action="store_true",
     help='If set, fine-tunes scorer with data specified through --training_data_path'
 )
+parser.add_argument(
+    '--continue_train',
+    default=False,
+    action="store_true",
+    help='If set, fine-tunes scorer with data specified through --training_data_path'
+)
 
 args = parser.parse_args()
 _DATA_DIR = args.data_dir
@@ -72,6 +78,7 @@ print("Results filename is {}".format(_RESULTS_FILENAME))
 print("Samples filename is {}".format(_SAMPLES_FILENAME))
 
 _TRAIN = args.train
+_CONTINUE_TRAIN = args.continue_train
 if _TRAIN:
     _MODEL_PATH = args.hf_model
 else:
@@ -85,7 +92,7 @@ def main():
     reference_scorer.run_reference_scorer(train_dataset_path=_TRAIN_DATASET_PATH, dev_dataset_path=_DEV_DATASET_PATH,
                                           test_dataset_path=_TEST_DATASET_PATH, output_path=_OUTPUT_DIR,
                                           results_filename=_RESULTS_FILENAME, samples_filenames=_SAMPLES_FILENAME,
-                                          _model_path=_MODEL_PATH, train=_TRAIN,
+                                          _model_path=_MODEL_PATH, train=_TRAIN, continue_train=_CONTINUE_TRAIN,
                                           train_bs=_BATCH_SIZE, test_bs=_BATCH_SIZE, epoch=_EPOCHS)
 
 
