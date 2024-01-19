@@ -134,11 +134,15 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
         fp16=False,  # mixed precision training
     )
 
-    if dataset in [properties.Dataset.FEVER, properties.Dataset.FEVER_REANNOTATION]:
+    if dataset == properties.Dataset.FEVER:
         wiki_db = pymysql.connect(host="localhost", port=3306, user="root", password=_FEVER_DB_PW, db="fever").cursor()
         train_claims, train_evidences, train_labels = utils.read_fever_dataset(train_dataset_path, wiki_db)
         test_claims, test_evidences, test_labels = utils.read_fever_dataset(test_dataset_path, wiki_db)
         eval_claims, dev_evidences, eval_labels = utils.read_fever_dataset(dev_dataset_path, wiki_db)
+    elif dataset == properties.Dataset.FEVER_REANNOTATION:
+        train_claims, train_evidences, train_labels = utils.read_fever_dataset_reannotation(train_dataset_path)
+        test_claims, test_evidences, test_labels = utils.read_fever_dataset_reannotation(test_dataset_path)
+        eval_claims, dev_evidences, eval_labels = utils.read_fever_dataset_reannotation(dev_dataset_path)
     elif dataset in [properties.Dataset.AVERITEC, properties.Dataset.AVERITEC_AFTER_P4]:
         train_claims, train_evidences, train_labels = utils.read_averitec_dataset(train_dataset_path)
         test_claims, test_evidences, test_labels = utils.read_averitec_dataset(test_dataset_path)

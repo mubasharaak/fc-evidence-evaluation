@@ -104,6 +104,10 @@ def read_fever_dataset(file_path: str, wiki_db):
         return read_fever_base(file_path, wiki_db)
 
 
+def read_fever_dataset_reannotation(file_path: str):
+    return read_fever_shared(file_path)
+
+
 def read_vitaminc_dataset(file_path: str):
     claims = []
     evidences = []
