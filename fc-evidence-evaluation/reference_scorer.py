@@ -77,7 +77,6 @@ def _continue_training(model, training_args, train_dataset, dev_dataset, test_da
         eval_dataset=dev_dataset,  # evaluation dataset
         compute_metrics=_compute_metrics,
     )
-
     trainer.train(resume_from_checkpoint=True)
     trainer.save_model(output_path)
 
@@ -140,6 +139,7 @@ def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
     dev_dataset = _prepare_dataset(dev_dataset_path, tokenizer=tokenizer)
 
     if continue_train:
+        print("Continuing training for model saved at {}".format(_model_path))
         results = _continue_training(model=model, training_args=training_args, train_dataset=train_dataset,
                                      dev_dataset=dev_dataset, test_dataset=test_dataset, output_path=output_path)
     else:
