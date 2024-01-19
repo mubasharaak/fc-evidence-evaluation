@@ -23,7 +23,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--test_data_file',
-    default="fever_test_gpt_score_zero.jsonl",
+    default="vitaminc_test.jsonl",
     help='Path to test data for evaluating fine-tuned reference scorer'
 )
 parser.add_argument(
