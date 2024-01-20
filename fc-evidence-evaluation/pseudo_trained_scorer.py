@@ -119,17 +119,22 @@ def continue_training(model, training_args, train_dataset, dev_dataset, test_dat
 
 
 def prepare_dataset(claims, evidence, labels, tokenizer):
+    print("claims: {}".format(claims[:1]))
+    print("evidence: {}".format(evidence[:1]))
+    print("labels: {}".format(labels[:1]))
+
     data_tokenized = tokenizer(evidence, claims,
                                max_length=_MAX_LENGTH,
                                return_token_type_ids=True, truncation=True,
                                padding=True)
+    print("data_tokenized: {}".format(data_tokenized))
     return AveritecDataset(data_tokenized, labels)
 
 
 def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_path: str, dev_dataset_path: str,
                    test_dataset_path: str, output_path: str, results_filename: str, samples_filenames: str,
                    train_model: bool, train_bs: int, test_bs: int, epoch: int):
-    tokenizer = AutoTokenizer.from_pretrained(_PATH_TOKENIZER)
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
     model = AutoModelForSequenceClassification.from_pretrained(model_path, torch_dtype="auto")
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     model.to(device)
@@ -138,40 +143,40 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
         print("Model will be trained!")
         model.train()
 
+    training_args = TrainingArguments(
+        output_dir=output_path,
+        num_train_epochs=epoch,
+        per_device_train_batch_size=train_bs,
+        per_device_eval_batch_size=test_bs,
+        warmup_steps=50,
+        weight_decay=0.01,
+        gradient_accumulation_steps=2,
+        evaluation_strategy="steps",
+        eval_steps=25,
+        save_steps=25,
+        metric_for_best_model="eval_f1_micro",
+        save_total_limit=1,
+        load_best_model_at_end=True,
+        learning_rate=1e-06,
+        fp16=True,  # mixed precision training
+    )
     # training_args = TrainingArguments(
     #     output_dir=output_path,  # output directory
-    #     num_train_epochs=epoch,  # total number of training epochs
-    #     per_device_train_batch_size=train_bs,  # batch size per device during training
-    #     per_device_eval_batch_size=test_bs,  # batch size for evaluation
-    #     warmup_steps=50,  # number of warmup steps for learning rate scheduler
+    #     num_train_epochs=4,  # total number of training epochs
+    #     learning_rate=4e-04,
+    #     per_device_train_batch_size=4,  # batch size per device during training
+    #     gradient_accumulation_steps=2,  # doubles the effective batch_size to 32, while decreasing memory requirements
+    #     per_device_eval_batch_size=64,  # batch size for evaluation
+    #     warmup_ratio=0.06,  # number of warmup steps for learning rate scheduler
     #     weight_decay=0.01,  # strength of weight decay
-    #     gradient_accumulation_steps=2,
+    #     # fp16=True,  # mixed precision training
     #     evaluation_strategy="steps",
-    #     eval_steps=25,
-    #     save_steps=25,
-    #     metric_for_best_model="eval_f1_micro",
-    #     save_total_limit=1,
-    #     load_best_model_at_end=True,
-    #     learning_rate=1e-06,
-    #     fp16=False,  # mixed precision training
+    #     eval_steps = 25,
+    #     save_steps = 25,
+    #     metric_for_best_model = "eval_f1_micro",
+    #     save_total_limit = 1,
+    #     load_best_model_at_end = True,
     # )
-    training_args = TrainingArguments(
-        output_dir=output_path,  # output directory
-        num_train_epochs=4,  # total number of training epochs
-        learning_rate=4e-04,
-        per_device_train_batch_size=4,  # batch size per device during training
-        gradient_accumulation_steps=2,  # doubles the effective batch_size to 32, while decreasing memory requirements
-        per_device_eval_batch_size=64,  # batch size for evaluation
-        warmup_ratio=0.06,  # number of warmup steps for learning rate scheduler
-        weight_decay=0.01,  # strength of weight decay
-        # fp16=True,  # mixed precision training
-        evaluation_strategy="steps",
-        eval_steps = 25,
-        save_steps = 25,
-        metric_for_best_model = "eval_f1_micro",
-        save_total_limit = 1,
-        load_best_model_at_end = True,
-    )
 
     if dataset == properties.Dataset.FEVER:
         wiki_db = pymysql.connect(host="localhost", port=3306, user="root", password=_FEVER_DB_PW, db="fever").cursor()

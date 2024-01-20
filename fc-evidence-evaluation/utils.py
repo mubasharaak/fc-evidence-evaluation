@@ -117,7 +117,14 @@ def read_vitaminc_dataset(file_path: str):
             line_loaded = json.loads(line)
             claims.append(line_loaded['claim'])
             evidences.append(line_loaded['evidence'])
-            labels.append(properties.LABEL_DICT[properties.Label(line_loaded["label"].lower())])
+            label_mapped = properties.LABEL_DICT[properties.Label(line_loaded["label"].lower())]
+            print("label initial: {}".format(line_loaded["label"]))
+            print("label mapped: {}".format(label_mapped))
+            labels.append(label_mapped)
+
+    print("claims: {}".format(claims[:1]))
+    print("evidence: {}".format(evidences[:1]))
+    print("labels: {}".format(labels[:1]))
 
     return claims, evidences, labels
 

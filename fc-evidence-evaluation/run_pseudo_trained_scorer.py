@@ -7,6 +7,8 @@ import properties
 import pseudo_trained_scorer
 
 # os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+# os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+
 parser = argparse.ArgumentParser(
     description='NLI Scorer arguments'
 )
@@ -53,8 +55,8 @@ parser.add_argument(
 )
 parser.add_argument(
     '--hf_model',
-    default="ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli",
-    # hg_model_hub_name = "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli"
+    default="MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    # default="ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli",
     # hg_model_hub_name = "stanleychu2/roberta-fever"
     help='Dataset that is used for evaluation.'
 )
@@ -65,8 +67,8 @@ parser.add_argument(
 )
 parser.add_argument(
     '--train',
-    default=False,
-    action="store_true",
+    default=True,
+    action="store_false",
     help='If set, fine-tunes scorer with data specified through --training_data_path'
 )
 
