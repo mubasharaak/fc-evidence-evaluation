@@ -6,7 +6,7 @@ import evaluate
 import properties
 import pseudo_trained_scorer
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 parser = argparse.ArgumentParser(
     description='NLI Scorer arguments'
 )
