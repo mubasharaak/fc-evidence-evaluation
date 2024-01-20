@@ -58,7 +58,7 @@ def _load_fever_evidence(evidences: list, wiki_db):
     return evidence_text
 
 
-def read_fever_shared(file_path, label_dict):
+def read_fever_shared(file_path):
     claims = []
     evidences = []
     labels = []
@@ -67,7 +67,7 @@ def read_fever_shared(file_path, label_dict):
             line_loaded = json.loads(line)
             for entry in list(line_loaded[1].values()):
                 claim = entry["claim"]
-                label = label_dict[properties.Label(entry["label"].lower())]
+                label = properties.LABEL_DICT[properties.Label(entry["label"].lower())]
                 for evidence_tuple in entry["evidence"]:
                     if len(evidence_tuple) == 3:
                         evidence = evidence_tuple[2]
@@ -80,7 +80,7 @@ def read_fever_shared(file_path, label_dict):
     return claims, evidences, labels
 
 
-def read_fever_base(file_path, wiki_db, label_dict):
+def read_fever_base(file_path, wiki_db):
     claims = []
     evidences = []
     labels = []
@@ -88,7 +88,7 @@ def read_fever_base(file_path, wiki_db, label_dict):
         for entry in f:
             entry = json.loads(entry)
             claim = entry["claim"]
-            label = label_dict[properties.Label(entry["label"].lower())]
+            label = properties.LABEL_DICT[properties.Label(entry["label"].lower())]
             for evidence in entry["evidence"]:
                 evidences.append(_load_fever_evidence(evidence, wiki_db))
                 labels.append(label)
@@ -97,18 +97,18 @@ def read_fever_base(file_path, wiki_db, label_dict):
     return claims, evidences, labels
 
 
-def read_fever_dataset(file_path: str, wiki_db, label_dict):
+def read_fever_dataset(file_path: str, wiki_db):
     if "shared_" in file_path:
-        return read_fever_shared(file_path, label_dict)
+        return read_fever_shared(file_path)
     else:
-        return read_fever_base(file_path, wiki_db, label_dict)
+        return read_fever_base(file_path, wiki_db)
 
 
-def read_fever_dataset_reannotation(file_path: str, label_dict):
-    return read_fever_shared(file_path, label_dict)
+def read_fever_dataset_reannotation(file_path: str):
+    return read_fever_shared(file_path)
 
 
-def read_vitaminc_dataset(file_path: str, label_dict):
+def read_vitaminc_dataset(file_path: str):
     claims = []
     evidences = []
     labels = []
@@ -117,14 +117,12 @@ def read_vitaminc_dataset(file_path: str, label_dict):
             line_loaded = json.loads(line)
             claims.append(line_loaded['claim'])
             evidences.append(line_loaded['evidence'])
-            labels.append(label_dict[properties.Label(line_loaded["label"].lower())])
-            # print("Initial label: {}".format(line_loaded["label"].lower()))
-            # print("Mapped label: {}".format(label_dict[properties.Label(line_loaded["label"].lower())]))
+            labels.append(properties.LABEL_DICT[properties.Label(line_loaded["label"].lower())])
 
     return claims, evidences, labels
 
 
-def read_hover_dataset(file_path: str, wiki_db, label_dict):
+def read_hover_dataset(file_path: str, wiki_db):
     claims = []
     evidences = []
     labels = []
@@ -133,13 +131,13 @@ def read_hover_dataset(file_path: str, wiki_db, label_dict):
 
     for entry in hover_data:
         claims.append(entry['claim'])
-        labels.append(label_dict[properties.Label(entry['label'].lower())])
+        labels.append(properties.LABEL_DICT[properties.Label(entry['label'].lower())])
         evidences.append(_load_hover_evidence(entry['supporting_facts'], wiki_db))
 
     return claims, evidences, labels
 
 
-def read_averitec_dataset(file_path, label_dict):
+def read_averitec_dataset(file_path):
     # load file
     with open(file_path, "r", encoding="utf-8") as file:
         dataset = json.load(file)
@@ -153,7 +151,7 @@ def read_averitec_dataset(file_path, label_dict):
             continue
 
         claims.append(entry["claim"])
-        labels.append(label_dict[properties.Label(entry["label"].lower())])
+        labels.append(properties.LABEL_DICT[properties.Label(entry["label"].lower())])
 
         qa_pair = ""
         for qa in entry["questions"]:

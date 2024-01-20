@@ -34,11 +34,6 @@ LABEL_DICT = {
     Label.SUPPORTED: 1,
     Label.NEI: 2,
 }
-LABEL_DICT_deberta_old = {
-    Label.SUPPORTED: 0,
-    Label.NEI: 1,
-    Label.REFUTED: 2,
-}
 
 LABEL_DICT_REVERSE = {
     0: "refuted",

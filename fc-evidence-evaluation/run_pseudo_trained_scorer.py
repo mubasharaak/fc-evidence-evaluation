@@ -86,10 +86,8 @@ _DATASET = properties.Dataset(args.dataset)
 
 _TRAIN = args.train
 if _TRAIN:
-    label_dict = properties.LABEL_DICT
     _MODEL_PATH = args.hf_model
 else:
-    label_dict = properties.LABEL_DICT_deberta_old
     _MODEL_PATH = args.finetuned_model
 
 _BATCH_SIZE = 4
@@ -102,8 +100,7 @@ def main():
                                          train_dataset_path=_TRAIN_DATASET_PATH, dev_dataset_path=_DEV_DATASET_PATH,
                                          test_dataset_path=_TEST_DATASET_PATH, output_path=_OUTPUT_DIR,
                                          results_filename=_RESULTS_FILENAME, samples_filenames=_SAMPLES_FILENAME,
-                                         train_model=_TRAIN, train_bs=_BATCH_SIZE, test_bs=_BATCH_SIZE, epoch=_EPOCHS,
-                                         label_dict=label_dict)
+                                         train_model=_TRAIN, train_bs=_BATCH_SIZE, test_bs=_BATCH_SIZE, epoch=_EPOCHS)
 
 
 if __name__ == '__main__':
