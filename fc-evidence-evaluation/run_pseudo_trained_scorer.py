@@ -90,7 +90,7 @@ if _TRAIN:
 else:
     _MODEL_PATH = args.finetuned_model
 
-_BATCH_SIZE = 4
+_BATCH_SIZE = 2
 _BATCH_SIZE_TEST = 64
 _EPOCHS = 5
 _METRIC = evaluate.load("glue", "mrpc")
