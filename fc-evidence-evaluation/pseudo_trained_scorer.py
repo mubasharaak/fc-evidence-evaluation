@@ -125,7 +125,7 @@ def prepare_dataset(claims, evidence, labels, tokenizer):
 
     data_tokenized = tokenizer(evidence, claims,
                                max_length=_MAX_LENGTH,
-                               return_token_type_ids=True, truncation=True,
+                               truncation=True,
                                padding=True, return_tensors="pt")
 
     print("data_tokenized: {}".format(data_tokenized))
