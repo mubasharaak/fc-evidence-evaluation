@@ -30,15 +30,15 @@ class Label(MultiValueEnum):
 
 
 LABEL_DICT = {
-    Label.REFUTED: 0,
-    Label.SUPPORTED: 1,
-    Label.NEI: 2,
+    Label.SUPPORTED: 0,
+    Label.NEI: 1,
+    Label.REFUTED: 2,
 }
 
 LABEL_DICT_REVERSE = {
-    0: "refuted",
-    1: "supported",
-    2: "not enough info",
+    0: "supported",
+    1: "not enough info",
+    3: "refuted",
 }
 
 

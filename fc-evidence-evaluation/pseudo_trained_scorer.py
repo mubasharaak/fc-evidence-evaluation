@@ -116,7 +116,7 @@ def continue_training(model, training_args, train_dataset, dev_dataset, test_dat
 
 
 def prepare_dataset(claims, evidence, labels, tokenizer):
-    data_tokenized = tokenizer(claims, evidence,
+    data_tokenized = tokenizer(evidence, claims,
                                max_length=_MAX_LENGTH,
                                return_token_type_ids=True, truncation=True,
                                padding=True)
