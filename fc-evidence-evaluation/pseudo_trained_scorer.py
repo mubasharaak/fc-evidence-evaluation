@@ -119,16 +119,16 @@ def continue_training(model, training_args, train_dataset, dev_dataset, test_dat
 
 
 def prepare_dataset(claims, evidence, labels, tokenizer):
-    print("claims: {}".format(claims[:1]))
-    print("evidence: {}".format(evidence[:1]))
-    print("labels: {}".format(labels[:1]))
+    print("claims: {}".format(claims))
+    print("evidence: {}".format(evidence))
+    print("labels: {}".format(labels))
 
     data_tokenized = tokenizer(evidence, claims,
                                max_length=_MAX_LENGTH,
                                return_token_type_ids=True, truncation=True,
                                padding=True, return_tensors="pt")
 
-    # print("data_tokenized: {}".format(np.isnan(data_tokenized).sum()))
+    print("data_tokenized: {}".format(data_tokenized))
     return AveritecDataset(data_tokenized, labels)
 
 
@@ -206,7 +206,7 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
     else:
         raise Exception("Dataset provided does not match available datasets: {}".format(properties.Dataset))
 
-    train_dataset = prepare_dataset(train_claims, train_evidences, train_labels, tokenizer)
+    train_dataset = prepare_dataset(train_claims[:10], train_evidences[:10], train_labels[:10], tokenizer)
     dev_dataset = prepare_dataset(eval_claims[:10], dev_evidences[:10], eval_labels[:10], tokenizer)
     test_dataset = prepare_dataset(test_claims, test_evidences, test_labels, tokenizer)
 
