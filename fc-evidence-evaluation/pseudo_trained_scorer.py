@@ -23,30 +23,10 @@ _WIKI_DB_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/P
 
 _METRIC = evaluate.load("glue", "mrpc")
 _PATH_TOKENIZER = "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli"
-
-_TEST_CLAIM = "The high blood pressure medication hydrochlorothiazide can cause skin cancer"
-_TEST_EVID = "What disease was hyrochlorothiazide associated with in 2017? Lip cancer What is " \
-             "hydrochlorothiazide? This medication is used to treat high blood pressure. How should " \
-             "hydrochlorothiazide be taken? Take this medication by mouth as directed by your doctor, " \
-             "usually once daily in the morning with or without food. If you take this drug too close to " \
-             "bedtime, you may need to wake up to urinate. It is best to take this medication at least 4 " \
-             "hours before your bedtime. Has there been any links to having a higher chance of cancer through " \
-             "the use of  Hydrochlorothiazide? The Medicines and Healthcare products Regulatory Agency (MHRA) " \
-             "has issued a drug safety update: Hydrochlorothiazide: risk of non-melanoma skin cancer, " \
-             "particularly in long-term use. Advise patients taking hydrochlorothiazide-containing products " \
-             "of the cumulative, dose-dependent risk of non-melanoma skin cancer, particularly in long-term " \
-             "use, and the need to regularly check for (and report) any suspicious skin lesions or moles. " \
-             "Counsel patients to limit exposure to sunlight and UV rays and to use adequate sun protection. " \
-             "Study data showing increase risk of skin cancer Two recent pharmaco-epidemiological studies1," \
-             "2 in Danish nationwide data sources (including the Danish Cancer Registry and National " \
-             "Prescription Registry) have shown a cumulative, dose-dependent, association between " \
-             "hydrochlorothiazide and non-melanoma skin cancer. The known photosensitising actions of " \
-             "hydrochlorothiazide could act as possible mechanism for this risk."
-
 _FEVER_DB_PW = open('/scratch/users/k20116188/fc_evidence_evaluation/credentials/fever_db_pw.txt', 'r').read()
 
 
-class AveritecDataset(torch.utils.data.Dataset):
+class PseudoTrainedScorerDataset(torch.utils.data.Dataset):
     def __init__(self, encodings, labels):
         self.encodings = encodings
         self.labels = labels
@@ -84,10 +64,10 @@ def _compute_metrics(eval_preds):
 
 def train(model, training_args, train_dataset, dev_dataset, test_dataset, output_path, do_training=False):
     trainer = Trainer(
-        model=model,  # the instantiated 🤗 Transformers model to be trained
-        args=training_args,  # training arguments, defined above
-        train_dataset=train_dataset,  # training dataset
-        eval_dataset=dev_dataset,  # evaluation dataset
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset,
+        eval_dataset=dev_dataset,
         compute_metrics=_compute_metrics,
     )
 
@@ -102,10 +82,10 @@ def train(model, training_args, train_dataset, dev_dataset, test_dataset, output
 
 def continue_training(model, training_args, train_dataset, dev_dataset, test_dataset, output_path):
     trainer = Trainer(
-        model=model,  # the instantiated 🤗 Transformers model to be trained
-        args=training_args,  # training arguments, defined above
-        train_dataset=train_dataset,  # training dataset
-        eval_dataset=dev_dataset,  # evaluation dataset
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset,
+        eval_dataset=dev_dataset,
         compute_metrics=scorer_utils.compute_metrics,
     )
 
@@ -113,23 +93,28 @@ def continue_training(model, training_args, train_dataset, dev_dataset, test_dat
     trainer.save_model(output_path)
 
     result_dict = trainer.predict(test_dataset)
-    # print(f"result_dict: {result_dict}")
     print(result_dict.metrics)
     return result_dict
 
 
 def prepare_dataset(claims, evidence, labels, tokenizer):
-    print("claims: {}".format(claims))
-    print("evidence: {}".format(evidence))
-    print("labels: {}".format(labels))
-
     data_tokenized = tokenizer(evidence, claims,
                                max_length=_MAX_LENGTH,
                                truncation=True,
                                padding=True, return_tensors="pt")
 
-    print("data_tokenized: {}".format(data_tokenized))
-    return AveritecDataset(data_tokenized, labels)
+    # print("data_tokenized: {}".format(data_tokenized))
+    return PseudoTrainedScorerDataset(data_tokenized, labels)
+
+
+def check_dataset(dataset):
+    print("Check for NaNs..")
+    for i, item in enumerate(dataset):
+        print("process ", i)
+        for k in item:
+            if torch.isnan(item[k]).any():
+                print("NaN in item ", i, " ", k)
+    print("Check completed")
 
 
 def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_path: str, dev_dataset_path: str,
@@ -209,6 +194,10 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
     train_dataset = prepare_dataset(train_claims[:10], train_evidences[:10], train_labels[:10], tokenizer)
     dev_dataset = prepare_dataset(eval_claims[:10], dev_evidences[:10], eval_labels[:10], tokenizer)
     test_dataset = prepare_dataset(test_claims[:10], test_evidences[:10], test_labels[:10], tokenizer)
+
+    check_dataset(train_dataset)
+    check_dataset(test_dataset)
+    check_dataset(dev_dataset)
 
     results = train(model, training_args, train_dataset=train_dataset,
                     dev_dataset=dev_dataset, test_dataset=test_dataset, output_path=output_path,
