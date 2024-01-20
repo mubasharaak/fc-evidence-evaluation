@@ -6,6 +6,8 @@ import evaluate
 import properties
 import pseudo_trained_scorer
 
+os.environ
+
 parser = argparse.ArgumentParser(
     description='NLI Scorer arguments'
 )
