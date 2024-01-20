@@ -65,8 +65,8 @@ parser.add_argument(
 )
 parser.add_argument(
     '--train',
-    default=True,
-    action="store_false",
+    default=False,
+    action="store_true",
     help='If set, fine-tunes scorer with data specified through --training_data_path'
 )
 

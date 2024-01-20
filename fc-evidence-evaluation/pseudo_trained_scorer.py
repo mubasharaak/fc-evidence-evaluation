@@ -22,7 +22,7 @@ _ENTITY_LINKING_PATTERN = re.compile('#.*?;-*[0-9]+,(-*[0-9]+)#')
 _WIKI_DB_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data"
 
 _METRIC = evaluate.load("glue", "mrpc")
-# _PATH_TOKENIZER = "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli"
+_PATH_TOKENIZER = "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli"
 
 _TEST_CLAIM = "The high blood pressure medication hydrochlorothiazide can cause skin cancer"
 _TEST_EVID = "What disease was hyrochlorothiazide associated with in 2017? Lip cancer What is " \
@@ -129,7 +129,7 @@ def prepare_dataset(claims, evidence, labels, tokenizer):
 def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_path: str, dev_dataset_path: str,
                    test_dataset_path: str, output_path: str, results_filename: str, samples_filenames: str,
                    train_model: bool, train_bs: int, test_bs: int, epoch: int):
-    tokenizer = AutoTokenizer.from_pretrained(model_path)
+    tokenizer = AutoTokenizer.from_pretrained(_PATH_TOKENIZER)
     model = AutoModelForSequenceClassification.from_pretrained(model_path, torch_dtype="auto")
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     model.to(device)
