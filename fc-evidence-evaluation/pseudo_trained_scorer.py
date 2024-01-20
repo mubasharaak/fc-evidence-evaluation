@@ -44,7 +44,7 @@ class PseudoTrainedScorerDataset(torch.utils.data.Dataset):
 def _compute_metrics(eval_preds):
     logits, labels = eval_preds
     predictions = np.argmax(logits, axis=-1)
-    print("labels: {}".format(labels))
+    # print("labels: {}".format(labels))
     print("logits: {}".format(logits))
     print("predictions: {}".format(predictions))
 
@@ -145,7 +145,7 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
         load_best_model_at_end=True,
         learning_rate=1e-06,
         fp16=False,  # mixed precision training
-        debug="underflow_overflow",
+        # debug="underflow_overflow",
     )
     # training_args = TrainingArguments(
     #     output_dir=output_path,  # output directory
