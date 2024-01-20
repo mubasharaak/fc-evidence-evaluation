@@ -195,9 +195,9 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
     dev_dataset = prepare_dataset(eval_claims, dev_evidences, eval_labels, tokenizer)
     test_dataset = prepare_dataset(test_claims, test_evidences, test_labels, tokenizer)
 
-    check_dataset(train_dataset)
-    check_dataset(test_dataset)
-    check_dataset(dev_dataset)
+    # check_dataset(train_dataset)
+    # check_dataset(test_dataset)
+    # check_dataset(dev_dataset)
 
     results = train(model, training_args, train_dataset=train_dataset,
                     dev_dataset=dev_dataset, test_dataset=test_dataset, output_path=output_path,
