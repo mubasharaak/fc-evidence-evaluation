@@ -165,6 +165,7 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
         warmup_ratio=0.06,  # number of warmup steps for learning rate scheduler
         weight_decay=0.01,  # strength of weight decay
         fp16=True,  # mixed precision training
+        evaluation_strategy="steps",
         eval_steps = 25,
         save_steps = 25,
         metric_for_best_model = "eval_f1_micro",
