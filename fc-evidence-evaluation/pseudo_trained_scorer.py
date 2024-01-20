@@ -45,8 +45,8 @@ def _compute_metrics(eval_preds):
     logits, labels = eval_preds
     predictions = np.argmax(logits, axis=-1)
     # print("labels: {}".format(labels))
-    print("logits: {}".format(logits))
-    print("predictions: {}".format(predictions))
+    # print("logits: {}".format(logits))
+    # print("predictions: {}".format(predictions))
 
     accuracy = accuracy_score(y_true=labels, y_pred=predictions)
     precision = precision_score(y_true=labels, y_pred=predictions, average='weighted')
