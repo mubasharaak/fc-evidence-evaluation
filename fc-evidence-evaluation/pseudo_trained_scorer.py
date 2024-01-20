@@ -159,7 +159,7 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
         output_dir=output_path,  # output directory
         num_train_epochs=4,  # total number of training epochs
         learning_rate=5e-06,
-        per_device_train_batch_size=16,  # batch size per device during training
+        per_device_train_batch_size=4,  # batch size per device during training
         gradient_accumulation_steps=2,  # doubles the effective batch_size to 32, while decreasing memory requirements
         per_device_eval_batch_size=64,  # batch size for evaluation
         warmup_ratio=0.06,  # number of warmup steps for learning rate scheduler
