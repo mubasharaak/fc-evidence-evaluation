@@ -53,8 +53,8 @@ parser.add_argument(
 )
 parser.add_argument(
     '--hf_model',
-    default="MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
-    # hg_model_hub_name = "ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli"
+    default="ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli",
+    # hg_model_hub_name = "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli"
     # hg_model_hub_name = "stanleychu2/roberta-fever"
     help='Dataset that is used for evaluation.'
 )
