@@ -127,7 +127,8 @@ def prepare_dataset(claims, evidence, labels, tokenizer):
                                max_length=_MAX_LENGTH,
                                return_token_type_ids=True, truncation=True,
                                padding=True)
-    print("data_tokenized: {}".format(data_tokenized))
+
+    print("data_tokenized: {}".format(np.isnan(data_tokenized).sum()))
     return AveritecDataset(data_tokenized, labels)
 
 
@@ -158,7 +159,7 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
         save_total_limit=1,
         load_best_model_at_end=True,
         learning_rate=1e-06,
-        fp16=True,  # mixed precision training
+        fp16=False,  # mixed precision training
     )
     # training_args = TrainingArguments(
     #     output_dir=output_path,  # output directory
