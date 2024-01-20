@@ -38,7 +38,7 @@ LABEL_DICT = {
 LABEL_DICT_REVERSE = {
     0: "supported",
     1: "not enough info",
-    3: "refuted",
+    2: "refuted",
 }
 
 
