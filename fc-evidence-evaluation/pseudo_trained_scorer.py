@@ -191,9 +191,9 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
     else:
         raise Exception("Dataset provided does not match available datasets: {}".format(properties.Dataset))
 
-    train_dataset = prepare_dataset(train_claims[:10], train_evidences[:10], train_labels[:10], tokenizer)
-    dev_dataset = prepare_dataset(eval_claims[:10], dev_evidences[:10], eval_labels[:10], tokenizer)
-    test_dataset = prepare_dataset(test_claims[:10], test_evidences[:10], test_labels[:10], tokenizer)
+    train_dataset = prepare_dataset(train_claims, train_evidences, train_labels, tokenizer)
+    dev_dataset = prepare_dataset(eval_claims, dev_evidences, eval_labels, tokenizer)
+    test_dataset = prepare_dataset(test_claims, test_evidences, test_labels, tokenizer)
 
     check_dataset(train_dataset)
     check_dataset(test_dataset)
