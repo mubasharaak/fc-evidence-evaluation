@@ -92,7 +92,7 @@ else:
 
 _BATCH_SIZE = 4
 _BATCH_SIZE_TEST = 64
-_EPOCHS = 3
+_EPOCHS = 5
 _METRIC = evaluate.load("glue", "mrpc")
 
 
