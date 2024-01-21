@@ -73,7 +73,7 @@ def train(model, training_args, train_dataset, dev_dataset, test_dataset, output
 
     if do_training:
         # trainer.train()
-        trainer.train(resume_from_checkpoint=True)
+        trainer.train(resume_from_checkpoint=True)  # todo remove later
         trainer.save_model(output_path)
 
     result_dict = trainer.predict(test_dataset)
@@ -145,7 +145,7 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
         save_total_limit=1,
         load_best_model_at_end=True,
         learning_rate=1e-06,
-        fp16=False,  # mixed precision training
+        fp16=True,  # mixed precision training
         # debug="underflow_overflow",
     )
     # training_args = TrainingArguments(
