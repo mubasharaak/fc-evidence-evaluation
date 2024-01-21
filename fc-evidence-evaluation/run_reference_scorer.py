@@ -48,7 +48,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--finetuned_model',
-    default="/scratch/users/k20116188/fc_evidence_evaluation/results/reference_scorer/checkpoint-13000",
+    default="/scratch/users/k20116188/fc_evidence_evaluation/results/reference_scorer/checkpoint-57000",
     help='Path to fine-tuned model.'
 )
 parser.add_argument(
@@ -59,8 +59,8 @@ parser.add_argument(
 )
 parser.add_argument(
     '--continue_train',
-    default=False,
-    action="store_true",
+    default=True,
+    action="store_false",
     help='If set, fine-tunes scorer with data specified through --training_data_path'
 )
 
