@@ -52,7 +52,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--hf_model',
-    default="/scratch/users/k20116188/fc_evidence_evaluation/pseudo_trained_scorer_training_data/checkpoint-7500",
+    default="/scratch/users/k20116188/fc_evidence_evaluation/pseudo_trained_scorer_training_data/checkpoint-7500/",
     # default="MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
     # default="ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli",
     # hg_model_hub_name = "stanleychu2/roberta-fever"
