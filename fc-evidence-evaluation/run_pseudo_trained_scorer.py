@@ -87,7 +87,7 @@ _DATASET = properties.Dataset(args.dataset)
 
 _TRAIN = args.train
 if _TRAIN:
-    _MODEL_PATH = args.x
+    _MODEL_PATH = args.hf_model
 else:
     _MODEL_PATH = args.finetuned_model
 
