@@ -120,7 +120,7 @@ def check_dataset(dataset):
 def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_path: str, dev_dataset_path: str,
                    test_dataset_path: str, output_path: str, results_filename: str, samples_filenames: str,
                    train_model: bool, train_bs: int, test_bs: int, epoch: int):
-    tokenizer = AutoTokenizer.from_pretrained(model_path)
+    tokenizer = AutoTokenizer.from_pretrained(_PATH_TOKENIZER)
     model = AutoModelForSequenceClassification.from_pretrained(model_path, torch_dtype="auto")
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     model.to(device)
@@ -138,8 +138,8 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
         weight_decay=0.01,
         gradient_accumulation_steps=2,
         evaluation_strategy="steps",
-        eval_steps=2500,
-        save_steps=2500,
+        eval_steps=10000,
+        save_steps=10000,
         metric_for_best_model="eval_f1_micro",
         save_total_limit=1,
         load_best_model_at_end=True,

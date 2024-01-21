@@ -52,7 +52,8 @@ parser.add_argument(
 )
 parser.add_argument(
     '--hf_model',
-    default="MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    default="/scratch/users/k20116188/fc_evidence_evaluation/pseudo_trained_scorer_training_data/checkpoint-7500",
+    # default="MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
     # default="ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli",
     # hg_model_hub_name = "stanleychu2/roberta-fever"
     help='Dataset that is used for evaluation.'
@@ -86,13 +87,13 @@ _DATASET = properties.Dataset(args.dataset)
 
 _TRAIN = args.train
 if _TRAIN:
-    _MODEL_PATH = args.hf_model
+    _MODEL_PATH = args.x
 else:
     _MODEL_PATH = args.finetuned_model
 
 _BATCH_SIZE = 2
 _BATCH_SIZE_TEST = 64
-_EPOCHS = 5
+_EPOCHS = 3
 _METRIC = evaluate.load("glue", "mrpc")
 
 
