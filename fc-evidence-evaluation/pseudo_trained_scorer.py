@@ -72,7 +72,8 @@ def train(model, training_args, train_dataset, dev_dataset, test_dataset, output
     )
 
     if do_training:
-        trainer.train()
+        # trainer.train()
+        trainer.train(resume_from_checkpoint=True)
         trainer.save_model(output_path)
 
     result_dict = trainer.predict(test_dataset)
