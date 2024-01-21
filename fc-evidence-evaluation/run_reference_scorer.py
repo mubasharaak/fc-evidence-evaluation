@@ -85,7 +85,7 @@ else:
     _MODEL_PATH = args.finetuned_model
 
 _BATCH_SIZE = 4
-_EPOCHS = 3
+_EPOCHS = 5
 
 
 def main():
