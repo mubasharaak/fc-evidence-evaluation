@@ -23,7 +23,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--test_data_file',
-    default="fever_test_based.jsonl",
+    default="vitaminc_test.jsonl",
     help='Path to test data for evaluating fine-tuned reference scorer'
 )
 parser.add_argument(
@@ -48,7 +48,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--finetuned_model',
-    default="/scratch/users/k20116188/fc_evidence_evaluation/results/reference_scorer/checkpoint-57000",
+    default="/scratch/users/k20116188/fc_evidence_evaluation/results/reference_scorer/checkpoint-58000",
     help='Path to fine-tuned model.'
 )
 parser.add_argument(
