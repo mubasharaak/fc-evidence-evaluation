@@ -131,26 +131,25 @@ information and no additional sources or background knowledge.
 -----
 Examples: 
 Claim: All government schools in India are being privatised. 
-Evidence: What did India's Union Education 
-Minister say about the privatisation of governments schools? New Delhi: There is no plan to privatise primary 
+Evidence: What did India's Union Education Minister say about the privatisation of governments schools? New Delhi: There is no plan to privatise primary 
 education, the Centre told the Parliament today. This statement was given by Minister of Human Resource Development, 
 Ra mesh Pokhriyal Nishank in the Lok Sabha today in response to Kaushalendra Kumar question on whether it is fact 
 that NITI Aayog has suggested that Primary Education may be given to the private sector to reduce the burden of 
 salary to teachers and other infrastructure. 
-Answer: There is no plan by the Indian government to privatize primary education as said by the Minister of Human Resource Development. The answer is refute. refute.
+Answer: Explanation: There is no plan by the Indian government to privatize primary education as said by the Minister of Human Resource Development. The answer is refute. Label: refute.
 
 Claim: South Africans that drink are amongst the top drinkers in the world. 
 Evidence: What is the global average 
 alcohol consumption in litres of pure alcohol per day? The global averages as of 2016 is 15.1 litres per day. What is 
 the daily average of pure alcohol consumption per day in South africa? 29.9 litres. Where does South Africa rank as a 
 nation in terms of Daily pure Alcohol consumption? 6th out of 189 countries. 
-Answer: The claim stays "amongst the top drinkers" not the top first, so since they are 6th, this could be plausible. The answer is support. support.
+Answer: Explanation: The claim stays "amongst the top drinkers" not the top first, so since they are 6th, this could be plausible. The answer is support. Label: support.
 
 Claim: There is a global average for the number of judges and magistrates to number of people in Kenya. 
 Evidence: How 
 many magistrates were their in Kenya in 2020? No answer could be found. Is there a global average for the number of 
 judges compared to population? No answer could be found. What is the population of Kenya? 47.6 million 
-Answer: The evidence does not support or refute the claim as there is no evidence to look at in reference to the claim. The answer is not enough information. not enough information
+Answer: Explanation: The evidence does not support or refute the claim as there is no evidence to look at in reference to the claim. The answer is not enough information. Label: not enough information
 -----
 The answer should be a json with two keys: explanation, label.
 
