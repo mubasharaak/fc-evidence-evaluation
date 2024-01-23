@@ -66,20 +66,27 @@ _WIKI_DB_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/P
 _FEVER_DB_PW = open('/scratch/users/k20116188/fc_evidence_evaluation/credentials/fever_db_pw.txt', 'r').read()
 
 
+def _prepare_dataset_samples(claims, evidences, labels):
+    samples = []
+    for claim, evid, lable in zip(claims, evidences, labels):
+        samples.append(properties.AveritecEntry(claim=claim, evidence=evid, label=lable))
+    return samples
+
+
 def _load_dataset(dataset, test_dataset_path):
     if dataset == properties.Dataset.FEVER:
         wiki_db = pymysql.connect(host="localhost", port=3306, user="root", password=_FEVER_DB_PW, db="fever").cursor()
-        test_claims, test_evidences, test_labels = utils.read_fever_dataset(test_dataset_path, wiki_db)
+        return _prepare_dataset_samples(utils.read_fever_dataset(test_dataset_path, wiki_db))
     elif dataset == properties.Dataset.FEVER_REANNOTATION:
-        test_claims, test_evidences, test_labels = utils.read_fever_dataset_reannotation(test_dataset_path)
+        return _prepare_dataset_samples(utils.read_fever_dataset_reannotation(test_dataset_path))
     elif dataset in [properties.Dataset.AVERITEC, properties.Dataset.AVERITEC_AFTER_P4]:
-        test_claims, test_evidences, test_labels = utils.read_averitec_dataset(test_dataset_path)
+        return _prepare_dataset_samples(utils.read_averitec_dataset(test_dataset_path))
     elif dataset == properties.Dataset.HOVER:
         wiki_db = utils.connect_to_db(os.path.join(_WIKI_DB_PATH, "hover", 'wiki_wo_links.db'))
-        test_claims, test_evidences, test_labels = utils.read_hover_dataset(test_dataset_path, wiki_db)
+        return _prepare_dataset_samples(utils.read_hover_dataset(test_dataset_path, wiki_db))
     elif dataset == properties.Dataset.VITAMINC:
         # also used for train.jsonl and dev.jsonl => all
-        test_claims, test_evidences, test_labels = utils.read_vitaminc_dataset(test_dataset_path)
+        return _prepare_dataset_samples(utils.read_vitaminc_dataset(test_dataset_path))
     else:
         raise Exception("Dataset provided does not match available datasets: {}".format(properties.Dataset))
 
@@ -89,17 +96,8 @@ def main():
         # Given predictions_output_path load predictions for evaluation
         predictions = utils.load_jsonl_file(_PREDICTIONS_OUTPUT_PATH, dataclass=properties.OpenAIResponse)
     else:
-        input_data = _load_dataset(_DATASET, _TEST_SET_PATH)
-        # todo adjust to include other datasets as well
+        input_data = random.sample(_load_dataset(_DATASET, _TEST_SET_PATH), _RANDOM_SUBSET)
         # predict using OpenAI API and store results
-        if properties.Dataset.FEVER.value in _TEST_SET_PATH.lower():
-            input_data = utils.load_fever(_TEST_SET_PATH)
-        elif any(entry in _TEST_SET_PATH.lower() for entry in properties.AVERITEC_INIT_FILES):
-            input_data = utils.load_averitec_base(_TEST_SET_PATH)
-        else:
-            # Averitec with metadata
-            input_data = utils.load_jsonl_file(_TEST_SET_PATH, properties.AveritecEntry)
-        input_data = random.sample(input_data, _RANDOM_SUBSET)
         predictions = prompt_scorer_openai.prompt_openai_model(input_data, _PROMPT_TYPE, _CLIENT)
         utils.save_jsonl_file(predictions, _PREDICTIONS_OUTPUT_PATH)
 
