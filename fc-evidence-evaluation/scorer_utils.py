@@ -74,11 +74,18 @@ def compute_metrics(eval_preds):
     return {"f1_micro": f1_micro, "f1_macro": f1_macro}
 
 
-def map_label(response: str) -> int:
+def map_label(response: str, is_two_classes: bool) -> int:
     label_str = json.loads(response)["label"].lower()
     # label_str = response.split(".")[-1].lower() if response.split(".")[-1] != "" else response.lower()
     try:
-        return properties.LABEL_DICT[properties.Label(label_str)]
+        if is_two_classes:
+            label_pred = properties.LABEL_DICT[properties.Label(label_str)]
+            if label_pred == 1:
+                # only two-class dataset = support and not support, i.e. refute
+                return 2
+            return label_pred
+        else:
+            return properties.LABEL_DICT[properties.Label(label_str)]
     except Exception:
         print(f"unknown label_str: {label_str}")
         return -1

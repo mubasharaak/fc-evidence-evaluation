@@ -144,13 +144,13 @@ education, the Centre told the Parliament today. This statement was given by Min
 Ra mesh Pokhriyal Nishank in the Lok Sabha today in response to Kaushalendra Kumar question on whether it is fact 
 that NITI Aayog has suggested that Primary Education may be given to the private sector to reduce the burden of 
 salary to teachers and other infrastructure. 
-Answer: Explanation: There is no plan by the Indian government to privatize primary education as said by the Minister of Human Resource Development. The answer is refute. Label: refute.
+Answer: Explanation: There is no plan by the Indian government to privatize primary education as said by the Minister of Human Resource Development. The claim is clearly refuted and therefore the answer is refute. Label: refute.
 
 Claim: There is a global average for the number of judges and magistrates to number of people in Kenya. 
 Evidence: How 
 many magistrates were their in Kenya in 2020? No answer could be found. Is there a global average for the number of 
 judges compared to population? No answer could be found. What is the population of Kenya? 47.6 million 
-Answer: Explanation: The evidence does not support or refute the claim as there is no evidence to look at in reference to the claim. The answer is not enough information. Label: not enough information
+Answer: Explanation: The evidence does neither support nor refute the claim that a global average for the number of judges and magistrates to number of people exists in Kenya. The answer is not enough information. Label: not enough information
 
 Claim: An IndyCar race driver drove a Formula 1 car designed by Peter McCool during the 2007 Formula One season.
 Evidence: The Super Aguri SA07 was Super Aguri F1's Formula One car for the 2007 Formula One season. It was designed by Peter McCool and was driven by Takuma Sato and Anthony Davidson. Takuma Sato (佐藤 琢磨, Satō Takuma, born 28 January 1977), nicknamed "Taku", is a Japanese professional racing driver. He competes part-time in the IndyCar Series, driving the No. 11 Honda for Chip Ganassi Racing.
@@ -158,7 +158,7 @@ Answer: Explanation: Takuma Sato is an IndyCar race driver who drove the Super A
 
 Claim: Rhythm Nation was incapable of being performed on Britain's Got Talent.
 Evidence: It has been covered by Pink , Crystal Kay , and Girls ' Generation and has also been performed on Glee , The X-Factor , and Britain 's Got Talent .
-Answer: Explanation: The Evidence states that the song Rhythm Nation was performed on Britain's Got Talent. The answer is refute. Label: refute. 
+Answer: Explanation: The Evidence states that the song Rhythm Nation was performed on Britain's Got Talent and therefore clearly refutes the claim that it was incapable to be performed. The answer is refute. Label: refute. 
 
 Claim: Alloy media platforms have a monthly reach of less than 100 million unique visitors .
 Evidence: According to comScore , Alloy media platforms reach over 95 million unique visitors each month , including over half of the age 12-34 internet users .

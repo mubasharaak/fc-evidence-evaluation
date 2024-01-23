@@ -167,6 +167,31 @@ def read_averitec_dataset(file_path):
     return claims, qa_pairs, labels
 
 
+def read_averitec_before_after_p4(file_path):
+    claims = []
+    qa_pairs = []
+    labels = []
+    # load file
+    with open(file_path) as f:
+        for line in f:
+            line_loaded = json.loads(line)
+            if line_loaded["label"].lower == "conflicting evidence/cherrypicking":
+                # scorer for 3-class problems
+                continue
+            claims.append(line_loaded['claim'])
+            label_mapped = properties.LABEL_DICT[properties.Label(line_loaded["label"].lower())]
+            labels.append(label_mapped)
+            qa_pair = ""
+            for qa in line_loaded["evidence"]:
+                qa_pair += (qa["question"] + " ")
+                for a in qa["answers"]:
+                    qa_pair += (a["answer"] + " ")
+                    if a["answer_type"] == "Boolean":
+                        qa_pair += ("." + a["boolean_explanation"] + ". ")
+            qa_pairs.append(qa_pair)
+    return claims, qa_pairs, labels
+
+
 def to_dict(obj):
     return json.loads(json.dumps(obj, default=lambda o: o.__dict__))
 

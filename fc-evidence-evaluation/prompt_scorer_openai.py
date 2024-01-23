@@ -94,7 +94,8 @@ def calculate_atomic_score(response: dict):
         return 0
 
 
-def evaluate_openai_output(output_all, prompt_type: properties.PromptTypes, ignore_labels=_IGNORE_LABELS_DEFAULT):
+def evaluate_openai_output(output_all, prompt_type: properties.PromptTypes, ignore_labels=_IGNORE_LABELS_DEFAULT,
+                           is_two_classes=False):
     output = [response for response in output_all if response.gold.lower() not in ignore_labels]
     if prompt_type == properties.PromptTypes.ATOMIC_FACTS:
         # calculate output score
@@ -105,7 +106,7 @@ def evaluate_openai_output(output_all, prompt_type: properties.PromptTypes, igno
     gold_labels = []
     for response in output:
         try:
-            pred_label = scorer_utils.map_label(response.response)
+            pred_label = scorer_utils.map_label(response.response, is_two_classes)
             if response.gold.lower() not in ignore_labels and pred_label in range(3):
                 pred_labels.append(pred_label)
                 gold_labels.append(properties.LABEL_DICT[properties.Label(response.gold.lower())])

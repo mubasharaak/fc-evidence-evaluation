@@ -15,17 +15,17 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument(
     '--test_set_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/pseudo_scorer_training_data/hover_test.jsonl",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/averitec_w_metadata_after_p4.jsonl",
     help='Path to testdata.'
 )
 parser.add_argument(
     '--predictions_output_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_pseudo/prediction_hover_test.jsonl",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_pseudo/prediction_averitec_w_metadata_after_p4.jsonl",
     help='Path to output file for predictions.'
 )
 parser.add_argument(
     '--scores_output_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_pseudo/results_hover_test.json",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_pseudo/results_averitec_w_metadata_after_p4.json",
     help='Path to output file for scores.'
 )
 parser.add_argument(
@@ -36,7 +36,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--dataset',
-    default="vitaminc",  # set to vitaminc if jsonl file with claim, evidence, label entries in dicts.
+    default="averitec_after_p4",  # set to vitaminc if jsonl file with claim, evidence, label entries in dicts.
     choices=list(properties.Dataset),
     help='Dataset that is used for evaluation.'
 )
@@ -53,6 +53,7 @@ _SCORES_OUTPUT_PATH = args.scores_output_path
 _ONLY_EVALUATE = args.only_evaluate_no_prediction
 _PROMPT_TYPE = properties.PromptTypes(args.prompt_type)
 _DATASET = properties.Dataset(args.dataset)
+_IS_HOVER_DATASET = True if "hover" in _TEST_SET_PATH else False
 
 _KEY = open('/Users/user/Desktop/openai_key.txt', 'r').read()
 _CLIENT = openai.OpenAI(
@@ -79,8 +80,10 @@ def _load_dataset(dataset, test_dataset_path):
         claims, evidences, labels = utils.read_fever_dataset(test_dataset_path, wiki_db)
     elif dataset == properties.Dataset.FEVER_REANNOTATION:
         claims, evidences, labels = utils.read_fever_dataset_reannotation(test_dataset_path)
-    elif dataset in [properties.Dataset.AVERITEC, properties.Dataset.AVERITEC_AFTER_P4]:
+    elif dataset == properties.Dataset.AVERITEC:
         claims, evidences, labels = utils.read_averitec_dataset(test_dataset_path)
+    elif dataset == properties.Dataset.AVERITEC_AFTER_P4:
+        claims, evidences, labels = utils.read_averitec_before_after_p4(test_dataset_path)
     elif dataset == properties.Dataset.HOVER:
         wiki_db = utils.connect_to_db(os.path.join(_WIKI_DB_PATH, "hover", 'wiki_wo_links.db'))
         claims, evidences, labels = utils.read_hover_dataset(test_dataset_path, wiki_db)
@@ -105,9 +108,8 @@ def main():
 
     # TODO continue by refactoring evaluation, e.g. output of "atomic" prompt
     scores = prompt_scorer_openai.evaluate_openai_output(predictions, _PROMPT_TYPE,
-                                                         ignore_labels=["conflicting evidence/cherrypicking",
-                                                                        "not enough information", "nei",
-                                                                        "not enough info"])
+                                                         ignore_labels=["conflicting evidence/cherrypicking"],
+                                                         is_two_classes=_IS_HOVER_DATASET)
     with open(_SCORES_OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(scores, f, indent=4)
 
