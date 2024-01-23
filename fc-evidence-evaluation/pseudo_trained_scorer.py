@@ -165,6 +165,8 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
     #     save_total_limit = 1,
     #     load_best_model_at_end = True,
     # )
+    train_claims, train_evidences, train_labels = utils.read_vitaminc_dataset(train_dataset_path)
+    eval_claims, dev_evidences, eval_labels = utils.read_vitaminc_dataset(dev_dataset_path)
 
     if dataset == properties.Dataset.FEVER:
         wiki_db = pymysql.connect(host="localhost", port=3306, user="root", password=_FEVER_DB_PW, db="fever").cursor()
@@ -172,9 +174,7 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
         test_claims, test_evidences, test_labels = utils.read_fever_dataset(test_dataset_path, wiki_db)
         eval_claims, dev_evidences, eval_labels = utils.read_fever_dataset(dev_dataset_path, wiki_db)
     elif dataset == properties.Dataset.FEVER_REANNOTATION:
-        train_claims, train_evidences, train_labels = utils.read_fever_dataset_reannotation(train_dataset_path)
         test_claims, test_evidences, test_labels = utils.read_fever_dataset_reannotation(test_dataset_path)
-        eval_claims, dev_evidences, eval_labels = utils.read_fever_dataset_reannotation(dev_dataset_path)
     elif dataset in [properties.Dataset.AVERITEC, properties.Dataset.AVERITEC_AFTER_P4]:
         train_claims, train_evidences, train_labels = utils.read_averitec_dataset(train_dataset_path)
         test_claims, test_evidences, test_labels = utils.read_averitec_dataset(test_dataset_path)
@@ -186,9 +186,7 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
         eval_claims, dev_evidences, eval_labels = utils.read_hover_dataset(dev_dataset_path, wiki_db)
     elif dataset == properties.Dataset.VITAMINC:
         # also used for train.jsonl and dev.jsonl => all
-        train_claims, train_evidences, train_labels = utils.read_vitaminc_dataset(train_dataset_path)
         test_claims, test_evidences, test_labels = utils.read_vitaminc_dataset(test_dataset_path)
-        eval_claims, dev_evidences, eval_labels = utils.read_vitaminc_dataset(dev_dataset_path)
     else:
         raise Exception("Dataset provided does not match available datasets: {}".format(properties.Dataset))
 
