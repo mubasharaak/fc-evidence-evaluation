@@ -1,7 +1,10 @@
 import argparse
 import json
+import os
+import random
 
 import openai
+import pymysql
 
 import prompt_scorer_openai
 import properties
@@ -32,8 +35,14 @@ parser.add_argument(
     help='Given predictions_output_path load predictions for evaluation.'
 )
 parser.add_argument(
+    '--dataset',
+    default="vitaminc",  # set to vitaminc if jsonl file with claim, evidence, label entries in dicts.
+    choices=list(properties.Dataset),
+    help='Dataset that is used for evaluation.'
+)
+parser.add_argument(
     '--prompt_type',
-    default="atomic",
+    default="cot",
     choices=[prompt.value for prompt in properties.PromptTypes],
     type=str.lower
 )
@@ -43,12 +52,36 @@ _PREDICTIONS_OUTPUT_PATH = args.predictions_output_path
 _SCORES_OUTPUT_PATH = args.scores_output_path
 _ONLY_EVALUATE = args.only_evaluate_no_prediction
 _PROMPT_TYPE = properties.PromptTypes(args.prompt_type)
+_DATASET = properties.Dataset(args.dataset)
 
-_KEY = open('/Users/user/Desktop/openai_key.txt', 'r').read()
+_KEY = open('/scratch/users/k20116188/fc_evidence_evaluation/credentials/openai_key.txt', 'r').read()
 _CLIENT = openai.OpenAI(
     api_key=_KEY,
     timeout=10,
 )
+_SEED = 10
+_RANDOM_SUBSET = 100
+random.seed(_SEED)
+_WIKI_DB_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data"
+_FEVER_DB_PW = open('/scratch/users/k20116188/fc_evidence_evaluation/credentials/fever_db_pw.txt', 'r').read()
+
+
+def _load_dataset(dataset, test_dataset_path):
+    if dataset == properties.Dataset.FEVER:
+        wiki_db = pymysql.connect(host="localhost", port=3306, user="root", password=_FEVER_DB_PW, db="fever").cursor()
+        test_claims, test_evidences, test_labels = utils.read_fever_dataset(test_dataset_path, wiki_db)
+    elif dataset == properties.Dataset.FEVER_REANNOTATION:
+        test_claims, test_evidences, test_labels = utils.read_fever_dataset_reannotation(test_dataset_path)
+    elif dataset in [properties.Dataset.AVERITEC, properties.Dataset.AVERITEC_AFTER_P4]:
+        test_claims, test_evidences, test_labels = utils.read_averitec_dataset(test_dataset_path)
+    elif dataset == properties.Dataset.HOVER:
+        wiki_db = utils.connect_to_db(os.path.join(_WIKI_DB_PATH, "hover", 'wiki_wo_links.db'))
+        test_claims, test_evidences, test_labels = utils.read_hover_dataset(test_dataset_path, wiki_db)
+    elif dataset == properties.Dataset.VITAMINC:
+        # also used for train.jsonl and dev.jsonl => all
+        test_claims, test_evidences, test_labels = utils.read_vitaminc_dataset(test_dataset_path)
+    else:
+        raise Exception("Dataset provided does not match available datasets: {}".format(properties.Dataset))
 
 
 def main():
@@ -56,6 +89,8 @@ def main():
         # Given predictions_output_path load predictions for evaluation
         predictions = utils.load_jsonl_file(_PREDICTIONS_OUTPUT_PATH, dataclass=properties.OpenAIResponse)
     else:
+        input_data = _load_dataset(_DATASET, _TEST_SET_PATH)
+        # todo adjust to include other datasets as well
         # predict using OpenAI API and store results
         if properties.Dataset.FEVER.value in _TEST_SET_PATH.lower():
             input_data = utils.load_fever(_TEST_SET_PATH)
@@ -64,8 +99,8 @@ def main():
         else:
             # Averitec with metadata
             input_data = utils.load_jsonl_file(_TEST_SET_PATH, properties.AveritecEntry)
-        # todo randomly select (w/ seed) a subset and not first 100 samples!!
-        predictions = prompt_scorer_openai.prompt_openai_model(input_data[:100], _PROMPT_TYPE, _CLIENT)
+        input_data = random.sample(input_data, _RANDOM_SUBSET)
+        predictions = prompt_scorer_openai.prompt_openai_model(input_data, _PROMPT_TYPE, _CLIENT)
         utils.save_jsonl_file(predictions, _PREDICTIONS_OUTPUT_PATH)
 
     # TODO continue by refactoring evaluation, e.g. output of "atomic" prompt
