@@ -150,6 +150,27 @@ Evidence: How
 many magistrates were their in Kenya in 2020? No answer could be found. Is there a global average for the number of 
 judges compared to population? No answer could be found. What is the population of Kenya? 47.6 million 
 Answer: Explanation: The evidence does not support or refute the claim as there is no evidence to look at in reference to the claim. The answer is not enough information. Label: not enough information
+
+Claim: 
+Evidence: 
+Answer:
+
+Claim: 
+Evidence: 
+Answer:
+
+Claim: 
+Evidence: 
+Answer:
+
+Claim: 
+Evidence: 
+Answer:
+
+Claim: 
+Evidence: 
+Answer:
+
 -----
 The answer should be a json with two keys: explanation, label.
 
