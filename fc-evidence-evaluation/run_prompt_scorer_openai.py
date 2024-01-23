@@ -60,7 +60,7 @@ _CLIENT = openai.OpenAI(
     timeout=10,
 )
 _SEED = 10
-_RANDOM_SUBSET = 3
+_RANDOM_SUBSET = 100
 random.seed(_SEED)
 _WIKI_DB_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data"
 _FEVER_DB_PW = open('/Users/user/Desktop/fever_db_pw.txt', 'r').read()

@@ -75,7 +75,7 @@ def compute_metrics(eval_preds):
 
 
 def map_label(response: str) -> int:
-    label_str = json.loads(response)["label"]
+    label_str = json.loads(response)["label"].lower()
     # label_str = response.split(".")[-1].lower() if response.split(".")[-1] != "" else response.lower()
     try:
         return properties.LABEL_DICT[properties.Label(label_str)]
