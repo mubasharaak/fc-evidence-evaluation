@@ -1,4 +1,5 @@
 import os
+from typing import Optional, Union
 
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
@@ -108,7 +109,7 @@ def read_fever_dataset_reannotation(file_path: str):
     return read_fever_shared(file_path)
 
 
-def read_vitaminc_dataset(file_path: str):
+def read_vitaminc_dataset(file_path: str) -> tuple[list, list, list]:
     claims = []
     evidences = []
     labels = []

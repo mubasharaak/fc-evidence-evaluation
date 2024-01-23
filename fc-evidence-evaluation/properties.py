@@ -24,8 +24,8 @@ class PromptTypes(enum.Enum):
 
 
 class Label(MultiValueEnum):
-    REFUTED = "refuted", "refutes", 0, "0", "contradiction", "c", "not_supported", "contradict"
-    SUPPORTED = "supported", "supports", 1, "1", "entailment", "e", "entail"
+    REFUTED = "refuted", "refutes", "refute", 0, "0", "contradiction", "c", "not_supported", "contradict"
+    SUPPORTED = "supported", "supports", "support", 1, "1", "entailment", "e", "entail"
     NEI = "not enough evidence", 2, "2", "neutral", "n", "conflicting evidence/cherrypicking", "not enough info", "not enough information", "nei"
 
 
@@ -36,15 +36,16 @@ LABEL_DICT = {
 }
 
 LABEL_DICT_REVERSE = {
-    0: "supported",
-    1: "not enough info",
-    2: "refuted",
+    0: "support",
+    1: "not enough information",
+    2: "refute",
 }
 
 
 @dataclass
 class OpenAIResponse:
     claim: str
+    evidence: str
     response: str
     gold: str
 

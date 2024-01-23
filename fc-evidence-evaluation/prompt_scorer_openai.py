@@ -9,8 +9,8 @@ import properties
 import scorer_utils
 
 _SEED = 10
-_MODEL = "gpt-3.5-turbo-1106"  # TODO evaluate with GPT4
-_MAX_TOKENS = 1500
+_MODEL = "gpt-3.5-turbo-1106"
+_MAX_TOKENS = 3000
 _IGNORE_LABELS_DEFAULT = ["conflicting evidence/cherrypicking"]
 
 
@@ -36,7 +36,7 @@ def _get_response_text(response: openai.types.chat.chat_completion.ChatCompletio
 
 def _process_output(dataset_sample: properties.AveritecEntry,
                     response: openai.types.chat.chat_completion.ChatCompletion):
-    return properties.OpenAIResponse(dataset_sample.claim, _get_response_text(response),
+    return properties.OpenAIResponse(dataset_sample.claim, dataset_sample.evidence, _get_response_text(response),
                                      dataset_sample.label.lower())
 
 
@@ -106,12 +106,11 @@ def evaluate_openai_output(output_all, prompt_type: properties.PromptTypes, igno
     for response in output:
         try:
             pred_label = scorer_utils.map_label(response.response)
-            if response.gold.lower() not in ignore_labels and pred_label in range(2):
+            if response.gold.lower() not in ignore_labels and pred_label in range(3):
                 pred_labels.append(pred_label)
                 gold_labels.append(properties.LABEL_DICT[properties.Label(response.gold.lower())])
-        except Exception:
-            print(f"{scorer_utils.map_label(response['response'])}")
-            print(f"{properties.LABEL_DICT[properties.Label(response['gold'].lower())]}")
+        except Exception as e:
+            print("Exception {} for the following claim: {}".format(e, response.claim))
 
     # calculate metrics (F1 micro/macro) todo replace this by own confusion matrix based on probabilities
     f1_micro = f1_score(y_true=gold_labels, y_pred=pred_labels, average='micro')

@@ -15,17 +15,17 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument(
     '--test_set_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/averitec_test.json",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/pseudo_scorer_training_data/hover_test.jsonl",
     help='Path to testdata.'
 )
 parser.add_argument(
     '--predictions_output_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_atomic/averitec_test.jsonl",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_pseudo/prediction_hover_test.jsonl",
     help='Path to output file for predictions.'
 )
 parser.add_argument(
     '--scores_output_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_atomic/averitec_test_scores.json",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_pseudo/results_hover_test.json",
     help='Path to output file for scores.'
 )
 parser.add_argument(
@@ -54,41 +54,43 @@ _ONLY_EVALUATE = args.only_evaluate_no_prediction
 _PROMPT_TYPE = properties.PromptTypes(args.prompt_type)
 _DATASET = properties.Dataset(args.dataset)
 
-_KEY = open('/scratch/users/k20116188/fc_evidence_evaluation/credentials/openai_key.txt', 'r').read()
+_KEY = open('/Users/user/Desktop/openai_key.txt', 'r').read()
 _CLIENT = openai.OpenAI(
     api_key=_KEY,
     timeout=10,
 )
 _SEED = 10
-_RANDOM_SUBSET = 100
+_RANDOM_SUBSET = 3
 random.seed(_SEED)
 _WIKI_DB_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data"
-_FEVER_DB_PW = open('/scratch/users/k20116188/fc_evidence_evaluation/credentials/fever_db_pw.txt', 'r').read()
+_FEVER_DB_PW = open('/Users/user/Desktop/fever_db_pw.txt', 'r').read()
 
 
-def _prepare_dataset_samples(claims, evidences, labels):
+def _prepare_dataset_samples(claims: list, evidences: list, labels: list):
     samples = []
     for claim, evid, lable in zip(claims, evidences, labels):
-        samples.append(properties.AveritecEntry(claim=claim, evidence=evid, label=lable))
+        samples.append(properties.AveritecEntry(claim=claim, evidence=evid, label=lable, justification=""))
     return samples
 
 
 def _load_dataset(dataset, test_dataset_path):
     if dataset == properties.Dataset.FEVER:
         wiki_db = pymysql.connect(host="localhost", port=3306, user="root", password=_FEVER_DB_PW, db="fever").cursor()
-        return _prepare_dataset_samples(utils.read_fever_dataset(test_dataset_path, wiki_db))
+        claims, evidences, labels = utils.read_fever_dataset(test_dataset_path, wiki_db)
     elif dataset == properties.Dataset.FEVER_REANNOTATION:
-        return _prepare_dataset_samples(utils.read_fever_dataset_reannotation(test_dataset_path))
+        claims, evidences, labels = utils.read_fever_dataset_reannotation(test_dataset_path)
     elif dataset in [properties.Dataset.AVERITEC, properties.Dataset.AVERITEC_AFTER_P4]:
-        return _prepare_dataset_samples(utils.read_averitec_dataset(test_dataset_path))
+        claims, evidences, labels = utils.read_averitec_dataset(test_dataset_path)
     elif dataset == properties.Dataset.HOVER:
         wiki_db = utils.connect_to_db(os.path.join(_WIKI_DB_PATH, "hover", 'wiki_wo_links.db'))
-        return _prepare_dataset_samples(utils.read_hover_dataset(test_dataset_path, wiki_db))
+        claims, evidences, labels = utils.read_hover_dataset(test_dataset_path, wiki_db)
     elif dataset == properties.Dataset.VITAMINC:
         # also used for train.jsonl and dev.jsonl => all
-        return _prepare_dataset_samples(utils.read_vitaminc_dataset(test_dataset_path))
+        claims, evidences, labels = utils.read_vitaminc_dataset(test_dataset_path)
     else:
         raise Exception("Dataset provided does not match available datasets: {}".format(properties.Dataset))
+    labels = [properties.LABEL_DICT_REVERSE[l] for l in labels]
+    return _prepare_dataset_samples(claims, evidences, labels)
 
 
 def main():

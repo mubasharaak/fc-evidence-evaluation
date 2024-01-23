@@ -75,18 +75,10 @@ def compute_metrics(eval_preds):
 
 
 def map_label(response: str) -> int:
-    label = None
     label_str = json.loads(response)["label"]
     # label_str = response.split(".")[-1].lower() if response.split(".")[-1] != "" else response.lower()
-    if label_str in list(properties.LABEL_DICT):
+    try:
         return properties.LABEL_DICT[properties.Label(label_str)]
-    else:
-        if "support" in label_str or "true" in label_str:
-            return properties.LABEL_DICT[properties.Label.SUPPORTED]
-        elif "refute" in label_str or "false" in label_str:
-            return properties.LABEL_DICT[properties.Label.REFUTED]
-        elif "not enough information" in label_str:
-            return properties.LABEL_DICT[properties.Label.NEI]
-        else:
-            print(f"unknown label_str: {label_str}")
-            return -1
+    except Exception:
+        print(f"unknown label_str: {label_str}")
+        return -1
