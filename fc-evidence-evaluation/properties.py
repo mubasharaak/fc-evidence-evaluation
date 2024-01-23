@@ -130,6 +130,13 @@ or doesn't give enough information. Explain the reasoning step-by-step before gi
 information and no additional sources or background knowledge.
 -----
 Examples: 
+Claim: South Africans that drink are amongst the top drinkers in the world. 
+Evidence: What is the global average 
+alcohol consumption in litres of pure alcohol per day? The global averages as of 2016 is 15.1 litres per day. What is 
+the daily average of pure alcohol consumption per day in South africa? 29.9 litres. Where does South Africa rank as a 
+nation in terms of Daily pure Alcohol consumption? 6th out of 189 countries. 
+Answer: Explanation: The claim stays "amongst the top drinkers" not the top first, so since they are 6th, this could be plausible. The answer is support. Label: support.
+
 Claim: All government schools in India are being privatised. 
 Evidence: What did India's Union Education Minister say about the privatisation of governments schools? New Delhi: There is no plan to privatise primary 
 education, the Centre told the Parliament today. This statement was given by Minister of Human Resource Development, 
@@ -138,38 +145,35 @@ that NITI Aayog has suggested that Primary Education may be given to the private
 salary to teachers and other infrastructure. 
 Answer: Explanation: There is no plan by the Indian government to privatize primary education as said by the Minister of Human Resource Development. The answer is refute. Label: refute.
 
-Claim: South Africans that drink are amongst the top drinkers in the world. 
-Evidence: What is the global average 
-alcohol consumption in litres of pure alcohol per day? The global averages as of 2016 is 15.1 litres per day. What is 
-the daily average of pure alcohol consumption per day in South africa? 29.9 litres. Where does South Africa rank as a 
-nation in terms of Daily pure Alcohol consumption? 6th out of 189 countries. 
-Answer: Explanation: The claim stays "amongst the top drinkers" not the top first, so since they are 6th, this could be plausible. The answer is support. Label: support.
-
 Claim: There is a global average for the number of judges and magistrates to number of people in Kenya. 
 Evidence: How 
 many magistrates were their in Kenya in 2020? No answer could be found. Is there a global average for the number of 
 judges compared to population? No answer could be found. What is the population of Kenya? 47.6 million 
 Answer: Explanation: The evidence does not support or refute the claim as there is no evidence to look at in reference to the claim. The answer is not enough information. Label: not enough information
 
-Claim: 
-Evidence: 
-Answer:
+Claim: An IndyCar race driver drove a Formula 1 car designed by Peter McCool during the 2007 Formula One season.
+Evidence: The Super Aguri SA07 was Super Aguri F1's Formula One car for the 2007 Formula One season. It was designed by Peter McCool and was driven by Takuma Sato and Anthony Davidson. Takuma Sato (佐藤 琢磨, Satō Takuma, born 28 January 1977), nicknamed "Taku", is a Japanese professional racing driver. He competes part-time in the IndyCar Series, driving the No. 11 Honda for Chip Ganassi Racing.
+Answer: Explanation: Takuma Sato is an IndyCar race driver who drove the Super Aguri SA07 for the 2007 Formula One season. The evidence states that this car was designed by Peter McCool. Hence the answer is support.Label: support 
 
-Claim: 
-Evidence: 
-Answer:
+Claim: Rhythm Nation was incapable of being performed on Britain's Got Talent.
+Evidence: It has been covered by Pink , Crystal Kay , and Girls ' Generation and has also been performed on Glee , The X-Factor , and Britain 's Got Talent .
+Answer: Explanation: The Evidence states that the song Rhythm Nation was performed on Britain's Got Talent. The answer is refute. Label: refute. 
 
-Claim: 
-Evidence: 
-Answer:
+Claim: Alloy media platforms have a monthly reach of less than 100 million unique visitors .
+Evidence: According to comScore , Alloy media platforms reach over 95 million unique visitors each month , including over half of the age 12-34 internet users .
+Answer: Explanation: While the evidence mentions that the platform reaches over 95 million unique visitors per month, it does not state clearly if the number is lower than 100 million. Hence the evidence does not contain enough information to decide if the claim is supported or refuted. Label: not enough information.
 
-Claim: 
-Evidence: 
-Answer:
+Claim: The American film, television and theater actress who was a star in the film the Matchmaker and also received the 40th AFI Life Achievement Award was born April 24, 1934.
+Evidence: The Matchmaker is a 1958 American comedy film directed by Joseph Anthony. The film stars Shirley Booth in her final film, Anthony Perkins, and Shirley MacLaine. Shirley MacLaine (born Shirley MacLean Beaty; April 24, 1934)[1] is an American film, television and theater actress and author. Known for her portrayals of quirky, strong-willed and eccentric women, she has received numerous accolades over her eight-decade career, including an Academy Award, an Emmy Award, two BAFTA Awards, six Golden Globe Awards, two Volpi Cups, two Silver Bears, and the 40th AFI Life Achievement Award. 
+Answer: Explanation: The actress mentioned in the claim is Shirley Booth as she was starred in the Matchmaker, received the 40th AFI Life Achievement Award and was born on April 24, 1934 as stated in the evidence. The answer is support. Label: support.
 
-Claim: 
-Evidence: 
-Answer:
+Claim: Bambi, is based on a book by the American author Felix Salten, The Country Bears is not.
+Evidence: Bambi, a Life in the Woods (German title: Bambi: Eine Lebensgeschichte aus dem Walde) is a 1923 Austrian coming-of-age novel written by Felix Salten, and originally published in Berlin by Ullstein Verlag. The Country Bears is a 2002 American musical road comedy[2] film directed by Peter Hastings, produced by Walt Disney Pictures, and based on the Disney theme park attraction Country Bear Jamboree.
+Answer: Explanation: The evidence supports that Bambi is a book by Felix Slaten and The Country Bears is not. However, it mentions that Felix Salten is American while the evidence tells us he was Austrian. The claims is refuted. Label: refute.
+
+Claim: The film Deliver Us from Evil , released in 2014 , has Eric Bana , Edgar Ramírez , Sean Harris , Olivia Munn , and Joel McHale as the main stars .
+Evidence: Despite mixed to negative reviews by critics , the film, which was released in 2014, was a box office success , grossing $ 87.9 million against a $ 30 million budget .
+Answer: Explanation: While the evidence confirms that the movie was released in 2014 it misses information about the actors starred in the movie. Hence the answer is not enough information given. Label: not enough information.
 
 -----
 The answer should be a json with two keys: explanation, label.
