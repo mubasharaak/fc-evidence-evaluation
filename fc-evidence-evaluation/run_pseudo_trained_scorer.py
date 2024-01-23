@@ -60,7 +60,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--finetuned_model',
-    default="/scratch/users/k20116188/fc_evidence_evaluation/results/pseudo_trained_scorer",
+    default="/scratch/users/k20116188/fc_evidence_evaluation/results/pseudo_trained_scorer/checkpoint-140000",
     help='Path to fine-tuned model.'
 )
 parser.add_argument(
