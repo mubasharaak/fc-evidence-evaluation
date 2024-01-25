@@ -9,7 +9,7 @@ import properties
 import scorer_utils
 
 _SEED = 10
-_MODEL = "gpt-3.5-turbo-1106"
+_MODEL = "gpt-4-1106-preview"
 _MAX_TOKENS = 3000
 _IGNORE_LABELS_DEFAULT = ["conflicting evidence/cherrypicking"]
 
