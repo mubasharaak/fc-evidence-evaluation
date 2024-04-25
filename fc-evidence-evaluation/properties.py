@@ -366,14 +366,65 @@ label is refuted
 
 """
 
+ATOMIC_REFERENCE_PROMPT = """
+You will get as input a claim, a reference evidence and a predicted evidence. 
+Please verify the correctness of the predicted evidence by comparing it to the reference evidence, following these steps:
+1. Break down the predicted evidence in independent facts. Each fact should be a separate sentence. 
+2. Only break down the predicted evidence into facts, not the reference evidence or the claim!
+3. Evaluate each fact individually: is the fact supported by the reference evidence? Do not use additional sources or background knowledge.
+4. Finally summarise how many facts are (1.) supported by the reference evidence, (2.) contradict the reference evidence, (3.) are not verifiable given the reference evidence. Therefore, generate a dictionary with three keys: support, contradict, not enough information.
+-----
+Examples:
+
+Claim: Mukesh Ambani, richest man in Asia had surgery for pancreatic cancer at Sloan Kettering, New York, US cancer speciality hospital on October 30, 2020.
+Reference evidence: When was the photograph taken of Mukesh Ambani, the richest man in Asia, on the Facebook post claiming he had been diagnosed with pancreatic cancer and had undergone surgery? The photograph was taken on September 5, 2020. When was a video filmed of  Mukesh Ambani at the virtual launch of NK Singh's book Portrait of Power? The video was filmed on October 19, 2020. What date was the  Facebook post which confirmed Mukesh Ambani had lost 30 kgs, been diagnosed with pancreatic cancer and had had liver transplant surgery? The Facebook post was dated November 2, 2020. Where was Mukesh's photo of him supposedly recieving surgery actually taken? It was taken by Manushree Vijayvergiya who shared her experience of meeting Mukesh and Isha Ambani in a cafe in Liechtenstein.
+Predicted evidence: Who was the man who allegedly threatened Mukhesh Ambani:  Question answer:  What was his name and where was he from? New Delhi: The man had allegedly called on the HN Reliance Foundation Hospital and issued threats to Mukesh Ambani in filthy language. What are the predictions by Chiragh Darwalla for Ambanis? Astrology Predictions for Mukesh Ambani by Astrologer Chirag Daruwalla. Mukesh Ambani is an Indian industrialist and the chairman and managing director of Reliance Industries. What happened to Mukhesh Ambanis net worth? Nov 2, 2020 Mumbai: Mukesh Ambani, Asia's richest man, lost as much as $7 billion from his networth as Reliance Industries Ltd.'s shares tumbled to the lowest price in more than three months following a...
+Facts (in predicted evidence): - A man allegedly called on the HN Reliance Foundation Hospital and issued threats to Mukesh Ambani.
+-  Astrologer Chirag Daruwalla issues predictions for Mukesh Ambani.
+- Mukesh Ambani is an Indian industrialist.
+- Mukesh Ambani is the chairman and managing director of Reliance Industries.
+- Mukesh Ambani is Asia's richest man.
+- Mukesh Ambani lost $7 billion from his networth as Reliance Industries Ltd.'s shares tumbled to the lowest price in more than three months.
+Fact check: - A man allegedly called on the HN Reliance Foundation Hospital and issued threats to Mukesh Ambani. The reference evidence does not mention anything about a man calling and threatening Mukesh Ambani. Not enough information.
+- Astrologer Chirag Daruwalla issues predictions for Mukesh Ambani. The reference evidence does not mention anything about an Astrologer giving predictions about Mukesh Ambani's future. Not enough information.
+- Mukesh Ambani is an Indian industrialist. The reference evidence does not mention that Mukesh Ambani is an Indian industrialist. Not enough information.
+- Mukesh Ambani is the chairman and managing director of Reliance Industries. The reference evidence does not mention that Mukesh Ambani is the managing director of Reliance Industries. Not enough information.
+- Mukesh Ambani is Asia's richest man. The fact 'Mukesh Ambani is Asia's richest man' is supported by the reference evidence.  
+- Mukesh Ambani lost $7 billion from his networth as Reliance Industries Ltd.'s shares tumbled to the lowest price in more than three months. The reference evidence does not mention that Mukesh Ambani lost money or why he lost it. Not enough information.
+Output: {"support": 1, "contradict": 0, "not enough information": 5}
+
+Claim: The Chinese biological laboratory in Wuhan is owned by Glaxo. Who, by chance, owns Pfizer (the one who produces the vaccine!
+Reference evidence: Who are Glaxo? GlaxoSmithKline is a Big Pharma corporation. It sits at No. 282 on Forbes Global 500 rankings. GSK is ranked number 6 among the top 20 pharma companies by revenue in 2019, according to FiercePharma. Who owns the biological laboratory in Wuhan city China? The Wuhan Institute of Virology that was the focus of conspiracy theories early in the covid 19 pandemic is owned by Chinese Academy of Sciences. Who owns the Chinese Academy of Sciences (CAS)? The CAS is  controlled by China's State Council, the country's main administrative government body. Does Glaxo own the pharma company Pfizer? The two firms are publicly traded companies listed on the New York Stock Exchange, however the claim that Pfizer is owned by GSK is incorrect. Pfizer was nearly 69 per cent owned by institutional shareholders such as investment firms as of 10 December.
+Predicted evidence: Who owns the vaccine company Pfizer? The Chinese laboratory in Wuhan where coronavirus emerged is owned by GlaxoSmithKline (GSK). The same GSK also owns Pfizer, the pharma company that produces vaccine for the virus. Does the WIV (Hubei Institute for Biological Products, Wuhan, China) belong to Gsk or Pfizer? Therefore, there's no evidence that the Wuhan Institute of Virology (WIV) is owned by Glaxo (GSK), a public scientific institution, nor that GSK belongs to Pfizer. Who is the parent company of the Wuhan based company that manufactures the vaccine? The author claimed that a Wuhan-based pharmaceutical company is owned by Glaxo, which is also the owner of Pfizer.
+Facts (in predicted evidence): - The Chinese laboratory in Wuhan where coronavirus emerged is owned by GlaxoSmithKline (GSK).
+- GSK also owns Pfizer, the pharma company that produces vaccine for the virus.
+- There’s no evidence that the Wuhan Institute of Virology (WIV) is owned by Glaxo (GSK), a public scientific institution.
+- There’s no evidence that GSK belongs to Pfizer.
+- The author claimed that a Wuhan-based pharmaceutical company is owned by Glaxo, which is also the owner of Pfizer.
+Fact check: - The Chinese laboratory in Wuhan where coronavirus emerged is owned by GlaxoSmithKline (GSK). This fact contradicts the reference evidence which states that the Wuhan Institute of Virology is owned by the Chinese Academy of Sciences, not by GlaxoSmithKline.
+- GSK also owns Pfizer, the pharma company that produces vaccine for the virus. This fact contradicts the reference evidence which states that Pfizer is not owned by GlaxoSmithKline.
+- There’s no evidence that the Wuhan Institute of Virology (WIV) is owned by Glaxo (GSK), a public scientific institution. This fact aligns with the reference evidence.
+- There’s no evidence that GSK belongs to Pfizer. This fact aligns with the reference evidence.
+- The author claimed that a Wuhan-based pharmaceutical company is owned by Glaxo, which is also the owner of Pfizer. This fact is not addressed in the reference evidence.
+Output: {"support": 2, "contradict": 2, "not enough information": 1}
+-----
+Input: 
+
+Claim: {}
+Reference evidence: {}
+Predicted evidence: {}
+Facts (in predicted evidence):
+Fact check:
+Output:
+"""
+
 ATOMIC_PROMPT = """
 You will get as input a claim and evidence. 
 Please verify the correctness of the claim following the following steps.
 1. Break down the claim in independent facts. Each fact should be a separate sentence. 
 2. Only break down the claim into facts, not the evidence!
-3. Evaluate each fact individually using the given evidence only. Do not use additional sources or background knowledge.
-4. Finally summarise how many facts are (1.) supported by the evidence, (2.) contradict with the evidence, (3.) are not verifiable given the evidence. Therefore, generate a dictionary with three keys: supports, contradicts, not enough information.
-
+3. Evaluate each fact individually using the given evidence only. Do not use additional sources or background knowledge. Explain the evaluation.
+4. Finally summarise how many facts are (1.) supported by the evidence, (2.) contradict with the evidence, (3.) are not verifiable given the evidence. Therefore, generate a dictionary with three keys: support, contradict, not enough information.
 -----
 Examples:
 
@@ -383,14 +434,11 @@ Facts: - Mukesh Ambani is the richest man in Asia.
 - Mukesh Ambani had surgery for pancreatic cancer.
 - The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US.
 - The surgery occurred on October 30, 2020.
-Fact check: - Mukesh Ambani is the richest man in Asia. Not enough information given.
-- Mukesh Ambani had surgery for pancreatic cancer. Not enough information given.
-- The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US. Not enough information given.
-- The surgery occurred on October 30, 2020. The evidence shows other appearances by Ambani shortly before and after October 30, 2020. This conflicts with the fact “The surgery occurred on October 30, 2020”.
-Output: {"support": 0, "refute": 0, "not enough info": 3}
-
-
-Output: 0 facts have the label support, 1 fact has the label contradicts, 3 facts have the label not enough information
+Fact check: - Mukesh Ambani is the richest man in Asia. Not enough information given as the evidence does not mention anything about Ambani's wealth.
+- Mukesh Ambani had surgery for pancreatic cancer. Not enough information given as the evidence mentions a Facebook post but shortly after that he was seen at a launch event.
+- The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US. Not enough information given as the evidence does not mention anything about a hospital location. 
+- The surgery occurred on October 30, 2020. The evidence shows other appearances by Ambani shortly before and after October 30, 2020. This contradicts with the fact “The surgery occurred on October 30, 2020”.
+Output: {"support": 0, "contradict": 1, "not enough information": 3}
 
 Claim: Millions of jobs in the US were lost during Donald Trump's US presidency.
 Evidence: How many people were in employment in 2017? 145,627,000 people as of January 2017. How many people were in employment in 2020? 141,735,000 people in September 2020. How many people in employment did the economy lose under Trump's presidency? The economy lost an estimate of 3,892,000 people in employment.
@@ -399,10 +447,9 @@ Facts: - Donald Trump was US president.
 Fact check: 
 - Donald Trump was US president. Supported, the evidence mentions Trump’s presidency indicating that he was president of the US.
  - Millions of jobs in the US were lost during his US presidency. The evidence supports this statement.
-Output: 2 facts have the label support, 0 facts has the label contradicts, 0 facts have the label not enough information
-
+Output: {"support": 2, "contradict": 0, "not enough information": 0}
 -----
-The answer should be a json with three keys: support, refute, not enough information. The label should be the number of facts falling into this category.
+Input: 
 
 Claim: {}
 Evidence: {}
@@ -445,7 +492,68 @@ Score:
 """
 
 REFERENCE_PROMPT = """
-TODO compare Averitec prediction to Averitec annotated evidence for reference based evaluation.
+Given a reference text, score the target text based on the following four categories:
+
+1. Semantic Coverage: How much of the reference evidence is covered by the predicted model evidence (i.e., that the content, meaning, and entities of the reference evidence are fully represented in the generated evidence)? (score range 1-5)
+	1 score = nothing is covered 
+	2 scores = very little of the reference evidence is covered
+	3 scores = approximately half of the reference evidence is covered by the predicted one
+	4 scores = most of the reference evidence is covered 
+	5 scores = everything mentioned in the reference evidence is covered in the predicted evidence
+
+2. Coherence: The predicted evidence is coherent if all sentences are connected sensibly and the evidence makes sense as a whole. (score range 1-5)
+	1 score = not coherent at all
+	2 scores = most of the text is not coherent or sentence not connected and therefore overall not well understandable
+	3 scores  = approx. half of the evidence is coherent vs. the rest being not-coherent, not relevant, etc.
+	4 scores = almost every sentence is coherent and overall the evidence forms a whole that makes sense, with some minor mistakes
+	5 scores = very coherent (the entire text forms one coherent body)
+
+3. Repetition and redundancy: Does the predicted evidence contain redundancy in the factual information or repetition of (part of) sentences? (score range 1-3)
+	1 score = a lot of repetition and redundancy. Most of the evidence text could be removed due to redundancy/repetition 
+	2 scores = some redundant sentences/paragraphs
+	3 scores = no repetition and redundancy at all
+
+4. Consistency: Is the predicted evidence consistent in the information it provides? (score range 1-3)
+	1 score = not consistent at all, contains a lot of conflicting and/or illogical information 
+	2 scores = approx. half of the evidence is consistent however there is major conflicting or illogical information included
+	3 scores = evidence is overall consistent
+
+-----
+Examples:
+
+reference text: "Question: What is the total population of Kerala, India?
+Answer: 3,33,87,677 from a 2011 census."
+target text: "Question: Does India have 5, 18 beds available for each 1000 people in government hospitals in 2018?
+Answer: The availability of beds for elderly population in India is 5.18 beds per 1000 population. In the heatmaps below, we show the state-level variation in availability of government beds in India.
+Question: What percentage of total Kerala population is urban?
+Answer: Ten years later the urban population of Kerala accounted for 26 percent of the total population, compared
+Question: What language is spoken by the majority of people in kerala?
+Answer: Kerala is the most unilingual state of India in which about 97% of the total population speak Malayalam as their Native language.[43]"
+
+Output:
+Semantic Coverage:
+The reference text asks for the total population of Kerala, India, as per the 2011 census.
+The target text does not address the total population number from the census directly. Instead, it discusses the availability of beds for the elderly population in India, urban population percentage in Kerala, and the language spoken by the majority in Kerala.
+Semantic Coverage Score: 1 (The reference evidence regarding the total population figure is not covered at all).
+
+Coherence:
+The target text is coherent within its context, discussing various aspects of healthcare, urbanization, and language demographics in Kerala/India. Each question and answer are sensibly connected within its section, providing coherent information on different topics.
+Coherence Score: 5 (The entire text forms a coherent body of information across its diverse topics).
+
+Repetition and Redundancy:
+The target text covers distinct topics without repeating information or sentences about the specific details it aims to provide. There's no evident repetition or redundancy in discussing healthcare availability, urban population percentage, or linguistic demographics.
+Repetition and Redundancy Score: 3 (There is no repetition or redundancy within the context of its varied topics).
+
+Consistency:
+The target text maintains consistency within the information it provides, with no conflicting statements among the answers about healthcare availability, urban population percentage, or linguistic demographics.
+Consistency Score: 3 (The evidence is overall consistent within its context).
+
+The target text diverges significantly from the reference text's specific inquiry regarding Kerala's total population according to the 2011 census. While the target text is coherent, lacks repetition, and maintains consistency within its own context, it fails to cover the semantic content of the reference text.
+-----
+
+reference text: {}
+target text: {}
+Output:
 """
 
 PROMPT_MAPPING = {
