@@ -1,6 +1,6 @@
 import enum
 from dataclasses import dataclass
-from typing import List, Union
+from typing import List
 from typing import Optional, Union
 
 from aenum import MultiValueEnum
@@ -59,20 +59,11 @@ class AveritecAnswer:
     answer_type: str
     boolean_explanation: Optional[str]
 
-    # def __init__(self, answer, answer_type, boolean_explanation=None):
-    #     self.answer = answer
-    #     self.answer_type = answer_type
-    #     self.boolean_explanation = boolean_explanation
-
 
 @dataclass
 class AveritecQA:
     question: str
     answers: List[AveritecAnswer]
-
-    # def __init__(self, question: str, answers: list[AveritecAnswer]):
-    #     self.question = question
-    #     self.answers = answers
 
 
 @dataclass
@@ -81,12 +72,6 @@ class AveritecEntry:
     label: str
     justification: str
     evidence: Union[List[AveritecQA], str]
-
-    # def __init__(self, claim: str, label: str, justification: str, evidence: list[AveritecQA]):
-    #     self.claim = claim
-    #     self.label = label
-    #     self.justification = justification
-    #     self.evidence = evidence
 
 
 FEVER_DATASET_PATH = "shared_task_test_annotations_evidence.jsonl"
@@ -466,7 +451,7 @@ Please verify the correctness of the claim following the following steps.
 1. Break down the claim in independent facts. Each fact should be a separate sentence. 
 2. Only break down the claim into facts, not the evidence!
 3. Evaluate each fact individually using the given evidence only. Do not use additional sources or background knowledge. Explain the evaluation.
-4. Finally summarise how many facts are (1.) supported by the evidence, (2.) contradict with the evidence, (3.) are not verifiable given the evidence. Therefore, generate a json with three keys: support, contradict, not enough information.
+4. Finally summarise how many facts are (1.) supported by the evidence, (2.) how many facts you have in total.
 
 Generate the output in form of a json as shown in the example below.
 -----
@@ -478,8 +463,7 @@ Output: {{
             "facts": '1. Mukesh Ambani is the richest man in Asia. 2. Mukesh Ambani had surgery for pancreatic cancer. 3. The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US. 4. The surgery occurred on October 30, 2020.',
             "fact check": '1. Mukesh Ambani is the richest man in Asia. Not enough information given as the evidence does not mention anything about Ambani's wealth. 2. Mukesh Ambani had surgery for pancreatic cancer. Not enough information given as the evidence mentions a Facebook post but shortly after that he was seen at a launch event. 3. The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US. Not enough information given as the evidence does not mention anything about a hospital location. 4. The surgery occurred on October 30, 2020. The evidence shows other appearances by Ambani shortly before and after October 30, 2020. This contradicts with the fact that the surgery occurred on October 30, 2020.',
             "support": 0, 
-            "contradict": 1, 
-            "not enough information": 3
+            "facts count": 4 
         }}
 
 Claim: Millions of jobs in the US were lost during Donald Trump's US presidency.
@@ -488,8 +472,7 @@ Output: {{
             "facts": '1. Donald Trump was US president. 2. Millions of jobs in the US were lost during his US presidency.',
             "fact check": '1. Donald Trump was US president. Supported, the evidence mentions Trump’s presidency indicating that he was president of the US. 2. Millions of jobs in the US were lost during his US presidency. The evidence supports this statement.',
             "support": 2, 
-            "contradict": 0, 
-            "not enough information": 0
+            "facts count": 2 
         }}
 -----
 Input: 
