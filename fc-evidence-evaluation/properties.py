@@ -1,6 +1,6 @@
 import enum
 from dataclasses import dataclass
-from typing import List
+from typing import List, Union
 from typing import Optional, Union
 
 from aenum import MultiValueEnum
@@ -10,6 +10,7 @@ class Dataset(enum.Enum):
     FEVER = "fever"
     FEVER_REANNOTATION = "fever_reannotation"
     AVERITEC = "averitec"
+    AVERITEC_SYSTEM_PRED = "averitec_system_pred"
     AVERITEC_AFTER_P4 = "averitec_after_p4"
     HOVER = "hover"
     VITAMINC = "vitaminc"
@@ -20,6 +21,8 @@ class PromptTypes(enum.Enum):
     COT = "cot"
     TOT = "tot"
     ATOMIC_FACTS = "atomic"
+    ATOMIC_REFERENCE_FACTS = "atomic_reference"
+    ATOMIC_REFERENCE_FACTS_PREC_RECALL = "atomic_reference_prec_recall"
     SCORE = "score"
 
 
@@ -46,7 +49,7 @@ LABEL_DICT_REVERSE = {
 class OpenAIResponse:
     claim: str
     evidence: str
-    response: str
+    response: Union[str, dict]
     gold: str
 
 
@@ -366,55 +369,94 @@ label is refuted
 
 """
 
-ATOMIC_REFERENCE_PROMPT = """
+ATOMIC_REFERENCE_PROMPT_PREC_RECALL = """
 You will get as input a claim, a reference evidence and a predicted evidence. 
 Please verify the correctness of the predicted evidence by comparing it to the reference evidence, following these steps:
-1. Break down the predicted evidence in independent facts. Each fact should be a separate sentence. 
-2. Only break down the predicted evidence into facts, not the reference evidence or the claim!
-3. Evaluate each fact individually: is the fact supported by the reference evidence? Do not use additional sources or background knowledge.
-4. Finally summarise how many facts are (1.) supported by the reference evidence, (2.) contradict the reference evidence, (3.) are not verifiable given the reference evidence. Therefore, generate a dictionary with three keys: support, contradict, not enough information.
+1. Break down the PREDICTED evidence in independent facts. Each fact should be a separate sentence. 
+3. Evaluate each fact individually: is the fact supported by the REFERENCE evidence? Do not use additional sources or background knowledge.
+4. Next, break down the REFERENCE evidence in independent facts. Each fact should be a separate sentence.
+5. Evaluate each fact individually: is the fact supported by the PREDICTED evidence? Do not use additional sources or background knowledge.
+5. Finally summarise (1.) how many predicted facts are supported by the reference evidence, (2.) how many reference facts are supported by the predicted evidence.
+
+Generate the output in form of a json as shown in the examples below.
 -----
 Examples:
 
 Claim: Mukesh Ambani, richest man in Asia had surgery for pancreatic cancer at Sloan Kettering, New York, US cancer speciality hospital on October 30, 2020.
 Reference evidence: When was the photograph taken of Mukesh Ambani, the richest man in Asia, on the Facebook post claiming he had been diagnosed with pancreatic cancer and had undergone surgery? The photograph was taken on September 5, 2020. When was a video filmed of  Mukesh Ambani at the virtual launch of NK Singh's book Portrait of Power? The video was filmed on October 19, 2020. What date was the  Facebook post which confirmed Mukesh Ambani had lost 30 kgs, been diagnosed with pancreatic cancer and had had liver transplant surgery? The Facebook post was dated November 2, 2020. Where was Mukesh's photo of him supposedly recieving surgery actually taken? It was taken by Manushree Vijayvergiya who shared her experience of meeting Mukesh and Isha Ambani in a cafe in Liechtenstein.
-Predicted evidence: Who was the man who allegedly threatened Mukhesh Ambani:  Question answer:  What was his name and where was he from? New Delhi: The man had allegedly called on the HN Reliance Foundation Hospital and issued threats to Mukesh Ambani in filthy language. What are the predictions by Chiragh Darwalla for Ambanis? Astrology Predictions for Mukesh Ambani by Astrologer Chirag Daruwalla. Mukesh Ambani is an Indian industrialist and the chairman and managing director of Reliance Industries. What happened to Mukhesh Ambanis net worth? Nov 2, 2020 Mumbai: Mukesh Ambani, Asia's richest man, lost as much as $7 billion from his networth as Reliance Industries Ltd.'s shares tumbled to the lowest price in more than three months following a...
-Facts (in predicted evidence): - A man allegedly called on the HN Reliance Foundation Hospital and issued threats to Mukesh Ambani.
--  Astrologer Chirag Daruwalla issues predictions for Mukesh Ambani.
-- Mukesh Ambani is an Indian industrialist.
-- Mukesh Ambani is the chairman and managing director of Reliance Industries.
-- Mukesh Ambani is Asia's richest man.
-- Mukesh Ambani lost $7 billion from his networth as Reliance Industries Ltd.'s shares tumbled to the lowest price in more than three months.
-Fact check: - A man allegedly called on the HN Reliance Foundation Hospital and issued threats to Mukesh Ambani. The reference evidence does not mention anything about a man calling and threatening Mukesh Ambani. Not enough information.
-- Astrologer Chirag Daruwalla issues predictions for Mukesh Ambani. The reference evidence does not mention anything about an Astrologer giving predictions about Mukesh Ambani's future. Not enough information.
-- Mukesh Ambani is an Indian industrialist. The reference evidence does not mention that Mukesh Ambani is an Indian industrialist. Not enough information.
-- Mukesh Ambani is the chairman and managing director of Reliance Industries. The reference evidence does not mention that Mukesh Ambani is the managing director of Reliance Industries. Not enough information.
-- Mukesh Ambani is Asia's richest man. The fact 'Mukesh Ambani is Asia's richest man' is supported by the reference evidence.  
-- Mukesh Ambani lost $7 billion from his networth as Reliance Industries Ltd.'s shares tumbled to the lowest price in more than three months. The reference evidence does not mention that Mukesh Ambani lost money or why he lost it. Not enough information.
-Output: {"support": 1, "contradict": 0, "not enough information": 5}
+Predicted evidence: Who was the man who allegedly threatened Mukhesh Ambani:  Question answer:  What was his name and where was he from? New Delhi: The man had allegedly called on the HN Reliance Foundation Hospital and issued threats to Mukesh Ambani in filthy language. What are the predictions by Chiragh Darwalla for Ambanis? Astrology Predictions for Mukesh Ambani by Astrologer Chirag Daruwalla. Mukesh Ambani is an Indian industrialist and the chairman and managing director of Reliance Industries. What happened to Mukhesh Ambanis net worth? Nov 2, 2020 Mumbai: Mukesh Ambani, Asia's richest man, lost as much as $7 billion from his networth as Reliance Industries Ltd.'s shares tumbled to the lowest price in more than three months following a.
+Output: {{
+            'facts in predicted evidence': '1. A man allegedly called on the HN Reliance Foundation Hospital and issued threats to Mukesh Ambani. 2. Astrologer Chirag Daruwalla issues predictions for Mukesh Ambani. 3. Mukesh Ambani is an Indian industrialist. 4. Mukesh Ambani is the chairman and managing director of Reliance Industries. 5. Mukesh Ambani is Asia's richest man. 6. Mukesh Ambani lost $7 billion from his networth as Reliance Industries Ltd.'s shares tumbled to the lowest price in more than three months.',
+            'fact check predicted evidence': '1. A man allegedly called on the HN Reliance Foundation Hospital and issued threats to Mukesh Ambani. The reference evidence does not mention anything about a man calling and threatening Mukesh Ambani. Not enough information. 2. Astrologer Chirag Daruwalla issues predictions for Mukesh Ambani. The reference evidence does not mention anything about an Astrologer giving predictions about Mukesh Ambani's future. Not enough information. 3. Mukesh Ambani is an Indian industrialist. The reference evidence does not mention that Mukesh Ambani is an Indian industrialist. Not enough information. 4. Mukesh Ambani is the chairman and managing director of Reliance Industries. The reference evidence does not mention that Mukesh Ambani is the managing director of Reliance Industries. Not enough information. 5. Mukesh Ambani is Asia's richest man. The fact 'Mukesh Ambani is Asia's richest man' is supported by the reference evidence. 6. Mukesh Ambani lost $7 billion from his networth as Reliance Industries Ltd.'s shares tumbled to the lowest price in more than three months. The reference evidence does not mention that Mukesh Ambani lost money or why he lost it. Not enough information.',
+            'facts count predicted evidence': 6, 
+            'support predicted evidence': 1, 
+            'facts in reference evidence': '1. Mukhesh Aambi is the richest man in Asia. 2. On September 5, 2020 a photograph of Mukesh Ambani was taken claiming he had been diagnosed with pancreatic cancer and had undergone surgery. 3. On October 19, 2020 a video of Mukesh Ambani was filmed at the virtual launch of NK Singh's book. 4. On November 2, 2020 a Facebook post was posted confirming that Mukesh Ambani had lost 30 kgs, been diagnosed with pancreatic cancer and had had liver transplant surgery. 5. A photo of Mukhesh Ambani supposedly recieving surgery actually taken in Liechtenstein.',
+            'fact check reference evidence': '1. Mukhesh Aambi is the richest man in Asia. The predicted evidence mentions that Mukhesh Ambani is Asia's richest man, this fact is hence supported. 2. On September 5, 2020 a photograph of Mukesh Ambani was taken claiming he had been diagnosed with pancreatic cancer and had undergone surgery. The predicted evidence does not mention anything about Mukhesh Ambani's cancer diagnosis or surgery. Not enough information. 3. On October 19, 2020 a video of Mukesh Ambani was filmed at the virtual launch of NK Singh's book. Predicted evidence does not mention Ambani attending any book launch. Not enough information. 4. On November 2, 2020 a Facebook post was posted confirming that Mukesh Ambani had lost 30 kgs, been diagnosed with pancreatic cancer and had had liver transplant surgery. The predicted evidence does not mention any of this. Not enough information. 5. A photo of Mukhesh Ambani supposedly recieving surgery was actually taken in Liechtenstein. The predicted evdience does not mention anything about a survey or Ambani being in Liechtenstein. Not enough information.',
+            'facts count reference evidence': 5, 
+            'support reference evidence': 1
+        }}
 
 Claim: The Chinese biological laboratory in Wuhan is owned by Glaxo. Who, by chance, owns Pfizer (the one who produces the vaccine!
 Reference evidence: Who are Glaxo? GlaxoSmithKline is a Big Pharma corporation. It sits at No. 282 on Forbes Global 500 rankings. GSK is ranked number 6 among the top 20 pharma companies by revenue in 2019, according to FiercePharma. Who owns the biological laboratory in Wuhan city China? The Wuhan Institute of Virology that was the focus of conspiracy theories early in the covid 19 pandemic is owned by Chinese Academy of Sciences. Who owns the Chinese Academy of Sciences (CAS)? The CAS is  controlled by China's State Council, the country's main administrative government body. Does Glaxo own the pharma company Pfizer? The two firms are publicly traded companies listed on the New York Stock Exchange, however the claim that Pfizer is owned by GSK is incorrect. Pfizer was nearly 69 per cent owned by institutional shareholders such as investment firms as of 10 December.
 Predicted evidence: Who owns the vaccine company Pfizer? The Chinese laboratory in Wuhan where coronavirus emerged is owned by GlaxoSmithKline (GSK). The same GSK also owns Pfizer, the pharma company that produces vaccine for the virus. Does the WIV (Hubei Institute for Biological Products, Wuhan, China) belong to Gsk or Pfizer? Therefore, there's no evidence that the Wuhan Institute of Virology (WIV) is owned by Glaxo (GSK), a public scientific institution, nor that GSK belongs to Pfizer. Who is the parent company of the Wuhan based company that manufactures the vaccine? The author claimed that a Wuhan-based pharmaceutical company is owned by Glaxo, which is also the owner of Pfizer.
-Facts (in predicted evidence): - The Chinese laboratory in Wuhan where coronavirus emerged is owned by GlaxoSmithKline (GSK).
-- GSK also owns Pfizer, the pharma company that produces vaccine for the virus.
-- There’s no evidence that the Wuhan Institute of Virology (WIV) is owned by Glaxo (GSK), a public scientific institution.
-- There’s no evidence that GSK belongs to Pfizer.
-- The author claimed that a Wuhan-based pharmaceutical company is owned by Glaxo, which is also the owner of Pfizer.
-Fact check: - The Chinese laboratory in Wuhan where coronavirus emerged is owned by GlaxoSmithKline (GSK). This fact contradicts the reference evidence which states that the Wuhan Institute of Virology is owned by the Chinese Academy of Sciences, not by GlaxoSmithKline.
-- GSK also owns Pfizer, the pharma company that produces vaccine for the virus. This fact contradicts the reference evidence which states that Pfizer is not owned by GlaxoSmithKline.
-- There’s no evidence that the Wuhan Institute of Virology (WIV) is owned by Glaxo (GSK), a public scientific institution. This fact aligns with the reference evidence.
-- There’s no evidence that GSK belongs to Pfizer. This fact aligns with the reference evidence.
-- The author claimed that a Wuhan-based pharmaceutical company is owned by Glaxo, which is also the owner of Pfizer. This fact is not addressed in the reference evidence.
-Output: {"support": 2, "contradict": 2, "not enough information": 1}
+Output: {{
+            'facts in predicted evidence': '1. The Chinese laboratory in Wuhan where coronavirus emerged is owned by GlaxoSmithKline (GSK). 2. GSK also owns Pfizer, the pharma company that produces vaccine for the virus. 3. There’s no evidence that the Wuhan Institute of Virology (WIV) is owned by Glaxo (GSK), a public scientific institution. 4. There’s no evidence that GSK belongs to Pfizer. 5. The author claimed that a Wuhan-based pharmaceutical company is owned by Glaxo, which is also the owner of Pfizer.',
+            'fact check predicted evidence': '1. The Chinese laboratory in Wuhan where coronavirus emerged is owned by GlaxoSmithKline (GSK). This fact contradicts the reference evidence which states that the Wuhan Institute of Virology is owned by the Chinese Academy of Sciences, not by GlaxoSmithKline. 2. GSK also owns Pfizer, the pharma company that produces vaccine for the virus. This fact contradicts the reference evidence which states that Pfizer is not owned by GlaxoSmithKline. 3. There’s no evidence that the Wuhan Institute of Virology (WIV) is owned by Glaxo (GSK), a public scientific institution. This fact aligns with the reference evidence. 4. There’s no evidence that GSK belongs to Pfizer. This fact aligns with the reference evidence. 5. The author claimed that a Wuhan-based pharmaceutical company is owned by Glaxo, which is also the owner of Pfizer. This fact is not addressed in the reference evidence.',
+            'facts count predicted evidence': 5, 
+            'support predicted evidence': 2, 
+            'facts in reference evidence': '1. GlaxoSmithKline is a Big Pharma corporation. 2. GlaxoSmithKline is among the top pharma companies by revenue in 2019. 3. The Wuhan Institute of Virology is owned by Chinese Academy of Sciences. 4. the Chinese Academy of Sciences (CAS) is  controlled by China's State Council. 5. Pfizer is not owned by GlaxoSmithKline. 6. Pfizer was largely owned by institutional shareholders such as investment firms in  December.',
+            'fact check reference evidence': '1. GlaxoSmithKline is a Big Pharma corporation. The predicted evidence mentions that Glaxo is a public scientific institution. Not supported. 2. GlaxoSmithKline is among the top pharma companies by revenue in 2019. The predicted evidence does not mention anything about Glaxo's revenue. Hence, this fact is not supported. 3. The Wuhan Institute of Virology is owned by Chinese Academy of Sciences. This is not supported as the predicted evidence does mentions the Chinese Academy of Sciences. 4. the Chinese Academy of Sciences (CAS) is  controlled by China's State Council. This is not supported as the predicted evidence does mentions the Chinese Academy of Sciences. 5. Pfizer is not owned by GlaxoSmithKline. The predicted evidence mentions that there is no evience that GSK belongs to Pfizer. 6. Pfizer was largely owned by institutional shareholders such as investment firms in  December. The predicted evidence does not mention any shareholders, not supported therefore.',
+            'facts count reference evidence': 6, 
+            'support reference evidence': 1
+        }}
 -----
 Input: 
 
 Claim: {}
 Reference evidence: {}
 Predicted evidence: {}
-Facts (in predicted evidence):
-Fact check:
+Output:
+"""
+
+ATOMIC_REFERENCE_PROMPT = """
+You will get as input a claim, a reference evidence and a predicted evidence. 
+Please verify the correctness of the predicted evidence by comparing it to the reference evidence, following these steps:
+1. Break down the predicted evidence in independent facts. Each fact should be a separate sentence. 
+2. Only break down the predicted evidence into facts, not the reference evidence or the claim!
+3. Evaluate each fact individually: is the fact supported by the reference evidence? Do not use additional sources or background knowledge.
+4. Finally summarise how many facts are (1.) supported by the reference evidence, (2.) contradict the reference evidence, (3.) are not verifiable given the reference evidence. Therefore, generate a json with three keys: support, contradict, not enough information.
+
+Generate the output in form of a json as shown in the examples below.
+-----
+Examples:
+
+Claim: Mukesh Ambani, richest man in Asia had surgery for pancreatic cancer at Sloan Kettering, New York, US cancer speciality hospital on October 30, 2020.
+Reference evidence: When was the photograph taken of Mukesh Ambani, the richest man in Asia, on the Facebook post claiming he had been diagnosed with pancreatic cancer and had undergone surgery? The photograph was taken on September 5, 2020. When was a video filmed of  Mukesh Ambani at the virtual launch of NK Singh's book Portrait of Power? The video was filmed on October 19, 2020. What date was the  Facebook post which confirmed Mukesh Ambani had lost 30 kgs, been diagnosed with pancreatic cancer and had had liver transplant surgery? The Facebook post was dated November 2, 2020. Where was Mukesh's photo of him supposedly recieving surgery actually taken? It was taken by Manushree Vijayvergiya who shared her experience of meeting Mukesh and Isha Ambani in a cafe in Liechtenstein.
+Predicted evidence: Who was the man who allegedly threatened Mukhesh Ambani:  Question answer:  What was his name and where was he from? New Delhi: The man had allegedly called on the HN Reliance Foundation Hospital and issued threats to Mukesh Ambani in filthy language. What are the predictions by Chiragh Darwalla for Ambanis? Astrology Predictions for Mukesh Ambani by Astrologer Chirag Daruwalla. Mukesh Ambani is an Indian industrialist and the chairman and managing director of Reliance Industries. What happened to Mukhesh Ambanis net worth? Nov 2, 2020 Mumbai: Mukesh Ambani, Asia's richest man, lost as much as $7 billion from his networth as Reliance Industries Ltd.'s shares tumbled to the lowest price in more than three months following a...
+Output: {{
+            'facts in predicted evidence': '1. A man allegedly called on the HN Reliance Foundation Hospital and issued threats to Mukesh Ambani. 2. Astrologer Chirag Daruwalla issues predictions for Mukesh Ambani. 3. Mukesh Ambani is an Indian industrialist. 4. Mukesh Ambani is the chairman and managing director of Reliance Industries. 5. Mukesh Ambani is Asia's richest man. 6. Mukesh Ambani lost $7 billion from his networth as Reliance Industries Ltd.'s shares tumbled to the lowest price in more than three months.',
+            'fact check': '1. A man allegedly called on the HN Reliance Foundation Hospital and issued threats to Mukesh Ambani. The reference evidence does not mention anything about a man calling and threatening Mukesh Ambani. Not enough information. 2. Astrologer Chirag Daruwalla issues predictions for Mukesh Ambani. The reference evidence does not mention anything about an Astrologer giving predictions about Mukesh Ambani's future. Not enough information. 3. Mukesh Ambani is an Indian industrialist. The reference evidence does not mention that Mukesh Ambani is an Indian industrialist. Not enough information. 4. Mukesh Ambani is the chairman and managing director of Reliance Industries. The reference evidence does not mention that Mukesh Ambani is the managing director of Reliance Industries. Not enough information. 5. Mukesh Ambani is Asia's richest man. The fact 'Mukesh Ambani is Asia's richest man' is supported by the reference evidence. 6. Mukesh Ambani lost $7 billion from his networth as Reliance Industries Ltd.'s shares tumbled to the lowest price in more than three months. The reference evidence does not mention that Mukesh Ambani lost money or why he lost it. Not enough information.',
+            'support': 1, 
+            'contradict': 0, 
+            'not enough information': 5
+        }}
+
+Claim: The Chinese biological laboratory in Wuhan is owned by Glaxo. Who, by chance, owns Pfizer (the one who produces the vaccine!
+Reference evidence: Who are Glaxo? GlaxoSmithKline is a Big Pharma corporation. It sits at No. 282 on Forbes Global 500 rankings. GSK is ranked number 6 among the top 20 pharma companies by revenue in 2019, according to FiercePharma. Who owns the biological laboratory in Wuhan city China? The Wuhan Institute of Virology that was the focus of conspiracy theories early in the covid 19 pandemic is owned by Chinese Academy of Sciences. Who owns the Chinese Academy of Sciences (CAS)? The CAS is  controlled by China's State Council, the country's main administrative government body. Does Glaxo own the pharma company Pfizer? The two firms are publicly traded companies listed on the New York Stock Exchange, however the claim that Pfizer is owned by GSK is incorrect. Pfizer was nearly 69 per cent owned by institutional shareholders such as investment firms as of 10 December.
+Predicted evidence: Who owns the vaccine company Pfizer? The Chinese laboratory in Wuhan where coronavirus emerged is owned by GlaxoSmithKline (GSK). The same GSK also owns Pfizer, the pharma company that produces vaccine for the virus. Does the WIV (Hubei Institute for Biological Products, Wuhan, China) belong to Gsk or Pfizer? Therefore, there's no evidence that the Wuhan Institute of Virology (WIV) is owned by Glaxo (GSK), a public scientific institution, nor that GSK belongs to Pfizer. Who is the parent company of the Wuhan based company that manufactures the vaccine? The author claimed that a Wuhan-based pharmaceutical company is owned by Glaxo, which is also the owner of Pfizer.
+Output: {{
+            'facts in predicted evidence': '1. The Chinese laboratory in Wuhan where coronavirus emerged is owned by GlaxoSmithKline (GSK). 2. GSK also owns Pfizer, the pharma company that produces vaccine for the virus. 3. There’s no evidence that the Wuhan Institute of Virology (WIV) is owned by Glaxo (GSK), a public scientific institution. 4. There’s no evidence that GSK belongs to Pfizer. 5. The author claimed that a Wuhan-based pharmaceutical company is owned by Glaxo, which is also the owner of Pfizer.',
+            'fact check': '1. The Chinese laboratory in Wuhan where coronavirus emerged is owned by GlaxoSmithKline (GSK). This fact contradicts the reference evidence which states that the Wuhan Institute of Virology is owned by the Chinese Academy of Sciences, not by GlaxoSmithKline. 2. GSK also owns Pfizer, the pharma company that produces vaccine for the virus. This fact contradicts the reference evidence which states that Pfizer is not owned by GlaxoSmithKline. 3. There’s no evidence that the Wuhan Institute of Virology (WIV) is owned by Glaxo (GSK), a public scientific institution. This fact aligns with the reference evidence. 4. There’s no evidence that GSK belongs to Pfizer. This fact aligns with the reference evidence. 5. The author claimed that a Wuhan-based pharmaceutical company is owned by Glaxo, which is also the owner of Pfizer. This fact is not addressed in the reference evidence.',
+            'support': 2, 
+            'contradict': 2, 
+            'not enough information': 1
+        }}
+-----
+Input: 
+
+Claim: {}
+Reference evidence: {}
+Predicted evidence: {}
 Output:
 """
 
@@ -424,37 +466,37 @@ Please verify the correctness of the claim following the following steps.
 1. Break down the claim in independent facts. Each fact should be a separate sentence. 
 2. Only break down the claim into facts, not the evidence!
 3. Evaluate each fact individually using the given evidence only. Do not use additional sources or background knowledge. Explain the evaluation.
-4. Finally summarise how many facts are (1.) supported by the evidence, (2.) contradict with the evidence, (3.) are not verifiable given the evidence. Therefore, generate a dictionary with three keys: support, contradict, not enough information.
+4. Finally summarise how many facts are (1.) supported by the evidence, (2.) contradict with the evidence, (3.) are not verifiable given the evidence. Therefore, generate a json with three keys: support, contradict, not enough information.
+
+Generate the output in form of a json as shown in the example below.
 -----
 Examples:
 
 Claim: Mukesh Ambani, richest man in Asia had surgery for pancreatic cancer at Sloan Kettering, New York, US cancer speciality hospital on October 30, 2020.
 Evidence: When was the photograph taken of Mukesh Ambani on the Facebook post claiming he had been diagnosed with pancreatic cancer and had undergone surgery? The photograph was taken on September 5, 2020. When was a video filmed of  Mukesh Ambani at the virtual launch of NK Singh's book Portrait of Power? The video was filmed on October 19, 2020. What date was the  Facebook post which confirmed Mukesh Ambani had lost 30 kgs, been diagnosed with pancreatic cancer and had had liver transplant surgery? The Facebook post was dated November 2, 2020. Where was Mukesh's photo of him supposedly recieving surgery actually taken? It was taken by Manushree Vijayvergiya who shared her experience of meeting Mukesh and Isha Ambani in a cafe in Liechtenstein.
-Facts: - Mukesh Ambani is the richest man in Asia.
-- Mukesh Ambani had surgery for pancreatic cancer.
-- The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US.
-- The surgery occurred on October 30, 2020.
-Fact check: - Mukesh Ambani is the richest man in Asia. Not enough information given as the evidence does not mention anything about Ambani's wealth.
-- Mukesh Ambani had surgery for pancreatic cancer. Not enough information given as the evidence mentions a Facebook post but shortly after that he was seen at a launch event.
-- The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US. Not enough information given as the evidence does not mention anything about a hospital location. 
-- The surgery occurred on October 30, 2020. The evidence shows other appearances by Ambani shortly before and after October 30, 2020. This contradicts with the fact “The surgery occurred on October 30, 2020”.
-Output: {"support": 0, "contradict": 1, "not enough information": 3}
+Output: {{
+            "facts": '1. Mukesh Ambani is the richest man in Asia. 2. Mukesh Ambani had surgery for pancreatic cancer. 3. The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US. 4. The surgery occurred on October 30, 2020.',
+            "fact check": '1. Mukesh Ambani is the richest man in Asia. Not enough information given as the evidence does not mention anything about Ambani's wealth. 2. Mukesh Ambani had surgery for pancreatic cancer. Not enough information given as the evidence mentions a Facebook post but shortly after that he was seen at a launch event. 3. The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US. Not enough information given as the evidence does not mention anything about a hospital location. 4. The surgery occurred on October 30, 2020. The evidence shows other appearances by Ambani shortly before and after October 30, 2020. This contradicts with the fact that the surgery occurred on October 30, 2020.',
+            "support": 0, 
+            "contradict": 1, 
+            "not enough information": 3
+        }}
 
 Claim: Millions of jobs in the US were lost during Donald Trump's US presidency.
 Evidence: How many people were in employment in 2017? 145,627,000 people as of January 2017. How many people were in employment in 2020? 141,735,000 people in September 2020. How many people in employment did the economy lose under Trump's presidency? The economy lost an estimate of 3,892,000 people in employment.
-Facts: - Donald Trump was US president. 
- - Millions of jobs in the US were lost during his US presidency.
-Fact check: 
-- Donald Trump was US president. Supported, the evidence mentions Trump’s presidency indicating that he was president of the US.
- - Millions of jobs in the US were lost during his US presidency. The evidence supports this statement.
-Output: {"support": 2, "contradict": 0, "not enough information": 0}
+Output: {{
+            "facts": '1. Donald Trump was US president. 2. Millions of jobs in the US were lost during his US presidency.',
+            "fact check": '1. Donald Trump was US president. Supported, the evidence mentions Trump’s presidency indicating that he was president of the US. 2. Millions of jobs in the US were lost during his US presidency. The evidence supports this statement.',
+            "support": 2, 
+            "contradict": 0, 
+            "not enough information": 0
+        }}
 -----
 Input: 
 
 Claim: {}
 Evidence: {}
-Fact check:
-Output:
+Output: 
 """
 
 SCORE_PROMPT = """
@@ -561,5 +603,7 @@ PROMPT_MAPPING = {
     PromptTypes.COT: COT_PROMPT,  # is the PSEUDO prompt that uses COT prompting
     PromptTypes.TOT: TOT_PROMPT,
     PromptTypes.ATOMIC_FACTS: ATOMIC_PROMPT,  # is the REFERENCE LESS prompt
+    PromptTypes.ATOMIC_REFERENCE_FACTS: ATOMIC_REFERENCE_PROMPT,  # is the REFERENCE LESS prompt
+    PromptTypes.ATOMIC_REFERENCE_FACTS_PREC_RECALL: ATOMIC_REFERENCE_PROMPT_PREC_RECALL,  # is the REFERENCE LESS prompt
     PromptTypes.SCORE: SCORE_PROMPT
 }

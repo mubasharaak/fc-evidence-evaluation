@@ -15,17 +15,22 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument(
     '--test_set_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/averitec_w_metadata_after_p4.jsonl",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/averitec_test.json",
     help='Path to testdata.'
 )
 parser.add_argument(
+    '--system_pred_path',
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/baseline_pred_averitec_test.json",
+    help='Path to system predictions for reference-based evaluation.'
+)
+parser.add_argument(
     '--predictions_output_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt4_pseudo/prediction_averitec_w_metadata_after_p4.jsonl",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_atomic_reference_prec_recall/prediction_averitec_test.jsonl",
     help='Path to output file for predictions.'
 )
 parser.add_argument(
     '--scores_output_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt4_pseudo/results_averitec_w_metadata_after_p4.json",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_atomic_reference_prec_recall/results_averitec_test.json",
     help='Path to output file for scores.'
 )
 parser.add_argument(
@@ -36,18 +41,19 @@ parser.add_argument(
 )
 parser.add_argument(
     '--dataset',
-    default="averitec_after_p4",  # set to vitaminc if jsonl file with claim, evidence, label entries in dicts.
+    default="averitec",  # set to vitaminc if jsonl file with claim, evidence, label entries in dicts.
     choices=list(properties.Dataset),
     help='Dataset that is used for evaluation.'
 )
 parser.add_argument(
     '--prompt_type',
-    default="cot",
+    default="atomic_reference_prec_recall",
     choices=[prompt.value for prompt in properties.PromptTypes],
     type=str.lower
 )
 args = parser.parse_args()
 _TEST_SET_PATH = args.test_set_path
+_SYSTEM_PRED_PATH = args.system_pred_path
 _PREDICTIONS_OUTPUT_PATH = args.predictions_output_path
 _SCORES_OUTPUT_PATH = args.scores_output_path
 _ONLY_EVALUATE = args.only_evaluate_no_prediction
@@ -55,7 +61,7 @@ _PROMPT_TYPE = properties.PromptTypes(args.prompt_type)
 _DATASET = properties.Dataset(args.dataset)
 _IS_HOVER_DATASET = True if "hover" in _TEST_SET_PATH else False
 
-_KEY = open('/Users/user/Desktop/openai_key.txt', 'r').read()
+_KEY = open('/Users/user/Desktop/openai_key_fc_eval.txt', 'r').read()
 _CLIENT = openai.OpenAI(
     api_key=_KEY,
     timeout=10,
@@ -84,6 +90,8 @@ def _load_dataset(dataset, test_dataset_path):
         claims, evidences, labels = utils.read_averitec_dataset(test_dataset_path)
     elif dataset == properties.Dataset.AVERITEC_AFTER_P4:
         claims, evidences, labels = utils.read_averitec_before_after_p4(test_dataset_path)
+    elif dataset == properties.Dataset.AVERITEC_SYSTEM_PRED:
+        claims, evidences, labels = utils.read_averitec_dataset(test_dataset_path, filter_conflicting_evid=False)
     elif dataset == properties.Dataset.HOVER:
         wiki_db = utils.connect_to_db(os.path.join(_WIKI_DB_PATH, "hover", 'wiki_wo_links.db'))
         claims, evidences, labels = utils.read_hover_dataset(test_dataset_path, wiki_db)
@@ -101,12 +109,22 @@ def main():
         # Given predictions_output_path load predictions for evaluation
         predictions = utils.load_jsonl_file(_PREDICTIONS_OUTPUT_PATH, dataclass=properties.OpenAIResponse)
     else:
+        # load test data
         input_data = random.sample(_load_dataset(_DATASET, _TEST_SET_PATH), _RANDOM_SUBSET)
+        # load system predictions
+        test_predictions = _load_dataset(properties.Dataset.AVERITEC_SYSTEM_PRED, _SYSTEM_PRED_PATH)
         # predict using OpenAI API and store results
-        predictions = prompt_scorer_openai.prompt_openai_model(input_data, _PROMPT_TYPE, _CLIENT)
-        utils.save_jsonl_file(predictions, _PREDICTIONS_OUTPUT_PATH)
+        predictions = prompt_scorer_openai.prompt_openai_model(input_data, test_predictions, _PROMPT_TYPE, _CLIENT)
 
-    # TODO continue by refactoring evaluation, e.g. output of "atomic" prompt
+    # add scores to predictions
+    predictions_w_scores = []
+    for pred in predictions:
+        if _PROMPT_TYPE == properties.PromptTypes.ATOMIC_REFERENCE_FACTS:
+            predictions_w_scores.append(prompt_scorer_openai.calculate_atomic_score_openai_response(pred))
+        elif _PROMPT_TYPE == properties.PromptTypes.ATOMIC_REFERENCE_FACTS_PREC_RECALL:
+            predictions_w_scores.append(prompt_scorer_openai.calculate_atomic_score_prec_recall_openai_response(pred))
+    utils.save_jsonl_file(predictions_w_scores, _PREDICTIONS_OUTPUT_PATH)
+
     scores = prompt_scorer_openai.evaluate_openai_output(predictions, _PROMPT_TYPE,
                                                          ignore_labels=["conflicting evidence/cherrypicking"],
                                                          is_two_classes=_IS_HOVER_DATASET)
