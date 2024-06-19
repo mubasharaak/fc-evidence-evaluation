@@ -25,12 +25,12 @@ parser.add_argument(
 )
 parser.add_argument(
     '--predictions_output_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_atomic_reference_prec_recall/prediction_averitec_test.jsonl",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_atomic/prediction_averitec_test.jsonl",
     help='Path to output file for predictions.'
 )
 parser.add_argument(
     '--scores_output_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_atomic_reference_prec_recall/results_averitec_test.json",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_atomic/results_averitec_test.json",
     help='Path to output file for scores.'
 )
 parser.add_argument(
@@ -47,7 +47,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--prompt_type',
-    default="atomic_reference_prec_recall",
+    default="atomic",
     choices=[prompt.value for prompt in properties.PromptTypes],
     type=str.lower
 )
@@ -67,7 +67,7 @@ _CLIENT = openai.OpenAI(
     timeout=10,
 )
 _SEED = 10
-_RANDOM_SUBSET = 100
+_RANDOM_SUBSET = 3
 random.seed(_SEED)
 _WIKI_DB_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data"
 _FEVER_DB_PW = open('/Users/user/Desktop/fever_db_pw.txt', 'r').read()
@@ -117,13 +117,8 @@ def main():
         predictions = prompt_scorer_openai.prompt_openai_model(input_data, test_predictions, _PROMPT_TYPE, _CLIENT)
 
     # add scores to predictions
-    predictions_w_scores = []
-    for pred in predictions:
-        if _PROMPT_TYPE == properties.PromptTypes.ATOMIC_REFERENCE_FACTS:
-            predictions_w_scores.append(prompt_scorer_openai.calculate_atomic_score_openai_response(pred))
-        elif _PROMPT_TYPE == properties.PromptTypes.ATOMIC_REFERENCE_FACTS_PREC_RECALL:
-            predictions_w_scores.append(prompt_scorer_openai.calculate_atomic_score_prec_recall_openai_response(pred))
-    utils.save_jsonl_file(predictions_w_scores, _PREDICTIONS_OUTPUT_PATH)
+    utils.save_jsonl_file(prompt_scorer_openai.calculate_prediction_scores(predictions, _PROMPT_TYPE),
+                          _PREDICTIONS_OUTPUT_PATH)
 
     scores = prompt_scorer_openai.evaluate_openai_output(predictions, _PROMPT_TYPE,
                                                          ignore_labels=["conflicting evidence/cherrypicking"],
