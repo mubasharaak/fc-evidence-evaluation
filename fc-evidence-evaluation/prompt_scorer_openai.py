@@ -15,8 +15,9 @@ _MAX_TOKENS = 3000
 _IGNORE_LABELS_DEFAULT = ["conflicting evidence/cherrypicking"]
 
 
-def _query_openai(prompt: str, client, keys=None, seed=_SEED, model=_MODEL, max_tokens=_MAX_TOKENS,
+def _query_openai(prompt: str, client, keys=None, model: str = None, seed=_SEED, max_tokens=_MAX_TOKENS,
                   response_format="json_object"):
+    prompting_model = model if model else _MODEL
     return client.chat.completions.create(
         messages=[
             {
@@ -24,7 +25,7 @@ def _query_openai(prompt: str, client, keys=None, seed=_SEED, model=_MODEL, max_
                 "content": prompt,
             }
         ],
-        model=model,
+        model=prompting_model,
         max_tokens=max_tokens,
         response_format={"type": response_format},
         seed=seed,
@@ -38,7 +39,8 @@ def _get_response_text(response: openai.types.chat.chat_completion.ChatCompletio
 
 def _process_output(dataset_sample: properties.AveritecEntry,
                     response: openai.types.chat.chat_completion.ChatCompletion):
-    return properties.OpenAIResponse(claim=dataset_sample.claim, evidence=dataset_sample.evidence, response=_get_response_text(response),
+    return properties.OpenAIResponse(claim=dataset_sample.claim, evidence=dataset_sample.evidence,
+                                     response=_get_response_text(response),
                                      gold=dataset_sample.label.lower(), id=dataset_sample.id)
 
 
@@ -90,13 +92,13 @@ def calculate_prediction_scores(preds: list[properties.OpenAIResponse], prompt_t
 
 
 def prompt_openai_model(dataset: list[properties.AveritecEntry], predictions: list[properties.AveritecEntry],
-                        prompt_type: properties.PromptTypes, client, match_system_preds=True) -> list[
+                        prompt_type: properties.PromptTypes, client, match_system_preds=True, model: str = None) -> \
+list[
     properties.OpenAIResponse]:
     """Prompts OpenAI models."""
     responses = []
     for i, sample in enumerate(dataset):
         print("running sample")
-        # try:
         if match_system_preds:
             # search in predictions for matching prediction
             pred = _get_system_prediction(sample, predictions)
@@ -108,11 +110,12 @@ def prompt_openai_model(dataset: list[properties.AveritecEntry], predictions: li
         prompt = _prepare_prompt(sample, pred, prompt_type)
         while True:
             try:
-                responses.append(_process_output(sample, _query_openai(prompt, client, response_format="json_object")))
+                responses.append(
+                    _process_output(sample, _query_openai(prompt, client, response_format="json_object", model=model)))
                 break
             except openai.APITimeoutError as e:
                 print(e)
-                time.sleep(10)
+                time.sleep(60)
                 pass
     return responses
 
