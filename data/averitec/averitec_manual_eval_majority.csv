@@ -1,5 +1,5 @@
-,Unnamed: 0,id,claim,gold label,reference evidence,predicted evidence,semantic_coverage,coherence,redundancy,consistency,count,semantic_coverage_scaled,coherence_scaled,redundancy_scaled,consistency_scaled,label_majority,verdict_agreement,nei_disagreement
-0,0,585,"The total population of Kerala, India is 3,56,99,443",refuted,"Question: What is the total population of Kerala, India?
+id,claim,gold label,reference evidence,predicted evidence,semantic_coverage,coherence,redundancy,consistency,count,semantic_coverage_scaled,coherence_scaled,redundancy_scaled,consistency_scaled,label_majority,verdict_agreement,nei_disagreement
+585,"The total population of Kerala, India is 3,56,99,443",refuted,"Question: What is the total population of Kerala, India?
 Answer: 3,33,87,677 from a 2011 census.
 ","Question: Does India have 5, 18 beds available for each 1000 people in government hospitals in 2018?
 Answer: The availability of beds for elderly population in India is 5.18 beds per 1000 population. In the heatmaps below, we show the state-level variation in availability of government beds in India.
@@ -9,8 +9,8 @@ Answer: Ten years later the urban population of Kerala accounted for 26 percent 
 
 Question: What language is spoken by the majority of people in kerala?
 Answer: Kerala is the most unilingual state of India in which about 97% of the total population speak Malayalam as their Native language.[43]
-",2.5,3.0,3.0,1.5,2,0.4285714285714285,0.5,1.0,0.25,not enough information,0,0
-1,1,33,Face masks do not prevent the transmission of Covid-19.,refuted,"Question: Have there been studies to show that wearing masks help stop transmission of Covid-19?
+",2.5,3,3,1.5,2,0.4285714285714285,0.5,1,0.25,not enough information,0,0
+33,Face masks do not prevent the transmission of Covid-19.,refuted,"Question: Have there been studies to show that wearing masks help stop transmission of Covid-19?
 Answer: A study in the Lancet found that Communities with high reported mask-wearing and physical distancing had the highest predicted probability of transmission control. Most masks prevent aerosols from passing through them, thus preventing the spread of COVID-19.
 ","Question: Do masks protect against covid 19  A:  There are no studies that show that masks prevent transmission. There are some studies showing that they reduce transmission but not enough to make them effective. There is one study that shows that people who?
 Answer: Claims: Masks are not an effective way of protection from the new coronavirus, only N95 are, and masks have disclaimers saying they cannot prevent someone from acquiring the new coronavirus
@@ -20,8 +20,8 @@ Answer: Face masks protecting from infections
 
 Question: Does wearing masks protect against COVID-19?
 Answer: Some empirical studies find masks to be effective in preventing disease transmission, whereas others do not.16,18–26 We determined that the studies that did not find masks to be effective were under-powered to such an extent that even if masks were 100% effective, they still would have been unlikely to find a statistically significant result.
-",3.3333333333333335,3.3333333333333335,1.6666666666666667,2.0,3,0.6666666666666666,0.5833333333333334,0.33333333333333337,0.5,contradicting information (some evidence parts support the claim whereas others refute it),0,1
-2,2,439,Kpop stans have taken over the #ImpeachBidenNow hashtag.,supported,"Question: Have Kpop stans taken over the #ImpeachBidenNow hashtag?
+",3.3333333333333335,3.3333333333333335,1.6666666666666667,2,3,0.6666666666666666,0.5833333333333334,0.33333333333333337,0.5,contradicting information (some evidence parts support the claim whereas others refute it),0,1
+439,Kpop stans have taken over the #ImpeachBidenNow hashtag.,supported,"Question: Have Kpop stans taken over the #ImpeachBidenNow hashtag?
 Answer: Yes K-pop fans have hilariously flooded the #ImpeachBidenNow hashtag that Donald Trump supporters have been trying to get trending on Twitter.
 
 On Friday (January 22), K-pop fans took over a nonsensical hashtag that called for newly elected President Joe Biden's impeachment. The wacky hashtag follows Trump's recent impeachment, which made him the first United States President to ever be impeached twice.. 
@@ -33,8 +33,8 @@ Answer: K-pop fans hijack #ImpeachBidenNow hashtag on social media, causing it t
 
 Question: How did K-Pop fans take over #BlackLivesMatter on social media?
 Answer: That's because K-pop fans have essentially taken over the hashtag in an effort to drown out those they oppose.
-",3.0,2.3333333333333335,2.0,1.6666666666666667,4,0.5714285714285714,0.33333333333333337,0.5,0.33333333333333337,not enough information,0,0
-3,3,494,Gov. Tony Evers has the authority and revenue necessary to upgrade the Wisconsin unemployment system without the Legislature.,refuted,"Question: What powers does the Wisconsin Governor have?
+",3,2.3333333333333335,2,1.6666666666666667,4,0.5714285714285714,0.33333333333333337,0.5,0.33333333333333337,not enough information,0,0
+494,Gov. Tony Evers has the authority and revenue necessary to upgrade the Wisconsin unemployment system without the Legislature.,refuted,"Question: What powers does the Wisconsin Governor have?
 Answer: No answer could be found.
 
 Question: What goverment funds does Tony Evers have access to?
@@ -56,8 +56,8 @@ Answer: Legislature yet to take action on governor’s special session to modern
 
 Question: What does the unemployment system need to be improved to better serve future claims?
 Answer: “Ultimately, this is the necessary solution to provide better, faster services to future claimants and improve the (unemployment) system’s ability to respond to future recessions,” Pechacek said.
-",2.0,3.5,3.0,2.5,3,0.2857142857142857,0.625,1.0,0.75,not enough information,0,0
-4,4,591,"Muslim population of Kerala, India is 88,73,472.",not enough information,"Question: What is the population of Muslims in Kerala, India?
+",2,3.5,3,2.5,3,0.2857142857142857,0.625,1,0.75,not enough information,0,0
+591,"Muslim population of Kerala, India is 88,73,472.",not enough information,"Question: What is the population of Muslims in Kerala, India?
 Answer: The 2011 census gives 8,873,472 as the figure.The lowest growth rate was seen in Kerala with 12.8%; population increased from 7.8 million to 8.8 million.
 
 Question: What is the population of Muslims in Kerala, India at the time of writing the claim in 2020?
@@ -73,8 +73,8 @@ Answer: While the Hindus constitute 1.82 crore, Muslim population is pegged at 8
 
 Question: How many Muslims live in Rural Kerala?
 Answer: The calculated Muslim population (2011) in Kerala state is 88,73,472. The number of Muslims in rural areas is only 42,51,787, against an urban population of 46,21,685.
-",3.5,4.0,3.0,3.0,2,0.7142857142857143,0.75,1.0,1.0,supported,0,1
-5,5,15,COVID 19 patients don’t need intensive care or ventilators.,refuted,"Question: Have Covid-19 patients been placed on a ventilator in intensive care?
+",3.5,4,3,3,2,0.7142857142857143,0.75,1,1,supported,0,1
+15,COVID 19 patients don’t need intensive care or ventilators.,refuted,"Question: Have Covid-19 patients been placed on a ventilator in intensive care?
 Answer: About 5–15% of patients with COVID-19 infection require intensive care surveillance and ventilator support. This is primarily because of the effects of pneumonia and acute respiratory distress syndrome. According to Medical Xpress, if lung function has been severely impaired, patients may need a ventilator.
 ","Question: What are the experiences of doctors have had with using ventilator support in Covid-19 cases?
 Answer: Physicians are using their experience with ventilators in those situations to guide their care for Covid-19 patients.
@@ -84,8 +84,8 @@ Answer: As the COVID-19 surge continues, Atrium Health has a record-breaking num
 
 Question: What are the risks of using a Ventilator in a COVID-19 patient?
 Answer: Ventilation of COVID-19 patients in intensive care units
-",2.5,2.5,2.5,3.0,2,0.4285714285714285,0.375,0.75,1.0,refuted,1,1
-6,6,211,"Combustion, cannot exist without at least 16% of oxygen content to burn, and Mars atmosphere only contains 0'16% of molecular oxygen. So, NASA's Perseverance rover cannot land on Mars.",refuted,"Question: What is the landing sequence for Perseverance?
+",2.5,2.5,2.5,3,2,0.4285714285714285,0.375,0.75,1,refuted,1,1
+211,"Combustion, cannot exist without at least 16% of oxygen content to burn, and Mars atmosphere only contains 0'16% of molecular oxygen. So, NASA's Perseverance rover cannot land on Mars.",refuted,"Question: What is the landing sequence for Perseverance?
 Answer: a protective ""aeroshell"" containing Perseverance, Ingenuity and a descent vehicle called ""Skycrane"" enters the Mars atmosphere at 19,500 km/h (12,100 mph).21.5-metre parachute will deploy, and the heat shield will be ejected. Two minutes later, the back part of the shell will separate too.The Skycrane, descending at 2.7 km/h (1.6 mph) and powered by eight throttleable retrorockets, will then lower the rover on 7.6 metre (25 foot) nylon cords, from about 20 metres above the ground.
 
 Question: What fuel does the Perseverance rockets use?
@@ -102,7 +102,7 @@ Answer: There may be 0.1% oxygen present on Mars but decomposition of hydrazine 
 Question: What is Clark saying about the atmosphere of Mars?
 Answer: Clark said that while ""combustion cannot exist using the Martian atmosphere"" is generally a true statement, and there is about 0.1% oxygen present, Perseverance isn't using combustion to land.
 ",2.5,3.5,1.5,2.5,3,0.4285714285714285,0.625,0.25,0.75,refuted,1,1
-7,7,473,"The word ""Guantanamo"" on the website of the Office of Military Commissions had special significance, that something unusual or significant was about to happen.",not enough information,"Question: Is there a relationship between the US and Guantanamo bay
+473,"The word ""Guantanamo"" on the website of the Office of Military Commissions had special significance, that something unusual or significant was about to happen.",not enough information,"Question: Is there a relationship between the US and Guantanamo bay
 Answer: The US has handled cases related to detainees held at Guantanamo Bay in Cuba
 
 Question: Does ""Guantanamo"" being on the US Military Commissions website have a significance
@@ -115,8 +115,8 @@ Answer: and the military court system,” Dept. of Defense News Briefing on Mili
 
 Question: What were the reasons for placing these detainees at  a US base in Cuba?
 Answer: The military then placed these ""detainees"" at a U.S. base located at Guantanamo Bay, Cuba at the direction of the Bush Administration, which believed that the base fell outside the jurisdiction of U.S. federal courts.
-",1.5,3.5,3.0,2.5,2,0.14285714285714285,0.625,1.0,0.75,not enough information,1,1
-8,8,832,Kenyan exports within the East African Community jumped to a six-year high in 2019.,supported,"Question: What is the membership of the East African Community?
+",1.5,3.5,3,2.5,2,0.14285714285714285,0.625,1,0.75,not enough information,1,1
+832,Kenyan exports within the East African Community jumped to a six-year high in 2019.,supported,"Question: What is the membership of the East African Community?
 Answer: The EAC comprises 6 Partner States:
 Burundi
 Kenya
@@ -138,8 +138,8 @@ Answer: Kenya’s EAC exports hit six-year high after trade rows easeTuesday Feb
 
 Question: How is Kenya connected to the rest of Africa?
 Answer: Kenya is active within regional trade blocs such as the Common Market for Eastern and Southern Africa (COMESA) and the East African Community (EAC), a partnership of Kenya, Uganda, Tanzania, Rwanda, Burundi and South Sudan.
-",3.5,4.0,2.5,2.0,2,0.7142857142857143,0.75,0.75,0.5,contradicting information (some evidence parts support the claim whereas others refute it),0,1
-9,9,503,SinoVac COVID-19 vaccine (CoronaVac) has an efficacy rate of 91.25% in Indonesia.,refuted,"Question: What is the efficacy rate of the SinoVac COVID-19 vaccine (CoronaVac) in Indonesia?
+",3.5,4,2.5,2,2,0.7142857142857143,0.75,0.75,0.5,contradicting information (some evidence parts support the claim whereas others refute it),0,1
+503,SinoVac COVID-19 vaccine (CoronaVac) has an efficacy rate of 91.25% in Indonesia.,refuted,"Question: What is the efficacy rate of the SinoVac COVID-19 vaccine (CoronaVac) in Indonesia?
 Answer: CoronaVac had a 65.3 per cent efficacy rate.
 
 Question: Which country shows the SinoVac COVID-19 vaccine (CoronaVac) efficacy rate at 91.25%?
@@ -152,8 +152,8 @@ Answer: Turkey, which approved the Sinovac vaccine for emergency use on Wednesda
 
 Question: Is the Sinovac vaccine 100% effective at protecting against COVID-19?
 Answer: China's pharma giant Sinovac Biotech claims its vaccine has a 100% success rate at preventing fatal COVID-19.
-",4.5,5.0,3.0,3.0,3,0.9999999999999999,1.0,1.0,1.0,refuted,1,1
-10,10,843,"In March 2018, Kenya and Ghana were the first countries to not only sign but also ratify the landmark agreement creating the African Continental Free Trade Area.",supported,"Question: Which country was the first to ratify the African Continental Free Trade Area Agreement first?
+",4.5,5,3,3,3,0.9999999999999999,1,1,1,refuted,1,1
+843,"In March 2018, Kenya and Ghana were the first countries to not only sign but also ratify the landmark agreement creating the African Continental Free Trade Area.",supported,"Question: Which country was the first to ratify the African Continental Free Trade Area Agreement first?
 Answer: Kenya - 6th May 2018
 
 Question: When did Ghana sign the agreement?
@@ -169,8 +169,8 @@ Answer: 44 African Countries Sign Agreement to Establish African Continental Fre
 
 Question: What are the 4 African Countries that have not signed up to the agreement?
 Answer: All 54 African countries signed the Paris Agreement, with only four countries so far failing to ratify it.[51]
-",1.5,2.5,1.5,2.0,2,0.14285714285714285,0.375,0.25,0.5,not enough information,0,0
-11,11,284,"In 2020, there was a 64% drop in cases of GBVF compared to the same period in 2019",not enough information,"Question: At the time of the claim, what were the latest 2020 South Africa GBVF statistics available?
+",1.5,2.5,1.5,2,2,0.14285714285714285,0.375,0.25,0.5,not enough information,0,0
+284,"In 2020, there was a 64% drop in cases of GBVF compared to the same period in 2019",not enough information,"Question: At the time of the claim, what were the latest 2020 South Africa GBVF statistics available?
 Answer: The police’s latest crime statistics at the time of the claim covered the period up to 31st March 2020 (Annual Stats 
 Crime Statistics 2019/2020). The next release document for crime statistics also included data from April to June 2021.
 
@@ -185,8 +185,8 @@ Answer: Continuing this trend, in the year ending June 2020, 100,813 cases were 
 
 Question: What was the weekly average in cases from 6 Jan to 1 Mar 2020?
 Answer: This is compared with the average weekly number of cases between 6 January and 1 March 2020.
-",2.0,3.5,2.5,3.0,2,0.2857142857142857,0.625,0.75,1.0,refuted,0,1
-12,12,669,One of the Deadliest Days in American History was the Battle of Antietam.,supported,"Question: Where did the Battle of Antietam take place?
+",2,3.5,2.5,3,2,0.2857142857142857,0.625,0.75,1,refuted,0,1
+669,One of the Deadliest Days in American History was the Battle of Antietam.,supported,"Question: Where did the Battle of Antietam take place?
 Answer: ..on Antietam Creek near the small town of Sharpsburg, Maryland. Four hours of intense fighting took place on an old sunken road that separated two farms.
 
 Question: When did the Battle of Antietam take place?
@@ -205,8 +205,8 @@ Answer: The battle of Antietam was fought along a 4-mile front and remains the b
 
 Question: What was the battle of anti etam and how many people were killed on that day in american history?
 Answer: With a tally of more than five thousand killed, twenty thousand wounded, and three thousand missing, the Battle of Antietam made September 17, 1862, the deadliest day of combat in American history.
-",3.5,4.0,2.5,2.0,2,0.7142857142857143,0.75,0.75,0.5,supported,1,1
-13,13,830,The Covid-19 dusk-to-dawn curfew is Kenya’s first ever nationwide curfew since independence.,supported,"Question: When did Kenya gain independence
+",3.5,4,2.5,2,2,0.7142857142857143,0.75,0.75,0.5,supported,1,1
+830,The Covid-19 dusk-to-dawn curfew is Kenya’s first ever nationwide curfew since independence.,supported,"Question: When did Kenya gain independence
 Answer: Kenya gained independence in 1963
 
 Question: Have there been other nationwide curfews in Kenya since 1963
@@ -216,8 +216,8 @@ Answer: On March 25, President Kenyatta announced a nationwide dusk-to-dawn curf
 
 Question: What is the reason for the lifting of curfews in Kenya?
 Answer: The President of Kenya, Uhuru Kenyatta, has lifted the curfew in force in the country from dusk to dawn.
-",1.5,3.0,1.5,3.0,2,0.14285714285714285,0.5,0.25,1.0,not enough information,0,0
-14,14,164,The COVID-19 vaccine should not be given to people with neurological issues as it can further aggravate their symptoms.,refuted,"Question: Are Covid-19 vaccines safe for people with neurological issues?
+",1.5,3,1.5,3,2,0.14285714285714285,0.5,0.25,1,not enough information,0,0
+164,The COVID-19 vaccine should not be given to people with neurological issues as it can further aggravate their symptoms.,refuted,"Question: Are Covid-19 vaccines safe for people with neurological issues?
 Answer: Yes All COVID-19 vaccines are safe for neurology patients. The ABN recommends you take
 up whichever vaccination you are offered without delay regardless of your age, state of
 health or medication that you’re receiving, unless you have a specific contraindication
@@ -230,8 +230,8 @@ Answer: Based on existing evidence, neurologists should recommend COVID-19 vacci
 
 Question: is it safe to administer the Covid vaccine to a person with a history of seizures?
 Answer: - People with neurological issues, as the vaccine can further aggravate the symptoms
-",3.0,3.0,2.5,1.5,2,0.5714285714285714,0.5,0.75,0.25,contradicting information (some evidence parts support the claim whereas others refute it),0,1
-15,15,35,"During the final days of the Trump presidency, House Rep. Matt Gaetz (R-Fla.) privately pursued a blanket pardon from then-President Donald Trump, while the U.S. Department of Justice (DOJ), under Trump appointee William Barr, was launching a concurrent investigation into an alleged sexual assault of a minor by the congressman.",supported,"Question: Who is Matt Gaetz?
+",3,3,2.5,1.5,2,0.5714285714285714,0.5,0.75,0.25,contradicting information (some evidence parts support the claim whereas others refute it),0,1
+35,"During the final days of the Trump presidency, House Rep. Matt Gaetz (R-Fla.) privately pursued a blanket pardon from then-President Donald Trump, while the U.S. Department of Justice (DOJ), under Trump appointee William Barr, was launching a concurrent investigation into an alleged sexual assault of a minor by the congressman.",supported,"Question: Who is Matt Gaetz?
 Answer: Matt Gaetz is American lawyer and politician who has served as the U.S. representative
 
 Question: Did Matt Gaetz privately pursued a blanket pardon from then-President Donald Trump?
@@ -247,8 +247,8 @@ Answer: Gaetz, under investigation for sex allegations, sought blanket pardon fr
 
 Question: Did Rep Matt gaetz ask the president to pardon himself?
 Answer: During the final weeks of the Trump administration, Rep. Matt Gaetz asked the White House for a blanket presidential pardon that ultimately was not granted, say sources.
-",3.0,4.0,2.5,3.0,4,0.5714285714285714,0.75,0.75,1.0,contradicting information (some evidence parts support the claim whereas others refute it),0,1
-16,16,533,"Parler has gone offline after Amazon suspended it from its server hosting service on Sunday, January 10, 2021.",supported,"Question: Did Amazon remove Parler from its hosting services?
+",3,4,2.5,3,4,0.5714285714285714,0.75,0.75,1,contradicting information (some evidence parts support the claim whereas others refute it),0,1
+533,"Parler has gone offline after Amazon suspended it from its server hosting service on Sunday, January 10, 2021.",supported,"Question: Did Amazon remove Parler from its hosting services?
 Answer: Yes confirmed in letter.. 
 ","Question: What is Amazon saying about Parlers suspension of its services?
 Answer: Amazon Web Services is suspending Parler's access to its hosting services at the end of the weekend, potentially driving the service offline unless it can find a new provider.
@@ -258,8 +258,8 @@ Answer: Amazon has told Parler it will suspend the company’s AWS hosting servi
 
 Question: Why is it offline now?
 Answer: UPDATE, Jan. 11 2021: As of January 11, Parler is no longer available on the Apple or Google app stores and has lost its Amazon web hosting, driving the service offline.
-",4.5,5.0,2.5,3.0,2,0.9999999999999999,1.0,0.75,1.0,supported,1,1
-17,17,501,Chemtrails are declassified,refuted,"Question: What are Chemtrails?
+",4.5,5,2.5,3,2,0.9999999999999999,1,0.75,1,supported,1,1
+501,Chemtrails are declassified,refuted,"Question: What are Chemtrails?
 Answer: Believers in chemtrails say those trails are actually clouds of chemicals used by the government for nefarious purposes
 
 Question: Has any European government declassified any documents on chemtrails ?
@@ -272,8 +272,8 @@ Answer: The Lost Journals of Nikola Tesla: Haarp - Chemtrails And The Secrets Of
 
 Question: What does this group claim about chemtrail spraying?
 Answer: Russ Tanner runs what he claims is the largest ""chemtrails"" group on Facebook - Chemtrails Global Skywatch - which has more than 114,000 members.
-",1.5,2.0,2.5,2.0,2,0.14285714285714285,0.25,0.75,0.5,not enough information,0,0
-18,18,335,"By the end of January 2021, over 430,000 opportunities have already been supported through the [Presidential Employment Stimulus]. A further 180,000 opportunities are currently in the recruitment process.”",supported,"Question: What is the aim of the Presidential Employment stimulus
+",1.5,2,2.5,2,2,0.14285714285714285,0.25,0.75,0.5,not enough information,0,0
+335,"By the end of January 2021, over 430,000 opportunities have already been supported through the [Presidential Employment Stimulus]. A further 180,000 opportunities are currently in the recruitment process.”",supported,"Question: What is the aim of the Presidential Employment stimulus
 Answer: The Presidential Employment Stimulus is designed to support
 a spectrum of opportunities, focusing on job creation through
 public employment; on job retention in vulnerable sectors; on
@@ -287,8 +287,8 @@ Question: Are there opportunities being supported by the Presidential Employment
 Answer: As Ramaphosa also noted, a further 186,879 opportunities are currently recruiting or accepting applications.
 ","Question: How many jobs has the Stimulus created in the USA since the beginning of 2020?
 Answer: By the end of January 2021, over 430,000 opportunities have already been supported through the stimulus.
-",2.0,4.5,2.0,3.0,3,0.2857142857142857,0.875,0.5,1.0,not enough information,0,0
-19,19,77,"Kids and body parts were found in the Ever Given, the cargo shipped that blocked Egypt's Suez Canal for multiple days.",refuted,"Question: Did the Ever Given get stuck in the Suez Canal?
+",2,4.5,2,3,3,0.2857142857142857,0.875,0.5,1,not enough information,0,0
+77,"Kids and body parts were found in the Ever Given, the cargo shipped that blocked Egypt's Suez Canal for multiple days.",refuted,"Question: Did the Ever Given get stuck in the Suez Canal?
 Answer: Yes The cargo ship Ever Given was stuck in the Suez Canal in March 2021.. 
 
 Question: Was the Ever Given carrying body parts when it got stuck in the Suez Canal in March 2021?
@@ -301,8 +301,8 @@ Answer: The post’s claim appears to be baseless. Neither the Suez Canal Author
 
 Question: What caused Ever the Ever Ever given given ship to run into the Suez Canal?
 Answer: The Ever Given, a Panama-flagged ship that carries cargo between Asia and Europe, ran aground Tuesday in the narrow, man-made canal dividing continental Africa from the Sinai Peninsula.
-",4.0,5.0,3.0,3.0,2,0.8571428571428571,1.0,1.0,1.0,refuted,1,1
-20,20,255,"After one year, there is still no evidence that masks or lockdowns slow the spread of COVID-19.",refuted,"Question: Does mask wearing slow down the spread of COVID-19?
+",4,5,3,3,2,0.8571428571428571,1,1,1,refuted,1,1
+255,"After one year, there is still no evidence that masks or lockdowns slow the spread of COVID-19.",refuted,"Question: Does mask wearing slow down the spread of COVID-19?
 Answer: In the case of the novel coronavirus and COVID-19, the CDC Trusted Source notes that simple face coverings or masks can reduce its spread.
 
 It recommends that people wear a face covering or mask to cover their nose and mouth when in the community. This is another public health measure people should take to reduce the spread of COVID-19 in addition to social or physical distancing, frequent handwashing, and other preventive actions.
@@ -330,8 +330,8 @@ Answer: Two new papers published in the journal Nature say that lockdowns put in
 
 Question: What is the evidence to support the claims that masks and lockdown slow COVID-19 spread?
 Answer: Social media users have been sharing posts online that claim there is no evidence that face masks or lockdowns slow the spread of COVID-19.
-",2.0,3.0,3.0,2.0,2,0.2857142857142857,0.5,1.0,0.5,contradicting information (some evidence parts support the claim whereas others refute it),0,1
-21,21,763,Inaccurate early vote count in one Michigan county was a failure of the software used.,refuted,"Question: Was an inaccurate vote count in Michigan's Antrim County, during the 2020 elections, due to a software error?
+",2,3,3,2,2,0.2857142857142857,0.5,1,0.5,contradicting information (some evidence parts support the claim whereas others refute it),0,1
+763,Inaccurate early vote count in one Michigan county was a failure of the software used.,refuted,"Question: Was an inaccurate vote count in Michigan's Antrim County, during the 2020 elections, due to a software error?
 Answer: No An inaccurate vote count in Michigan’s Antrim County was never an official result and was due to a human error in not updating to the latest version, not a failure in Dominion Voting Systems software itself.. 
 
 Question: Did Dominion Voting Systems software fail in Antrim county?
@@ -355,8 +355,8 @@ Answer: There was a problem in one county where votes were initially incorrectly
 
 Question: What software was used by the county in question?
 Answer: Just one county used software from Dominion.
-",3.0,4.5,3.0,3.0,3,0.5714285714285714,0.875,1.0,1.0,refuted,1,1
-22,23,45,Philippines President Rodrigo Duterte is enraged at Health Secretary Francisco Duque III over ivermectin drug controversy amid current health crisis.,refuted,"Question: What is ivermectin?
+",3,4.5,3,3,3,0.5714285714285714,0.875,1,1,refuted,1,1
+45,Philippines President Rodrigo Duterte is enraged at Health Secretary Francisco Duque III over ivermectin drug controversy amid current health crisis.,refuted,"Question: What is ivermectin?
 Answer: Ivermectin is a registered veterinary product in the Philippine used to treat parasites and prevent heartworms in animals. It is also allowed for use for people only in topical form under a prescription, to treat head lice and skin conditions like rosacea.Ivermectin is a registered veterinary product but  It is also allowed for use for people only in topical form under a prescription, to treat head lice and skin conditions like rosacea.
 
 Question: is it recommended for use with COVID-19?
@@ -374,8 +374,8 @@ Answer: Mr. Duterte could be negatively affected if Health Secretary Francisco T
 
 Question: What are the issues that Francisco duque III has faced since covid-19 pandemic started?
 Answer: And then there is our health secretary, Francisco Duque III. He’s been under fire for several issues since the start of the pandemic.
-",1.5,4.0,3.0,3.0,2,0.14285714285714285,0.75,1.0,1.0,supported,0,1
-23,24,430,Tanzania has not been affected by COVID-19.,refuted,"Question: Are there records of deaths due to Covid-19 in Tanzania
+",1.5,4,3,3,2,0.14285714285714285,0.75,1,1,supported,0,1
+430,Tanzania has not been affected by COVID-19.,refuted,"Question: Are there records of deaths due to Covid-19 in Tanzania
 Answer: Yes Tanzania has reported 509 COVID-19 infections and 21 deaths in total, according to World Health Organization data.. 
 
 Question: Are there records of deaths due to Covid-19 in Tanzania?
@@ -388,8 +388,8 @@ Answer: To date, Tanzania has not signed up for the international Covax vaccinat
 
 Question: How has covid-19 affected the economy of Tanzania?
 Answer: ""The COVID-19 pandemic has negatively impacted Tanzania’s macroeconomic outlook, and the health and wellbeing of its population.
-",1.5,3.5,3.0,3.0,2,0.14285714285714285,0.625,1.0,1.0,refuted,1,1
-24,25,880,"President Donald J. Trump won the election on November 7, 2020",refuted,"Question: At the time of the posting, had the elections been called?
+",1.5,3.5,3,3,2,0.14285714285714285,0.625,1,1,refuted,1,1
+880,"President Donald J. Trump won the election on November 7, 2020",refuted,"Question: At the time of the posting, had the elections been called?
 Answer: No It was called half an hour after Trump tweeted. 
 
 Question: Was it called for Donald Trump?
@@ -399,8 +399,8 @@ Answer: - Donald J. Trump for President campaign website
 
 Question: How did Donald trump win this election?
 Answer: I WON THIS ELECTION, BY A LOT!— Donald J. Trump (@realDonaldTrump) November 7, 2020
-",1.0,1.0,1.0,2.5,2,0.0,0.0,0.0,0.75,supported,0,1
-25,26,142,A research organisation has confirmed Philippine Vice President Leni Robredo received zero votes in the country's Mindanao island.,refuted,"Question: did Philippine Vice President Leni Robredo receive any votes from Mindanao island?
+",1,1,1,2.5,2,0,0,0,0.75,supported,0,1
+142,A research organisation has confirmed Philippine Vice President Leni Robredo received zero votes in the country's Mindanao island.,refuted,"Question: did Philippine Vice President Leni Robredo receive any votes from Mindanao island?
 Answer: Robredo’s number spiked when the Mindanao votes started to come in. She got a greater number of votes from the Autonomous Region in Muslim Mindanao (ARMM) at 408,397 compared to the 249,963 that Marcos garnered, based on the partial, unofficial 72.35 percent processed election returns.
 ","Question: What is the vice presidential candidate of Philippines?
 Answer: To become country's first leader from southern Mindanao upon inauguration June 30; Leni Robredo proclaimed vice president
@@ -410,8 +410,8 @@ Answer: Vice President-elect Leni Robredo got the highest number of votes in 41 
 
 Question: What is the meaning of this statement by LENI ROBREDO, VP candidate of Philippines, on her dream to be the next vice president of philippines?
 Answer: Robredo said the dream of the people of Bicol of electing a Vice President was within reach, but the region had to unite behind her candidacy.
-",3.5,4.0,3.0,2.5,2,0.7142857142857143,0.75,1.0,0.75,refuted,1,1
-26,27,617,"Biden's sister is married to Stephen Owens, who owns Dominion voting systems.",refuted,"Question: What is Joe Biden's sister called?
+",3.5,4,3,2.5,2,0.7142857142857143,0.75,1,0.75,refuted,1,1
+617,"Biden's sister is married to Stephen Owens, who owns Dominion voting systems.",refuted,"Question: What is Joe Biden's sister called?
 Answer: Valerie Biden Owens
 
 Question: Is Valerie Biden Owens married to Stephen Owens, who owns Dominion voting systems?
@@ -424,8 +424,8 @@ Answer: Joe Biden has one sister, Valerie Biden Owens. She is married to Jack Ow
 
 Question: What relationship does Stephen OWENS have with Joe BIden's family?
 Answer: Fratto said Staple Street Capital co-founder Stephen Owens has no relationship with the Biden family.
-",4.5,4.5,3.0,2.5,3,0.9999999999999999,0.875,1.0,0.75,contradicting information (some evidence parts support the claim whereas others refute it),0,1
-27,28,363,Former President Donald Trump won a majority of lawsuits targeted at election fraud.,refuted,"Question: Has former U.S president filled lawsuits over his failed election results?
+",4.5,4.5,3,2.5,3,0.9999999999999999,0.875,1,0.75,contradicting information (some evidence parts support the claim whereas others refute it),0,1
+363,Former President Donald Trump won a majority of lawsuits targeted at election fraud.,refuted,"Question: Has former U.S president filled lawsuits over his failed election results?
 Answer: The president and his allies filed 62 lawsuits in state and federal courts seeking to overturn election results in states the president lost
 
 Question: Of the 62 cases that were filled  how many favoured Trumps claims?
@@ -440,8 +440,8 @@ Answer: Former U.S. President Donald Trump has repeatedly cited false claims by 
 
 Question: Did President Trump lose any election cases where the merits were considered?
 Answer: Trump did not win two-thirds of election lawsuits ‘where merits considered’
-",3.0,4.5,3.0,3.0,2,0.5714285714285714,0.875,1.0,1.0,refuted,1,1
-28,30,431,Biden administration temporarily freezes arms sales to Saudi Arabia and the United Arab Emirates.,supported,"Question: What did President Biden do to the arms deals between the US and the United Arab emirates
+",3,4.5,3,3,2,0.5714285714285714,0.875,1,1,refuted,1,1
+431,Biden administration temporarily freezes arms sales to Saudi Arabia and the United Arab Emirates.,supported,"Question: What did President Biden do to the arms deals between the US and the United Arab emirates
 Answer: President Joe Biden is temporarily freezing weapons sales to Saudi Arabia and the United Arab Emirates, pledging to review a set of controversial arms deals former President Donald Trump struck with the two U.S. allies in the waning days of his administration.
 ","Question: What does the Biden administration mean by suspending arms sales to Saudis and the UAE?
 Answer: READ: Biden suspends arms deals to Saudi Arabia, UAE
@@ -451,8 +451,8 @@ Answer: The Biden administration is also reviewing its policy for military sales
 
 Question: What does the UAE ambassador say about the Biden administration's decision to stop arms shipments to Saudi and UAE?
 Answer: United Arab Emirates (UAE) Ambassador to Washington Yousef Al-Otaiba considers that the announcement made by US President Joe Biden's administration regarding halting arms sales to the Emirates andô Saudi Arabia was to be expected.
-",3.5,3.5,3.0,2.5,2,0.7142857142857143,0.625,1.0,0.75,supported,1,1
-29,32,846,"As of the end of the 2019 calendar year, Nigeria had been able to achieve a textbook-to-pupil ratio of 1:1 for grades 1 through 3.",supported,"Question: What is the latest data on Nigeria's textbook-to-pupil ratio for grades 1 through 3?
+",3.5,3.5,3,2.5,2,0.7142857142857143,0.625,1,0.75,supported,1,1
+846,"As of the end of the 2019 calendar year, Nigeria had been able to achieve a textbook-to-pupil ratio of 1:1 for grades 1 through 3.",supported,"Question: What is the latest data on Nigeria's textbook-to-pupil ratio for grades 1 through 3?
 Answer: The data shows that the 1:1 Pupil Textbook Ratio in Mathematics, English and Kiswahili has
 almost been achieved in Grade 1, 2 and 3.
 
@@ -472,8 +472,8 @@ Answer: But while the textbook-to-pupil ratio in the first grades of school is n
 
 Question: Is there any correlation between the teacher-student ratio and student achievement?
 Answer: The student-teacher ratio has been found to be one of the strongest indicators of student success and engagement.
-",3.0,4.0,3.0,2.5,2,0.5714285714285714,0.75,1.0,0.75,supported,1,1
-30,33,691,"KEM Hospital in Mumbai, India has an automatic machine which can cure paralysis in just a few hours.",refuted,"Question: Does the KEM Hospital in Mumbai, India, have an automatic machine which can cure any paralysis patient?
+",3,4,3,2.5,2,0.5714285714285714,0.75,1,0.75,supported,1,1
+691,"KEM Hospital in Mumbai, India has an automatic machine which can cure paralysis in just a few hours.",refuted,"Question: Does the KEM Hospital in Mumbai, India, have an automatic machine which can cure any paralysis patient?
 Answer: No KEM Hospital in Mumbai, India does not have a machine which cures paralysis, but a new state-of-the-art centre with an advanced machine will offer interventions up to 24 hours in select ""stroke"" patients.. 
 
 Question: Does this new advanced machine cure old stroke cases?
@@ -489,8 +489,8 @@ Answer: Kem Hospital, Mumbai
 
 Question: Is it possible to cure paralysis and remove brain tumor using machine?
 Answer: Paralysis is cured in KEM Hospital within a few hours using an automatic machine. The brain tumors are removed using the machine, just like that in angioplasty.
-",2.0,2.0,3.0,1.5,2,0.2857142857142857,0.25,1.0,0.25,supported,0,1
-31,34,268,"India's Bharatiya Janata Party's Manoj Tiwari tweeted that if Prime Minister Narendra Modi-led government wasn't ruling the country, the petrol prices would have touched Rs 200.",not enough information,"Question: Were was this claim originally made?
+",2,2,3,1.5,2,0.2857142857142857,0.25,1,0.25,supported,0,1
+268,"India's Bharatiya Janata Party's Manoj Tiwari tweeted that if Prime Minister Narendra Modi-led government wasn't ruling the country, the petrol prices would have touched Rs 200.",not enough information,"Question: Were was this claim originally made?
 Answer: Twitter - @DainikKhaskar the account no longer exists
 
 Question: Who is DainikKhaskar?
@@ -503,8 +503,8 @@ Answer: Amid the rising fuel prices, a quote shared by a parody Twitter account 
 
 Question: What are the reasons behind the rise in petrol prices in recent times?
 Answer: 200 today had the Modi government not been in power: Manoj Tiwari, BJP leader.” The cost of petrol and diesel has skyrocketed off late, with petrol touching the Rs.100 per liter mark in some parts of the country.
-",1.0,2.5,2.5,2.0,2,0.0,0.375,0.75,0.5,supported,0,1
-32,35,467,Biden removed his hand from the fake Bible before his oath was finished,refuted,"Question: how important is the bible to Biden
+",1,2.5,2.5,2,2,0,0.375,0.75,0.5,supported,0,1
+467,Biden removed his hand from the fake Bible before his oath was finished,refuted,"Question: how important is the bible to Biden
 Answer: ""Every important date is in there,"" Biden told Stephen Colbert in a recent interview, calling the book a ""family heirloom.""
 
 Biden said the Bible gets a new date inscription every time a member of the family gets sworn in to office.
@@ -529,8 +529,8 @@ Answer: Biden’s hand remains placed on his family bible until after his final 
 
 Question: Was Biden's Bible used in his oath of office as Attorney General of Delaware?
 Answer: Decades later, his son Beau Biden used the same Bible when he was sworn in as Delaware’s attorney general.
-",3.5,4.5,3.0,3.0,2,0.7142857142857143,0.875,1.0,1.0,refuted,1,1
-33,36,178,£37 billion has been spent on NHS Test and Trace so far.,not enough information,"Question: What was the budget for the NHS Test and Trace?
+",3.5,4.5,3,3,2,0.7142857142857143,0.875,1,1,refuted,1,1
+178,£37 billion has been spent on NHS Test and Trace so far.,not enough information,"Question: What was the budget for the NHS Test and Trace?
 Answer: A total of £37 billion pounds has now been allocated to the NHS Test and Trace scheme.
 
 Question: What is the date of the claim?
@@ -552,8 +552,8 @@ Answer: The committee’s report takes issue with the £37 billion which has bee
 
 Question: How much has Test & Trace spent?
 Answer: But although this money is available, not all of it has been spent. At the end of October, the last date for which figures are available, Test and Trace had spent £5.8bn, mostly on testing.
-",3.0,5.0,2.5,3.0,2,0.5714285714285714,1.0,0.75,1.0,refuted,0,1
-34,37,702,President Donald Trump can issue pardons for his family members before leaving office.,supported,"Question: What is a pardon from the US President?
+",3,5,2.5,3,2,0.5714285714285714,1,0.75,1,refuted,0,1
+702,President Donald Trump can issue pardons for his family members before leaving office.,supported,"Question: What is a pardon from the US President?
 Answer: Presidential Pardon Power comes from the constitution. The president may reduce a prisoner’s sentence or pardon him for any federal crimes. Some presidents use this power to help rectify injustices from outdated mandatory minimum sentence laws. It often results in faster results than waiting for Congress to change laws. The Presidential pardon power is an important aspect of clemency.
 
 Question: Can a US President issue pardons before leaving office?
@@ -571,8 +571,8 @@ Answer: So it would still be very far outside the norm for Trump to pardon his f
 
 Question: What are some possible reasons for Trump to pardoning himself and his relatives and former staffers?
 Answer: Trump is said to be considering a slew of pardons and commutations before he leaves office, including potentially members of his family, former aides and even himself.
-",2.0,3.5,2.5,2.5,3,0.2857142857142857,0.625,0.75,0.75,supported,1,1
-35,38,310,"The United Kingdom will be one of the first countries to end the COVID-19 epidemic, and due to herd immunity. The most infectious strain of the virus has already immunized over 60% of the population.",refuted,"Question: Where is UK in the COVID-19 case rankings?
+",2,3.5,2.5,2.5,3,0.2857142857142857,0.625,0.75,0.75,supported,1,1
+310,"The United Kingdom will be one of the first countries to end the COVID-19 epidemic, and due to herd immunity. The most infectious strain of the virus has already immunized over 60% of the population.",refuted,"Question: Where is UK in the COVID-19 case rankings?
 Answer: The coronavirus (COVID-19) pandemic has led to record declines in gross domestic product (GDP) in advanced economies in 2020. International comparisons show that the UK has experienced the largest contraction in volume GDP amongst the G7 countries.
 1 February 2021At the date of the claim, England had the highest number of COVID-19 deaths, compared to US and EU.
 ","Question: What does the definition of 'herd immunity' mean in relation to COVID-19?
@@ -583,8 +583,8 @@ Answer: The percentage of the population that needs to be immune to attain herd 
 
 Question: What is herd immunity:  A term used in epidemiology to describe the level of immunity in a population that prevents the spread of a disease. Herd immunity occurs when enough people are immune to a particular disease to prevent it from spreading.?
 Answer: In other words, herd immunity is the inability of infected individuals to propagate an epidemic outbreak due to lack of contact with sufficient numbers of susceptible individuals.
-",1.0,3.5,2.0,2.0,3,0.0,0.625,0.5,0.5,not enough information,0,0
-36,39,677,One of the Deadliest Days in American History was the Galveston Hurricane.,supported,"Question: How many people died due to the Galveston hurricane?
+",1,3.5,2,2,3,0,0.625,0.5,0.5,not enough information,0,0
+677,One of the Deadliest Days in American History was the Galveston Hurricane.,supported,"Question: How many people died due to the Galveston hurricane?
 Answer: Between 6,000 and 8,000 people in the city died as a result of the storm. Estimated casualties for the entire island range from 10,000 to 12,000. For comparison, Hurricane Katrina (2005), the deadliest storm of recent times, claimed the lives of approximately 1,500 peopleBetween 6,000 and 8,000 people in the city died as a result of the storm. Estimated casualties for the entire island range from 10,000 to 12,000.
 
 Question: Was the Galveston Hurricane considered deadly?
@@ -597,8 +597,8 @@ Answer: - Great Hurricane of 1780 – Deadliest Atlantic hurricane recorded
 
 Question: How was 1900 the greatest hurricane in history?
 Answer: The storm was so destructive that the National Oceanic and Atmospheric Administration still characterizes the 1900 Galveston Hurricane as the ""greatest natural disaster to ever strike the United States.""
-",2.5,2.5,2.0,1.5,2,0.4285714285714285,0.375,0.5,0.25,supported,1,1
-37,40,371,Covid-19 has a survival rate of 99.8%.,not enough information,"Question: What is the survival rate of covid-19 in the UK?
+",2.5,2.5,2,1.5,2,0.4285714285714285,0.375,0.5,0.25,supported,1,1
+371,Covid-19 has a survival rate of 99.8%.,not enough information,"Question: What is the survival rate of covid-19 in the UK?
 Answer: Based on current – imperfect – knowledge, COVID-19
 has a mortality per case ratio of somewhere between 0.5 and 3.4%,2
  although these figures are likely
@@ -620,8 +620,8 @@ Answer: The post’s claim of a “99.996% survival rate” appears to be based 
 
 Question: What is a good estimate for survival rates for COVID-19?
 Answer: The survival rate varies by country but this estimate is too high for the UK. Estimates of the survival rate range from around 99% to 99.5%.
-",2.0,2.6666666666666665,1.6666666666666667,2.3333333333333335,4,0.2857142857142857,0.41666666666666663,0.33333333333333337,0.6666666666666667,refuted,0,1
-38,41,136,Tiwa Savage won a GRAMMY at the 63rd Annual GRAMMY Ceremony.,refuted,"Question: Did Tiwa Savage win a GRAMMY at the 63rd GRAMMY Awards?
+",2,2.6666666666666665,1.6666666666666667,2.3333333333333335,4,0.2857142857142857,0.41666666666666663,0.33333333333333337,0.6666666666666667,refuted,0,1
+136,Tiwa Savage won a GRAMMY at the 63rd Annual GRAMMY Ceremony.,refuted,"Question: Did Tiwa Savage win a GRAMMY at the 63rd GRAMMY Awards?
 Answer: No Tiwa Savage is not on the official list of winners.. 
 ","Question: What is the 63th annual Grammys ceremony date and time?
 Answer: The 63rd Annual Grammy Awards ceremony will be held on January 31, 2021, at the Staples Center in Los Angeles, US.
@@ -631,16 +631,16 @@ Answer: Burna Boy, Femi Kuti, Made Kuti and Tiwa Savage’s win at the 63rd Annu
 
 Question: What are the 63 Grammy awards ceremony dates and locations?
 Answer: The 63rd Annual Grammy Awards ceremony will be held on Jan. 31, 2021, at the Staples Center in Los Angeles, US.
-",4.333333333333333,3.6666666666666665,2.0,3.0,3,0.9523809523809522,0.6666666666666666,0.5,1.0,supported,0,1
-39,42,901,Voter turnout in Wisconsin jumped from about 67% in 2016 to over 89% in 2020.,refuted,"Question: Did the Voter turnout in Wisconsin jumped from about 67% in 2016 to over 89% in 2020?
+",4.333333333333333,3.6666666666666665,2,3,3,0.9523809523809522,0.6666666666666666,0.5,1,supported,0,1
+901,Voter turnout in Wisconsin jumped from about 67% in 2016 to over 89% in 2020.,refuted,"Question: Did the Voter turnout in Wisconsin jumped from about 67% in 2016 to over 89% in 2020?
 Answer: The Wisconsin Elections Commission estimates 2020 voter turnout is about 73%. Voter turnout in the state has only increased roughly 5% from 2016.
 ","Question: Was the turnout in Wisconsin in 2020 higher, lower or the same as 2016?
 Answer: Turnout was substantially higher than in 2016, when about 3 million, or 67% of voting-age Wisconsinites cast a ballot.
 
 Question: Is Trump's claim of fraudulent voting in Wisconsin true or false?
 Answer: Trump Jr. shared a claim that Wisconsin’s turnout jumped from 67% in 2016 to 89% in 2020, and intimated it is due to fraud or something nefarious.
-",3.5,4.5,1.5,3.0,2,0.7142857142857143,0.875,0.25,1.0,supported,0,1
-40,45,245,"Katie Porter (D-Calif.) appeared on CNN on Thursday to discuss her criticisms of the child tax credit improvements under the evolving stimulus package, which she said puts one-parent households at an unfair advantage.",supported,"Question: Do single parents have more restrictions on claiming child tax credits than married couples?
+",3.5,4.5,1.5,3,2,0.7142857142857143,0.875,0.25,1,supported,0,1
+245,"Katie Porter (D-Calif.) appeared on CNN on Thursday to discuss her criticisms of the child tax credit improvements under the evolving stimulus package, which she said puts one-parent households at an unfair advantage.",supported,"Question: Do single parents have more restrictions on claiming child tax credits than married couples?
 Answer: Yes Two parent households can earn up to $150,000 a year to qualify for child tax credit, but single parents must not earn more than $75,000.. 
 
 Question: By not married does the claim mean cohabiting without marriage or single parents?
@@ -653,8 +653,8 @@ Answer: Despite the phase-out, 90% of households receive the benefit.8 The compl
 
 Question: What are the benefits of this stimulus plan?
 Answer: Congress, White House strike deal for $2 trillion stimulus package: The legislation, which is expected to be enacted within days, is the biggest fiscal stimulus package in modern American history, aimed at delivering critical financial support to businesses forced to shut their doors and relief to American families and hospitals.
-",1.5,2.5,2.0,1.5,2,0.14285714285714285,0.375,0.5,0.25,not enough information,0,0
-41,46,450,"NASA send first American woman to space, Sally Ride, with 100 tampons.",refuted,"Question: Did Sally Ride take 100 tampons into space?
+",1.5,2.5,2,1.5,2,0.14285714285714285,0.375,0.5,0.25,not enough information,0,0
+450,"NASA send first American woman to space, Sally Ride, with 100 tampons.",refuted,"Question: Did Sally Ride take 100 tampons into space?
 Answer: No NASA asked her if this was the right amount but she didn't actually take that many with her.. 
 
 Question: Is there evidence of this conversation?
@@ -670,8 +670,8 @@ Answer: In 1978, Sally Ride, who became the first American woman in space, was s
 
 Question: Who was the First American Woman in Space (Sally Ride)?
 Answer: It wasn’t until 1983 that astronaut Sally Ride became the first American woman in space (Russia had sent the first woman to space, cosmonaut Valentina Tereshkova, in 1963.)
-",2.0,4.5,1.5,3.0,2,0.2857142857142857,0.875,0.25,1.0,not enough information,0,0
-42,47,628,"There was 130,000 cases of voter fraud in Nevada.",refuted,"Question: Was there a presidential election in Nevada, US in 2020?
+",2,4.5,1.5,3,2,0.2857142857142857,0.875,0.25,1,not enough information,0,0
+628,"There was 130,000 cases of voter fraud in Nevada.",refuted,"Question: Was there a presidential election in Nevada, US in 2020?
 Answer: The Presidential General Election took place in November 2020.
 
 Question: In the Presidential Elections in November 2020, were there 130,000 cases of voter fraud in Nevada?
@@ -688,7 +688,7 @@ Answer: On November 5, the Nevada Republican Party alleged ""at least 3,062 inst
 Question: Is it true that Nevada has found 3.6K instances where voters have cast a ballot after moving from Nevada?
 Answer: Nevada Republicans said they found ""at least 3,062 instances of voter fraud. ... Thousands of individuals have been identified who appear to have violated the law by casting ballots after they moved from NV.""
 ",3.5,4.5,1.5,2.5,3,0.7142857142857143,0.875,0.25,0.75,not enough information,0,0
-43,48,384,Sir Keir Starmer has never said that he wanted the UK to remain in the European Medicines Agency after Brexit.,refuted,"Question: Has Kier Starmer ever said that the UK should remain in the European Medicines Agency?
+384,Sir Keir Starmer has never said that he wanted the UK to remain in the European Medicines Agency after Brexit.,refuted,"Question: Has Kier Starmer ever said that the UK should remain in the European Medicines Agency?
 Answer: Yes On 17/01/2017 he said in parliament ""Mr Speaker, let me give three examples [of European collaboration we should seek to retain after Brexit] without the details: the European Aviation Safety Agency, which deals with safety; the European Medicines Agency; and Europol, which I worked with for many years. Those are the bits of the EU that we should be seeking to retain, not throw away.”. Yes “Why would we want to be outside the European Medicines Agency, which ensures that all medicines in the EU market are safe and effective?... [We] ask that consideration be given to finding ways to ensure that where we can we stay within those agencies, for the obvious benefits that they bring.”. 
 ","Question: What were the five instances of Starmers statements about UK wanting to stay within the EU?
 Answer: The Tories found five examples of when Starmer said the UK should attempt to remain part of the European Medicines Agency, all from 2017.
@@ -698,8 +698,8 @@ Answer: After the session, Sir Keir had to apologise for denying having previous
 
 Question: Why did he say he did not want the job?
 Answer: Keir Starmer said he “never” wanted to stay in the European Medicines Agency.
-",3.5,5.0,2.5,3.0,2,0.7142857142857143,1.0,0.75,1.0,refuted,1,1
-44,50,596,Military operations in the Amazon have been a big success.,refuted,"Question: Has there been a rise in deforestation in the Amazon since 2019?
+",3.5,5,2.5,3,2,0.7142857142857143,1,0.75,1,refuted,1,1
+596,Military operations in the Amazon have been a big success.,refuted,"Question: Has there been a rise in deforestation in the Amazon since 2019?
 Answer: Yes 2019 saw the biggest rise of 706.82 km² squared from 426.42 km² in 2018 and slight decrease in 2020 with 660.71 km² from 2019.. 
 
 Question: Has there been a rise in fires in the Amazon in 2020?
@@ -727,8 +727,8 @@ Answer: Sales operations has a big job to do. But as your organization grows, im
 
 Question: What are the benefits of being an Amazon military employee?
 Answer: With roles ranging from senior managerial positions to e-commerce internships, these employees share their experiences of working at Amazon and explain what it’s like to be a part of the Amazon Military Programme.
-",3.0,3.0,3.0,1.0,2,0.5714285714285714,0.5,1.0,0.0,supported,0,1
-45,51,4,"The Chinese biological laboratory in Wuhan is owned by Glaxo. Who, by chance, owns Pfizer (the one who produces the vaccine!",refuted,"Question: Who are Glaxo?
+",3,3,3,1,2,0.5714285714285714,0.5,1,0,supported,0,1
+4,"The Chinese biological laboratory in Wuhan is owned by Glaxo. Who, by chance, owns Pfizer (the one who produces the vaccine!",refuted,"Question: Who are Glaxo?
 Answer: GlaxoSmithKline is a Big Pharma corporation. It sits at No. 282 on Forbes’ Global 500 rankings. GSK is ranked number 6 among the top 20 pharma companies by revenue in 2019, according to FiercePharma.
 
 Question: Who owns the biological laboratory in Wuhan city China?
@@ -747,8 +747,8 @@ Answer: Therefore, there’s no evidence that the Wuhan Institute of Virology (W
 
 Question: Who is the parent company of the Wuhan based company that manufactures the vaccine?
 Answer: The author claimed that a Wuhan-based pharmaceutical company is owned by Glaxo, which is also the owner of Pfizer.
-",3.0,3.0,1.5,1.0,3,0.5714285714285714,0.5,0.25,0.0,contradicting information (some evidence parts support the claim whereas others refute it),0,1
-46,52,241,Joe Biden cured AIDS.,refuted,"Question: Who is Ted Nugent?
+",3,3,1.5,1,3,0.5714285714285714,0.5,0.25,0,contradicting information (some evidence parts support the claim whereas others refute it),0,1
+241,Joe Biden cured AIDS.,refuted,"Question: Who is Ted Nugent?
 Answer: An American rock musician and activist.
 Nugent has drawn attention for his outspoken conservative political views, as well as his vociferous advocacy of hunting and gun ownership rights.[8][9] He is a board member of the National Rifle Association and a strong supporter of the Republican Party. He has made a number of controversial and threatening statements against advocates of gun control; in one case, the Secret Service investigated him based on comments about President Barack Obama
 
@@ -763,8 +763,8 @@ Answer: President Biden and HHS Secretary Becerra deliver remarks to commemorate
 
 Question: What does Biden propose to do about the AIDS epidemic?
 Answer: Biden to propose stepping up U.S. fight against AIDS with research, treatment
-",1.5,4.0,2.0,3.0,3,0.14285714285714285,0.75,0.5,1.0,refuted,1,1
-47,53,137,Armed Conflict Location & Event Data Project to 'push back' at 'leftists' who claim that last year’s protests were “mostly peaceful.”,refuted,"Question: Did most of the protesters try to incite violence in the 2020 protests, in United States ?
+",1.5,4,2,3,3,0.14285714285714285,0.75,0.5,1,refuted,1,1
+137,Armed Conflict Location & Event Data Project to 'push back' at 'leftists' who claim that last year’s protests were “mostly peaceful.”,refuted,"Question: Did most of the protesters try to incite violence in the 2020 protests, in United States ?
 Answer: Yet, despite data indicating that demonstrations associated with the BLM movement are
 overwhelmingly peaceful, one recent poll suggested that 42% of respondents believe “most
 protesters [associated with the BLM movement] are trying to incite violence or destroy property”
@@ -791,8 +791,8 @@ Answer: In his op-ed, Johnson cited the Armed Conflict Location & Event Data Pro
 
 Question: What was the percentage of protests that were peaceful in May-August 2020?
 Answer: In other words, 7 percent—some 543 demonstrations—were not peaceful. Because the report, by the Armed Conflict Location & Event Data Project, examined an 89-day period from May 26 to August 22, 2020, that works out to an average of more than six violent events per day during last summer’s mostly peaceful BLM demonstrations.
-",2.0,4.5,2.5,2.5,3,0.2857142857142857,0.875,0.75,0.75,refuted,1,1
-48,54,199,All first five education ministers of India were from  one community.,refuted,"Question: Who were the first five education ministers of India?
+",2,4.5,2.5,2.5,3,0.2857142857142857,0.875,0.75,0.75,refuted,1,1
+199,All first five education ministers of India were from  one community.,refuted,"Question: Who were the first five education ministers of India?
 Answer: 1.Maulana Abul Kalam Azad
 2.Dr. K.L. Shrimali (Minister of State)
 3.Dr. K.L. Shrimali
@@ -815,8 +815,8 @@ Answer: To sum it up, all the first five education ministers of India are not fr
 
 Question: Who are the five ministers of education who have served India since independence?
 Answer: India’s first five education ministers did not hail from the same community
-",3.0,5.0,2.5,3.0,2,0.5714285714285714,1.0,0.75,1.0,refuted,1,1
-49,55,898,The Department Of Homeland Security crafted an election fraud sting by printing watermarked ballots.,refuted,"Question: Is the Department of Homeland Security in charge of designing election ballots
+",3,5,2.5,3,2,0.5714285714285714,1,0.75,1,refuted,1,1
+898,The Department Of Homeland Security crafted an election fraud sting by printing watermarked ballots.,refuted,"Question: Is the Department of Homeland Security in charge of designing election ballots
 Answer: The Department of Homeland Security (DHS) and the Cybersecurity and Infrastructure Security Agency (CISA) do not design or audit ballots, which are processes managed by state and local election officials.The Department of Homeland Security (DHS)  do not design or audit ballots,
 
 Question: What is the role of the Department of Homeland Security during elections
@@ -832,8 +832,8 @@ Answer: Conspiracy theories surrounding watermarks on election ballots have been
 
 Question: What are watermarked ballot fraud detection methods?
 Answer: The DHS has not announced or conducted a sting operation using watermarks on ballots to deter election interference.
-",2.5,4.0,2.5,2.5,3,0.4285714285714285,0.75,0.75,0.75,refuted,1,1
-50,60,321,"In South Africa, 2.7 million hectares has been transferred through the land restitution process, since 1995.",refuted,"Question: How many hectares of land was restituted between 1995 and 2018?
+",2.5,4,2.5,2.5,3,0.4285714285714285,0.75,0.75,0.75,refuted,1,1
+321,"In South Africa, 2.7 million hectares has been transferred through the land restitution process, since 1995.",refuted,"Question: How many hectares of land was restituted between 1995 and 2018?
 Answer: Restitution: 
  3 483 269,02
 
@@ -850,8 +850,8 @@ Answer: The scale of such land acquisitions has increased greatly. From 2004 to 
 
 Question: What was the number of restitution claimants in 1998?
 Answer: In 2000, some progress on land reform was made, though the progress was very slow. According to a chief land claims commissioner, Wallace Mgoqi, “just over 63,400 restitution claims were lodged with the Land Claims Commission between January 1995 and the cut-off date of December 1998 by people who were forced from their land”.
-",3.5,3.5,2.0,2.5,3,0.7142857142857143,0.625,0.5,0.75,refuted,1,1
-51,61,682,"Senator Rand Paul has more credentials than Dr. Deborah Birx, who is on the coronavirus task force",refuted,"Question: Who is Senator Rand Paul?
+",3.5,3.5,2,2.5,3,0.7142857142857143,0.625,0.5,0.75,refuted,1,1
+682,"Senator Rand Paul has more credentials than Dr. Deborah Birx, who is on the coronavirus task force",refuted,"Question: Who is Senator Rand Paul?
 Answer: Rand Paul (born January 7, 1963) is an American politician. He is the United States Senator from Kentucky (serving with Senate Majority Leader Mitch McConnell). He is a Republican and the son of Ron Paul.
 
 Question: Is Senator Rand Paul an American Board of Ophthalmology certified physician?
@@ -872,8 +872,8 @@ Answer: Senator Dr. Rand Paul has earned a reputation for embarrassing Tony Fauc
 
 Question: What was the exchange about between Rand paul and Dr Rachel Levin during Rachel levine’s confirmation hearings?
 Answer: And, it's time we addressed the much-talked-about exchange between Senator Rand Paul and Rachel Levine during Dr. Levine's confirmation hearing.
-",2.0,3.0,2.5,2.0,2,0.2857142857142857,0.5,0.75,0.5,not enough information,0,0
-52,62,562,Boris Johnson has announced  that the UK is going back into lockdown due to COVID-19.,supported,"Question: When were lockdowns imposed in England due to COVID-19?
+",2,3,2.5,2,2,0.2857142857142857,0.5,0.75,0.5,not enough information,0,0
+562,Boris Johnson has announced  that the UK is going back into lockdown due to COVID-19.,supported,"Question: When were lockdowns imposed in England due to COVID-19?
 Answer: The UK entered into three national lockdowns, on the 23rd of March 2020, 5th of November 2020 and 6th of January 2021.
 
 Question: What did Boris Johnson announce on his televised message on 4th of January 2021?
@@ -892,8 +892,8 @@ Answer: - The UK has gone into full coronavirus lockdown with the British public
 
 Question: What will the restrictions be on 22 February 2021?
 Answer: - UK Prime Minister Boris Johnson announces that he is optimistic that his announcement of his roadmap out of lockdown on the 22nd February will include easing of restrictions.
-",2.5,4.0,2.0,3.0,2,0.4285714285714285,0.75,0.5,1.0,supported,1,1
-53,63,461,Biden wasn't rendered a 21 gun salute as costumery for an incoming President,refuted,"Question: Was Joe Biden given a gun shot salute during his inauguration
+",2.5,4,2,3,2,0.4285714285714285,0.75,0.5,1,supported,1,1
+461,Biden wasn't rendered a 21 gun salute as costumery for an incoming President,refuted,"Question: Was Joe Biden given a gun shot salute during his inauguration
 Answer: Yes he was
 
 Question: How many gun shot salute was he given
@@ -903,8 +903,8 @@ Answer: Because Trump ordered it and Biden didn't. Biden did get a 21 gun salute
 
 Question: Why was Biden not given the 21 gun salutes on inauguration day like Donald Trump?
 Answer: CLAIM: “Why wasn’t Biden rendered a 21-gun salute” on Inauguration Day, like Trump was?
-",2.5,3.0,2.0,2.5,3,0.4285714285714285,0.5,0.5,0.75,refuted,1,1
-54,64,446,Users were logged off Facebook so that Facebook could update a feature to track users' bank account or email activity.,refuted,"Question: Were Users logged off Facebook so that Facebook could update a feature to track users' bank account or email activity?
+",2.5,3,2,2.5,3,0.4285714285714285,0.5,0.5,0.75,refuted,1,1
+446,Users were logged off Facebook so that Facebook could update a feature to track users' bank account or email activity.,refuted,"Question: Were Users logged off Facebook so that Facebook could update a feature to track users' bank account or email activity?
 Answer: No, Facebook’s recent logout glitch is not related to its off-Facebook tracking tool
 ","Question: How can I control my Facebook activity on my iPhone?
 Answer: But denying tracking on your iPhone does not cover your activity when using Facebook on a browser. You can control this using a little-known tool launched by Facebook last year called Off-Facebook Activity.
@@ -914,8 +914,8 @@ Answer: Facebook confirmed that its ""Off-Facebook Activity"" tracker has nothin
 
 Question: What can I do if Facebook is tracking my daily activity?
 Answer: There are a few ways to stop allowing Facebook to track your daily activities or data. You can turn off most of the permissions for Facebook that are not required for it to operate properly.
-",3.0,4.5,2.5,3.0,2,0.5714285714285714,0.875,0.75,1.0,refuted,1,1
-55,66,66,Loophole in Georgia election law allows voters to be given drinks other than water.,refuted,"Question: Was there a Loophole in Georgia election law ?
+",3,4.5,2.5,3,2,0.5714285714285714,0.875,0.75,1,refuted,1,1
+66,Loophole in Georgia election law allows voters to be given drinks other than water.,refuted,"Question: Was there a Loophole in Georgia election law ?
 Answer: MEMO
 GEORGIA ELECTION INTEGRITY ACT OF 2021 1
 Georgia Election Integrity Act of 2021
@@ -950,8 +950,8 @@ Answer: The bulletin also reminds elections officials that offering food, drinks
 
 Question: Is there a law in Georgia that says you cannot give water or food to voters while they are in a line to vote?
 Answer: One of the most contentious provisions is Georgia's ban on giving voters food or water while they're in line at the polls.
-",3.5,4.0,2.5,3.0,3,0.7142857142857143,0.75,0.75,1.0,refuted,1,1
-56,67,668,China has amassed combat troops in Canada on the U.S. border.,refuted,"Question: Does China have troops in Canada at the border with USA?
+",3.5,4,2.5,3,3,0.7142857142857143,0.75,0.75,1,refuted,1,1
+668,China has amassed combat troops in Canada on the U.S. border.,refuted,"Question: Does China have troops in Canada at the border with USA?
 Answer: Simply stated, officials in Vancouver, Canada, say there are no Chinese troops amassed there.
 
 ""There is nothing of the sort happening here,"" said an email from Alvin Singh, director of communications for Vancouver Mayor Kennedy Stewart.
@@ -980,8 +980,8 @@ Answer: Preventing China from doing so is the central objective of the U.S. Nati
 
 Question: What are the troops that are already participating in border operations?
 Answer: Some National Guard troops already participate in counter-drug operations on the border, though they don't have arrest powers.
-",1.5,3.0,2.0,2.0,2,0.14285714285714285,0.5,0.5,0.5,refuted,1,1
-57,69,332,2.7 million hectares has been transferred through the land restitution process.,refuted,"Question: Which country does the claim refer to?
+",1.5,3,2,2,2,0.14285714285714285,0.5,0.5,0.5,refuted,1,1
+332,2.7 million hectares has been transferred through the land restitution process.,refuted,"Question: Which country does the claim refer to?
 Answer: South Africa
 
 Question: What is SA's land restitution process?
@@ -1003,8 +1003,8 @@ Answer: Furthermore, more than 27 hectares, valued at just over R9 million, will
 
 Question: How many hectares have been transferred to landless people since the restitution programme began in 1995?
 Answer: So far, the land restitution process has also benefited over two-million land claimants and resulted in the transfer of around 2.7-million hectares.
-",3.0,3.0,1.5,3.0,2,0.5714285714285714,0.5,0.25,1.0,supported,0,1
-58,70,864,"The @US_FDA and the Democrats didn’t want to have me get a Vaccine WIN, prior to the election, so instead it came out five days later – As I’ve said all along!",refuted,"Question: DId Pfizer deliberately delay the release of the vaccine
+",3,3,1.5,3,2,0.5714285714285714,0.5,0.25,1,supported,0,1
+864,"The @US_FDA and the Democrats didn’t want to have me get a Vaccine WIN, prior to the election, so instead it came out five days later – As I’ve said all along!",refuted,"Question: DId Pfizer deliberately delay the release of the vaccine
 Answer: No Pfizer CEO Albert Bourla said' It’s important to note that we cannot apply for FDA Emergency Use Authorization based on these efficacy results alone. More data on safety is also needed, and we are continuing to accumulate that safety data as part of our ongoing clinical study.
 
 We estimate that a median of two months of safety data following the second and final dose of the vaccine candidate - required by FDA’s guidance for potential Emergency Use Authorization – will be available by the third week of Novembe. 
@@ -1016,8 +1016,8 @@ Answer: ""The @US_FDA and the Democrats didn’t want to have me get a Vaccine W
 
 Question: Does Trump want a vaccine before the 2020 election?
 Answer: “The @US_FDA and the Democrats didn’t want to have me get a Vaccine WIN, prior to the election, so instead it came out five days later – As I’ve said all along!”
-",1.0,1.0,1.0,2.0,2,0.0,0.0,0.0,0.5,supported,0,1
-59,71,513,"Presidential candidate joe biden said ""They asked me if I'd like to debate this gentleman, and I said, ''If we were in high school, I'd take him behind the gym and beat the hell out of him"" refering to Donald J. Trump.",supported,"Question: On 20/03/2018 at University of Miami College what did Joe Biden say his response was to “The press always ask me, ‘Don’t I wish I were debating him?’"" As referring to Donald Trump.
+",1,1,1,2,2,0,0,0,0.5,supported,0,1
+513,"Presidential candidate joe biden said ""They asked me if I'd like to debate this gentleman, and I said, ''If we were in high school, I'd take him behind the gym and beat the hell out of him"" refering to Donald J. Trump.",supported,"Question: On 20/03/2018 at University of Miami College what did Joe Biden say his response was to “The press always ask me, ‘Don’t I wish I were debating him?’"" As referring to Donald Trump.
 Answer: Joe Biden said, “They asked me would I like to debate this gentleman, and I said no. I said, ‘If we were in high school, I’d take him behind the gym and beat the hell out of him.’”  This Biden said was in context of Donald Trump's crude comments about women such as, ‘I can grab a woman anywhere and she likes it,’ which was followed by Trump saying  ‘I made a mistake.’
 
 Question: Did Joe Biden say the quote in the claim?
@@ -1030,8 +1030,8 @@ Answer: Mr. Biden said Tuesday he would have “beat the hell out of” Mr. Trum
 
 Question: Who beat Trump up in a high-school gym?
 Answer: “They asked me would I like to debate this gentleman {Trump}, and I said no. I said, ‘If we were in high school, I’d take him behind the gym and beat the hell out of him,’” said Joe Biden.
-",2.5,3.0,2.5,2.5,2,0.4285714285714285,0.5,0.75,0.75,supported,1,1
-60,72,160,"The COVID-19 vaccine should not be given to anybody who has ever suffered from respiratory disorders like pneumonia, asthma, bronchitis as the vaccine can lead to death due to the side effects",refuted,"Question: Are Covid-19 vaccines safe for people with respiratory disorders?
+",2.5,3,2.5,2.5,2,0.4285714285714285,0.5,0.75,0.75,supported,1,1
+160,"The COVID-19 vaccine should not be given to anybody who has ever suffered from respiratory disorders like pneumonia, asthma, bronchitis as the vaccine can lead to death due to the side effects",refuted,"Question: Are Covid-19 vaccines safe for people with respiratory disorders?
 Answer: People with asthma are advised by the government to follow the same public health advice as everyone else. 
 
 Keep yourself, and others, as safe as possible by:
@@ -1045,13 +1045,13 @@ Answer: ""We already know that children are not to be given this vaccine. The on
 
 Question: What are the expected side-effects of getting the COVID vaccine?
 Answer: Expected side effects should be explained during counseling, including that they are a normal part of the body’s reaction to the vaccine and developing antibodies to protect against COVID-19 illness.
-",1.5,3.5,2.5,2.0,2,0.14285714285714285,0.625,0.75,0.5,refuted,1,1
-61,73,862,"If Joe Biden were President, you wouldn’t have the Vaccine for another four years, nor would the @US_FDA have ever approved it so quickly. The bureaucracy would have destroyed millions of lives!",refuted,"Question: Is it true that If Joe Biden were President, you wouldn’t have the Vaccine for another four years, nor would the @US_FDA have ever approved it so quickly and The bureaucracy would have destroyed millions of lives?
+",1.5,3.5,2.5,2,2,0.14285714285714285,0.625,0.75,0.5,refuted,1,1
+862,"If Joe Biden were President, you wouldn’t have the Vaccine for another four years, nor would the @US_FDA have ever approved it so quickly. The bureaucracy would have destroyed millions of lives!",refuted,"Question: Is it true that If Joe Biden were President, you wouldn’t have the Vaccine for another four years, nor would the @US_FDA have ever approved it so quickly and The bureaucracy would have destroyed millions of lives?
 Answer: But the timing is coincidental. “At Pfizer, we are moving at the speed of science and only science guides all the decisions regarding our vaccine candidate,” the company told us in an email. “There are absolutely no political considerations involved in this process.”
 ","Question: What does Biden mean by ""another four years""?
 Answer: ""If Joe Biden were President, you wouldn’t have the Vaccine for another four years, nor would the @US_FDA have ever approved it so quickly.
-",1.5,1.0,1.0,1.5,2,0.14285714285714285,0.0,0.0,0.25,not enough information,0,0
-62,75,422,Article 42 of the Magna Carta 'enshrines' the right to free movement at home and across borders in peacetime,refuted,"Question: Does the magna carta include a law article  that gives the right to free movement at home and across borders in peacetime
+",1.5,1,1,1.5,2,0.14285714285714285,0,0,0.25,not enough information,0,0
+422,Article 42 of the Magna Carta 'enshrines' the right to free movement at home and across borders in peacetime,refuted,"Question: Does the magna carta include a law article  that gives the right to free movement at home and across borders in peacetime
 Answer: No No law exists within the magna cartas 37 articles of enshrined laws stating the right to free movement at home and across borders in peacetime.. 
 ","Question: What are Magna Carta's rights and how are they different from the rights of a free citizen?
 Answer: Magna Charta itself is in substance but a constrained declaration or proclamation and promulgation in the name of the King, Lords, and Commons, of the sense the latter had of their original, inherent, indefeasible natural rights, as also those of free citizens equally perdurable with the other.
@@ -1061,8 +1061,8 @@ Answer: In the UK, the right to free movement at home and across borders, during
 
 Question: What are the rights of freedom to travel in and out of and within a state?
 Answer: As early as the Articles of Confederation the Congress recognized freedom of movement (Article 4), though the right was thought to be so fundamental during the drafting of the Constitution as to not need explicit enumeration.[4]
-",3.5,4.5,2.5,3.0,2,0.7142857142857143,0.875,0.75,1.0,supported,0,1
-63,77,37,Prince Harry's son Archie isn't a prince because of a rule established by King George V.,supported,"Question: Is Meghan and Harry's Son, Archie, Not a Prince Because of a Rule created by King George V ?
+",3.5,4.5,2.5,3,2,0.7142857142857143,0.875,0.75,1,supported,0,1
+37,Prince Harry's son Archie isn't a prince because of a rule established by King George V.,supported,"Question: Is Meghan and Harry's Son, Archie, Not a Prince Because of a Rule created by King George V ?
 Answer: Correct at time of claim:
 
 a written order known as the Letters Patent comes in. In 1917, George V stated: ""…The grandchildren of the sons of any such Sovereign in the direct male line (save only the eldest living son of the eldest son of the Prince of Wales) shall have and enjoy in all occasions the style and title enjoyed by the children of Dukes of these Our Realms.""
@@ -1075,8 +1075,8 @@ Answer: Harry and Meghan's son, seventh in line to the British throne, is Archie
 
 Question: Is Archie's grandfather a king?
 Answer: Under the George V convention, Archie is not a prince, but will become one as the grandchild of a monarch once current heir to the throne Prince Charles is king.
-",3.5,3.0,2.5,2.5,2,0.7142857142857143,0.5,0.75,0.75,supported,1,1
-64,78,32,Face masks restrict breathing.,refuted,"Question: Can masks cause CO2 toxicity thereby making it difficult to breathe
+",3.5,3,2.5,2.5,2,0.7142857142857143,0.5,0.75,0.75,supported,1,1
+32,Face masks restrict breathing.,refuted,"Question: Can masks cause CO2 toxicity thereby making it difficult to breathe
 Answer: There are no clinically significant changes in end tidal carbon dioxide measurements — the amount of carbon dioxide in an exhalation. They also found no changes in blood oxygen levels after 5 or 30 minutes of wearing a mask while resting in participants that partook in a study
 ","Question: Do face masks restrict air flow?
 Answer: “Most importantly, masks work,” said Dr. Dilling, who is featured in the new Loyola Medicine video, “Coronavirus (COVID-19): Do Face Masks Restrict Air Flow?”
@@ -1086,8 +1086,8 @@ Answer: Yes, people with asthma can wear face masks.
 
 Question: How does the breathing pattern change for the person who is using a respirators mask compared to breathing normally?
 Answer: Thus, represents the fractional change in the respirator mask breathing to normal breathing for each during each inhalation breath over the eight cycles that was modeled.
-",1.5,3.0,2.0,2.5,2,0.14285714285714285,0.5,0.5,0.75,refuted,1,1
-65,79,508,US security alert warns of ‘national quarantine’ ahead of Biden's inauguration,refuted,"Question: Have any departments of  the National Guard responded to the claim that they are being mobilized, and that all Americans will be quarantined at home for two weeks?
+",1.5,3,2,2.5,2,0.14285714285714285,0.5,0.5,0.75,refuted,1,1
+508,US security alert warns of ‘national quarantine’ ahead of Biden's inauguration,refuted,"Question: Have any departments of  the National Guard responded to the claim that they are being mobilized, and that all Americans will be quarantined at home for two weeks?
 Answer: PSA: If you see this letter, which is once again circulating on social media and in public, please be aware it IS FALSE AND FAKE.
 
 Consider showing your support for us by helping to combat these rumors- retweet this to your page. Thank You! Be Well!!
@@ -1099,8 +1099,8 @@ Answer: Six-foot-tall fencing was installed around the Michigan Capitol and Lans
 
 Question: How many days is this quarantine?
 Answer: March 26, 2020, 12:00pm Message from the U.S. Embassy Spokesperson: We are in Day-5 of the 30-day national quarantine in El Salvador.
-",1.5,4.5,2.0,2.5,2,0.14285714285714285,0.875,0.5,0.75,supported,0,1
-66,80,308,Leaked visitor logs show Democratic California Rep. Adam Schiff visited deceased convicted sex offender Jeffrey Epstein’s private island 78 times.,refuted,"Question: Where Did the image originate?
+",1.5,4.5,2,2.5,2,0.14285714285714285,0.875,0.5,0.75,supported,0,1
+308,Leaked visitor logs show Democratic California Rep. Adam Schiff visited deceased convicted sex offender Jeffrey Epstein’s private island 78 times.,refuted,"Question: Where Did the image originate?
 Answer: Satire News Website.
 ","Question: What is the connection between Adam schiff and Jeffrey epstein?
 Answer: U.S. Rep. Adam Schiff has drawn conservative fire for his role in the impeachment hearings, and a recent Facebook post attempts to tie the California Democrat to the late Jeffrey Epstein, the financier accused of sexually assaulting underage girls.
@@ -1110,8 +1110,8 @@ Answer: FACT CHECK: Image Claims Adam Schiff Visited Jeffrey Epstein’s Island 
 
 Question: Does the image of Adam schiff with Jeffrey epstein have any truth to it?
 Answer: It includes an alleged photo of the two together. (RELATED: Image Claims The FBI Uncovered Over 250 Emails Between Adam Schiff And Jeffrey Epstein)
-",1.0,4.0,2.5,3.0,2,0.0,0.75,0.75,1.0,not enough information,0,0
-67,81,837,Kenya's last mile connectivity programme crossed the 7.2 million household connections mark,not enough information,"Question: What is Kenya's ""last mile"" programme?
+",1,4,2.5,3,2,0,0.75,0.75,1,not enough information,0,0
+837,Kenya's last mile connectivity programme crossed the 7.2 million household connections mark,not enough information,"Question: What is Kenya's ""last mile"" programme?
 Answer: ‘Last mile’ refers to the end link between electricity consumers and
 connectivity and the technologies and processes used to connect
 them.
@@ -1134,8 +1134,8 @@ Answer: The available data accounts for 6.7 million of the 7.2 million connectio
 
 Question: What is the difference between a last mile connection and an under-grid connection?
 Answer: It highlighted the potential opportunity to reduce energy poverty by targeting “last-mile” connections (the final stage of the electricity system) in “under grid” communities and argued that “to leverage existing infrastructure and economies of scale, subsidies and new approaches to financing connections are necessary”.
-",2.0,4.0,3.0,2.5,3,0.2857142857142857,0.75,1.0,0.75,not enough information,1,1
-68,82,621,The American Medical Association supports the use of hydroxychloroquine as a treatment for COVID-19.,refuted,"Question: Was any drug approved at this point for Covid-19?
+",2,4,3,2.5,3,0.2857142857142857,0.75,1,0.75,not enough information,1,1
+621,The American Medical Association supports the use of hydroxychloroquine as a treatment for COVID-19.,refuted,"Question: Was any drug approved at this point for Covid-19?
 Answer: At the same time, we caution hospitals, health systems, other entities, and individual practitioners that no medication has been FDA-approved for use in COVID-19 patients. Definitive evidence for the role of these drugs in treating COVID-19 patients has not been determined through robust clinical trials; decisions to use these medications off-label must be made with extreme caution and careful monitoring.
 
 Question: Did the AMA issue a statement about the claim?
@@ -1148,8 +1148,8 @@ Answer: The American Journal of Medicine didn’t recommend hydroxychloroquine a
 
 Question: Is there any evidence for hydroxylcholoroquinolone in treatment for Covid-19  Evident: There is no evidence to support its use for this purpose. Question:  What is the current evidence on the effectiveness of Hydroxyl Chloroquinone (HCQ) as a treatm?
 Answer: These findings do not support the use of hydroxychloroquine for treatment of COVID-19 among hospitalized adults.
-",2.0,3.5,2.0,2.5,2,0.2857142857142857,0.625,0.5,0.75,refuted,1,1
-69,83,673,Meghan Markle and Prince Harry plan an awards scheme to rival Queen Elizabeth II's honors system.,refuted,"Question: What have Prince Harry and Meghan Markle announced regarding award schemes?
+",2,3.5,2,2.5,2,0.2857142857142857,0.625,0.5,0.75,refuted,1,1
+673,Meghan Markle and Prince Harry plan an awards scheme to rival Queen Elizabeth II's honors system.,refuted,"Question: What have Prince Harry and Meghan Markle announced regarding award schemes?
 Answer: Thye have applied for a trademark linked to Archewell project. But according to their spokesperson there’s zero intention for Archewell’s work to rival the UK honors list.
 ","Question: Does Meghan Markle plan awards for her and Harry?
 Answer: In this case, Harry and Meghan's spokesperson has stated they do not plan any awards to rival the U.K. honors list.
@@ -1159,8 +1159,8 @@ Answer: Meghan Markle and Prince Harry (pictured) are set to launch a set of awa
 
 Question: What are the awards that Harry and Meghan will present to winners?
 Answer: Meghan and Harry's awards will focus specifically on stand-out players in particular fields, court documents seen by The Sun have revealed.
-",3.0,4.0,2.5,1.5,3,0.5714285714285714,0.75,0.75,0.25,contradicting information (some evidence parts support the claim whereas others refute it),0,1
-70,84,73,"Since President Muhammadu Buhari took office in 2015, the number of unemployed Nigerians has fallen.",refuted,"Question: How many Nigerians are unemployed today?
+",3,4,2.5,1.5,3,0.5714285714285714,0.75,0.75,0.25,contradicting information (some evidence parts support the claim whereas others refute it),0,1
+73,"Since President Muhammadu Buhari took office in 2015, the number of unemployed Nigerians has fallen.",refuted,"Question: How many Nigerians are unemployed today?
 Answer: 23.2 million
 
 Question: How many Nigerians are unemployed at date of the claim?
@@ -1182,8 +1182,8 @@ Answer: Buhari was elected president on May 29, 2015 – the second quarter (Q2)
 
 Question: What was Buhari's claim that 30 Million Nigers were jobless?
 Answer: “If you recall in 2015, buildup to the 2015 election when APC was campaigning, the figure that was used by the then candidate Buhari was that [a] minimum of 30 million Nigerians were out of jobs, were unemployed, particularly youths,” Adesina said in response to a question about high unemployment during a broadcast on Channels Television, a popular TV station in Nigeria.
-",3.0,3.0,2.5,2.5,2,0.5714285714285714,0.5,0.75,0.75,not enough information,0,0
-71,85,546,"The last man to attack the US Capitol, prior to the events on 6 January 2021, was a British Army Major General from Northern Ireland, in 1814.",refuted,"Question: Was Robert Ross really the last man to attack the US Capitol ?
+",3,3,2.5,2.5,2,0.5714285714285714,0.5,0.75,0.75,not enough information,0,0
+546,"The last man to attack the US Capitol, prior to the events on 6 January 2021, was a British Army Major General from Northern Ireland, in 1814.",refuted,"Question: Was Robert Ross really the last man to attack the US Capitol ?
 Answer: There have been four notable attacks on the US Capitol in-between Robert Ross and the incident on 6 January 2021. While Major General Robert Ross in 1814 was the last foreign attacker, Linda Evans and Laura Whitehorn were among the most recent attackers in 1983.
 ","Question: What is the most recent attack that occurred on US capitol building?
 Answer: There have been four notable attacks on the US Capitol in-between Robert Ross and the incident on 6 January 2021.
@@ -1193,8 +1193,8 @@ Answer: The Belfast Telegraph article describes how Major General Ross “led hi
 
 Question: Was there a blast at the US Capitol on January 6, 2021, and if so, what was the cause of that blast and how many people were injured in that incident?
 Answer: The blast rocked the Capitol, but injured neither Marshall, who hailed from North Manchester, nor bystanders.
-",2.5,4.0,2.5,2.5,4,0.4285714285714285,0.75,0.75,0.75,not enough information,0,0
-72,86,82,"During February 2021, the vast majority of families who were attempting to cross the southwest land border into the US were sent back.",refuted,"Question: How many individuals who were part of family units (FMUA) attempting to cross the US southwest land border in February 2021 were encountered by the US Border Patrol and the US Office of Field Operations?
+",2.5,4,2.5,2.5,4,0.4285714285714285,0.75,0.75,0.75,not enough information,0,0
+82,"During February 2021, the vast majority of families who were attempting to cross the southwest land border into the US were sent back.",refuted,"Question: How many individuals who were part of family units (FMUA) attempting to cross the US southwest land border in February 2021 were encountered by the US Border Patrol and the US Office of Field Operations?
 Answer: 19,246 individuals  attempting to cross the US southwest land border in February 2021 were part of family units.
 
 Question: Of these 19,246 individuals who were part of family units attempting to cross the US southwest land border in February 2021, how many were expelled and sent back to their home countries?
@@ -1207,8 +1207,8 @@ Answer: In June 2021, approximately 85% of arriving families were processed into
 
 Question: How many migrants have crossed the US-Mexico border since March 18, when the Trump administration began enforcing a new policy of separating migrant families at its southern border?
 Answer: The data includes migrants who have previously crossed. Nearly 67,000 individuals, mostly those crossing with their families and unaccompanied children, were allowed to stay in the U.S. while they seek protection from deportation.
-",1.5,4.0,2.5,2.0,3,0.14285714285714285,0.75,0.75,0.5,not enough information,0,0
-73,87,153,Dr. Anthony Fauci admits he isn’t listening to COVID-19 science when advocating policy.,refuted,"Question: Did Dr. Anthony Fauci admit that he isn't listening to COVID-19 science when advocating policy?
+",1.5,4,2.5,2,3,0.14285714285714285,0.75,0.75,0.5,not enough information,0,0
+153,Dr. Anthony Fauci admits he isn’t listening to COVID-19 science when advocating policy.,refuted,"Question: Did Dr. Anthony Fauci admit that he isn't listening to COVID-19 science when advocating policy?
 Answer: No In a March 10 CNN interview with Dr. Anthony Fauci on the recent announcement made by the Centers for Disease Control and Prevention that people who have been fully vaccinated against COVID-19 can gather indoors without masks, he states, ""They’re being careful, understandably. They want to get science, they want to get data, and then when you don’t have the data, and you don’t have the actual evidence, then you've got to make a judgment call. And I think that’s what you’re going to be seeing in the next weeks."". 
 ","Question: Is Faucci saying he doesn't listen to scientists when he advocates policy?
 Answer: Fact-check: Did Anthony Fauci admit he isn't listening to science when advocating policy?
@@ -1218,8 +1218,8 @@ Answer: Helping the public “understand why science and evidence-based policy i
 
 Question: Does Dr Anthony Faucy have a history of changing medicine in America forever?
 Answer: Long Before COVID-19, Dr. Anthony Fauci 'Changed Medicine In America Forever'
-",1.5,3.0,1.5,2.0,3,0.14285714285714285,0.5,0.25,0.5,refuted,1,1
-74,88,393,mRNA vaccines are a form of gene therapy.,refuted,"Question: What type of treatment is a mRNA vaccine?
+",1.5,3,1.5,2,3,0.14285714285714285,0.5,0.25,0.5,refuted,1,1
+393,mRNA vaccines are a form of gene therapy.,refuted,"Question: What type of treatment is a mRNA vaccine?
 Answer: An mRNA vaccine is a  nucleic acid vaccine that uses a section of genetic material that provides the instructions for specific proteins
 
 Question: What is a nucleic acid vaccine?
@@ -1240,8 +1240,8 @@ Answer: mRNA vaccines are not live viral vaccines and do not interfere with huma
 
 Question: What is the difference between mRNA vaccines and DNA vaccines?
 Answer: Moderna, which has developed one of the mRNA COVID-19 vaccines used across the world, explained in a fact sheet that mRNA and gene therapy take “fundamentally different” approaches.
-",2.5,4.5,3.0,3.0,2,0.4285714285714285,0.875,1.0,1.0,refuted,1,1
-75,89,580,Baringo [has] gone beyond the 35% ceiling on personnel emoluments as set in the constitution. We are at 55.7%.,supported,"Question: What are personnel emoluments?
+",2.5,4.5,3,3,2,0.4285714285714285,0.875,1,1,refuted,1,1
+580,Baringo [has] gone beyond the 35% ceiling on personnel emoluments as set in the constitution. We are at 55.7%.,supported,"Question: What are personnel emoluments?
 Answer: Emolument definition: Emoluments are money or other forms of payment which a person receives for doing work
 
 Question: Is there a cap in Kenya on personnel emoluments?
@@ -1259,8 +1259,8 @@ Answer: Baringo County
 
 Question: Is the baringo claim true or false?
 Answer: Baringo
-",1.0,3.0,2.0,1.5,2,0.0,0.5,0.5,0.25,not enough information,0,0
-76,90,383,"Face masks, recommended to help curb the spread of COVID-19, cause lung cancer.",refuted,"Question: What is WHO stance on use of mask
+",1,3,2,1.5,2,0,0.5,0.5,0.25,not enough information,0,0
+383,"Face masks, recommended to help curb the spread of COVID-19, cause lung cancer.",refuted,"Question: What is WHO stance on use of mask
 Answer: . The World Health Organization, the US Centers for Disease Control and Prevention and Health Canada agree that masks are generally safe to use and help to curb the spread of COVID-19, which has infected more than 100 million people, killing nearly 2.4 million globally.
 
 https://www.boomlive.in/world/fake-news-covid-19-face-masks-lung-cancer-12046
@@ -1280,8 +1280,8 @@ Answer: However, until more research is available, masks with exhalation valves 
 
 Question: Can face coverings protect against COVID-19?
 Answer: Face masks protecting from infections
-",1.5,3.5,2.0,2.5,2,0.14285714285714285,0.625,0.5,0.75,not enough information,0,0
-77,91,615,Coronavirus vaccines are primarily designed to improve survival rates of those infected.,refuted,"Question: What are vaccines primarily designed to improve?
+",1.5,3.5,2,2.5,2,0.14285714285714285,0.625,0.5,0.75,not enough information,0,0
+615,Coronavirus vaccines are primarily designed to improve survival rates of those infected.,refuted,"Question: What are vaccines primarily designed to improve?
 Answer: Vaccines primarily work by reducing the risk of infection.
 
 Question: Do vaccines help those already infected by a disease?
@@ -1294,8 +1294,8 @@ Answer: During the COVID-19 pandemic, vaccines save more lives if distributed to
 
 Question: What are the different types of COVID-19 vaccines that are currently being developed?
 Answer: Find out more about how vaccines are developed and approved for use.
-",1.0,4.0,2.5,2.5,3,0.0,0.75,0.75,0.75,not enough information,0,0
-78,92,849,"During Kenyatta's administration, 4.5 million title deeds have been issued in the seven years since 2013",not enough information,"Question: how many title deeds did Kenyatta issue
+",1,4,2.5,2.5,3,0,0.75,0.75,0.75,not enough information,0,0
+849,"During Kenyatta's administration, 4.5 million title deeds have been issued in the seven years since 2013",not enough information,"Question: how many title deeds did Kenyatta issue
 Answer: six million deeds
 
 Question: When was this claim made?
@@ -1311,8 +1311,8 @@ Answer: Kenyatta compared this number to the six million title deeds he said had
 
 Question: What was the number of titles issued by President Uhuru Kenyatta between January 2020 and March 2020 to Nyandura village in Nairobi's Eastland area and its descendants from the Kiambu, Nyeri, Soloi, Kajiado, Nakuru, Marsabit, Samburu and Turkana are?
 Answer: Between January and February 2020, President Kenyatta issued close to 100,000 title deeds to the Nyandarua colonial village, Nairobi’s Eastlands area, and to the descendants of Nyakinyua from Kiambogo, Njoro, and Solai areas.
-",1.0,3.5,2.5,3.0,2,0.0,0.625,0.75,1.0,not enough information,1,1
-79,93,115,The filibuster was created so that slave owners could hold power over the US government,refuted,"Question: When did the US Senate conduct its first Filibuster?
+",1,3.5,2.5,3,2,0,0.625,0.75,1,not enough information,1,1
+115,The filibuster was created so that slave owners could hold power over the US government,refuted,"Question: When did the US Senate conduct its first Filibuster?
 Answer: March 5th 1841
 
 Question: What was the March 5th 1841 Filibuster objecting about ?
@@ -1325,8 +1325,8 @@ Answer: The filibuster was created so that slave owners could hold power over ou
 
 Question: Why did they create this myth about states' rights and not slavery?
 Answer: They also created the myth that the Civil War was fought over states’ rights instead of slavery, which was the actual cause.
-",2.0,3.0,3.0,2.0,2,0.2857142857142857,0.5,1.0,0.5,contradicting information (some evidence parts support the claim whereas others refute it),0,1
-80,94,794,The Covid-19 dusk-to-dawn curfew is Kenya’s first ever nationwide curfew since independence.,supported,"Question: When was Kenya's Covid 19 'Dusk till Dawn' curfew introduced.
+",2,3,3,2,2,0.2857142857142857,0.5,1,0.5,contradicting information (some evidence parts support the claim whereas others refute it),0,1
+794,The Covid-19 dusk-to-dawn curfew is Kenya’s first ever nationwide curfew since independence.,supported,"Question: When was Kenya's Covid 19 'Dusk till Dawn' curfew introduced.
 Answer: Effective 27th March 2020 a daily curfew of between 7 p.m and 5 a.m. shall be in effect all over Kenya
 
 Question: Did Kenya have any curfews before 2020?
@@ -1339,8 +1339,8 @@ Answer: On March 25, President Kenyatta announced a nationwide dusk-to-dawn curf
 
 Question: What is the reason for the lifting of curfews in Kenya?
 Answer: The President of Kenya, Uhuru Kenyatta, has lifted the curfew in force in the country from dusk to dawn.
-",2.0,4.0,2.5,3.0,2,0.2857142857142857,0.75,0.75,1.0,not enough information,0,0
-81,95,791,Kenya's last mile connectivity programme crossed the 7.2 million household connections mark.,supported,"Question: What is Kenya's last mile connectivity programme?
+",2,4,2.5,3,2,0.2857142857142857,0.75,0.75,1,not enough information,0,0
+791,Kenya's last mile connectivity programme crossed the 7.2 million household connections mark.,supported,"Question: What is Kenya's last mile connectivity programme?
 Answer: ‘Last mile’ refers to the end link between electricity consumers and
 connectivity and the technologies and processes used to connect
 them.The Government of Kenya (GoK) has introduced a series of projects to stimulate economic growth and create jobs. They include the Last Mile Connectivity Program (LMCP), which aims to ensure everyone has access to electricity by 2020.
@@ -1358,8 +1358,8 @@ Answer: On November 12, 2020, in his state of the nation address, President Uhur
 
 Question: How long does it take to connect a customer to electric power in kenya?
 Answer: According to Kenya Power, the country’s electricity utility, “last mile” refers to the last link to the consumer’s premise or home.
-",2.0,3.5,3.0,2.0,3,0.2857142857142857,0.625,1.0,0.5,not enough information,0,0
-82,96,98,Boulder supermarket in Colo shooting suspect  came to the US during the Obama administration as a Syrian refugee via Obama-era asylum programs,refuted,"Question: When did Obama become president?
+",2,3.5,3,2,3,0.2857142857142857,0.625,1,0.5,not enough information,0,0
+98,Boulder supermarket in Colo shooting suspect  came to the US during the Obama administration as a Syrian refugee via Obama-era asylum programs,refuted,"Question: When did Obama become president?
 Answer: 2009
 
 Question: When did the Boulder shooting suspect come to the USA?
@@ -1372,8 +1372,8 @@ Answer: The suspected shooter was born in Syria, but the best available informat
 
 Question: Was the suspected boulder shooter from Colorado a refugee from Syria who was granted asylum under Obama's refugee program?
 Answer: Snopes, ""Was Suspected Boulder Shooter a Syrian Refugee Who Came to US via Obama-Era Asylum Program?""
-",3.5,4.0,2.0,2.0,3,0.7142857142857143,0.75,0.5,0.5,refuted,1,1
-83,97,452,COVID-19 can cause worse lung damage than heavy smoking.,supported,"Question: Does COVID-19 cause lung damage?
+",3.5,4,2,2,3,0.7142857142857143,0.75,0.5,0.5,refuted,1,1
+452,COVID-19 can cause worse lung damage than heavy smoking.,supported,"Question: Does COVID-19 cause lung damage?
 Answer: Yes The lungs are the organ most commonly affected by COVID-19, with a spectrum of severe effects.. 
 
 Question: What effects can COVID-19 cause to the lungs?
@@ -1395,8 +1395,8 @@ Answer: We rate the claim COVID-19 can cause worse lung damage than smoking TRUE
 
 Question: Does smoking cigarettes cause respiratory problems?
 Answer: Smoking cigarettes can cause significant lung damage, including respiratory symptoms, chronic obstructive pulmonary disease and lung cancer.
-",2.5,4.0,2.5,3.0,2,0.4285714285714285,0.75,0.75,1.0,supported,1,1
-84,98,170,Meghan Markle once worked at Humphrey Yogart,supported,"Question: where was Meghan Markle's first job
+",2.5,4,2.5,3,2,0.4285714285714285,0.75,0.75,1,supported,1,1
+170,Meghan Markle once worked at Humphrey Yogart,supported,"Question: where was Meghan Markle's first job
 Answer: Meghan's first foray into the workforce came when she was just 13 and took a gig at a place called Humphrey Yogart(opens in new tab)
 ","Question: What was Meghan Markle's job before she became an actress?
 Answer: Meghan worked at the Beverly Connection store on La Cienega Boulevard, which has long since been closed.
@@ -1406,8 +1406,8 @@ Answer: Sheftel says she was busy managing other Humphrey Yogart locations so sh
 
 Question: Does Meghan Markle work for the company that owns the restaurant that is closed?
 Answer: FYI ... Meghan used to work at the Humphrey Yogart on La Cienega, which is now closed, just like every location aside from the original.
-",4.0,3.5,2.0,2.0,3,0.8571428571428571,0.625,0.5,0.5,supported,1,1
-85,99,826,"Kenya currently ranks 56th globally and third in sub-Saharan Africa on the ease of doing business report,",supported,"Question: What is the ease of doing business report?
+",4,3.5,2,2,3,0.8571428571428571,0.625,0.5,0.5,supported,1,1
+826,"Kenya currently ranks 56th globally and third in sub-Saharan Africa on the ease of doing business report,",supported,"Question: What is the ease of doing business report?
 Answer: Doing Business is a World Bank Group flagship report that measures aspects of business regulation affecting domestic small and medium-size firms,
 
 Question: In the 2020 doing business report, where does Kenya rank?
@@ -1426,4 +1426,4 @@ Answer: Here are ten African countries on the World Bank’s ease of doing busin
 
 Question: How is Kenya ranked on The world Bank annual report on Doing business 2019?
 Answer: In the 2019 Doing Business Report, the World Bank ranks Kenya in 56th place among 190 countries in terms of ease of doing business.
-",3.5,3.5,2.0,2.5,2,0.7142857142857143,0.625,0.5,0.75,supported,1,1
+",3.5,3.5,2,2.5,2,0.7142857142857143,0.625,0.5,0.75,supported,1,1
