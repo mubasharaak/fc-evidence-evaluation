@@ -76,8 +76,9 @@ def _run_prompt_scorer(test_df: pd.DataFrame, prompt_type: properties.PromptType
 
 
 def _calc_correlation_append_results(reference: pd.DataFrame, predictions: list[properties.OpenAIResponse],
-                                     results_df: pd.DataFrame, score_type: properties.ScoreMetrics,
-                                     comparison_dim: properties.EvaluationDimensions):
+                                     results_df: pd.DataFrame,
+                                     comparison_dim: properties.EvaluationDimensions,
+                                     score_type: properties.ScoreMetrics = None, ):
     spearman_corr, pearson_corr = _calc_correlation(test_df=reference, results=predictions,
                                                     comparison_dim=comparison_dim, score_type=score_type)
     new_row = {
@@ -91,54 +92,67 @@ def _calc_correlation_append_results(reference: pd.DataFrame, predictions: list[
 
 
 def _calc_correlation_atomic_reference_based(reference: pd.DataFrame, prediction: list[properties.OpenAIResponse],
-                                             results_df: pd.DataFrame):
+                                             results_df: pd.DataFrame, prompt_type: properties.PromptTypes):
     # Coverage
     results_df = _calc_correlation_atomic_reference_based_prec_recall_split(reference=reference, prediction=prediction,
                                                                             results_df=results_df,
                                                                             comparison_dim=properties.EvaluationDimensions(
-                                                                                "semantic_coverage"))
+                                                                                "semantic_coverage"),
+                                                                            prompt_type=prompt_type)
     # Coherence
     results_df = _calc_correlation_atomic_reference_based_prec_recall_split(reference=reference, prediction=prediction,
                                                                             results_df=results_df,
                                                                             comparison_dim=properties.EvaluationDimensions(
-                                                                                "coherence"))
+                                                                                "coherence"),
+                                                                            prompt_type=prompt_type)
     # Redundancy
     results_df = _calc_correlation_atomic_reference_based_prec_recall_split(reference=reference, prediction=prediction,
                                                                             results_df=results_df,
                                                                             comparison_dim=properties.EvaluationDimensions(
-                                                                                "redundancy"))
+                                                                                "redundancy"),
+                                                                            prompt_type=prompt_type)
     # Consistency
     results_df = _calc_correlation_atomic_reference_based_prec_recall_split(reference=reference, prediction=prediction,
                                                                             results_df=results_df,
                                                                             comparison_dim=properties.EvaluationDimensions(
-                                                                                "consistency"))
+                                                                                "consistency"),
+                                                                            prompt_type=prompt_type)
     # Verdict agreement
     results_df = _calc_correlation_atomic_reference_based_prec_recall_split(reference=reference, prediction=prediction,
                                                                             results_df=results_df,
                                                                             comparison_dim=properties.EvaluationDimensions(
-                                                                                "verdict_agreement"))
+                                                                                "verdict_agreement"),
+                                                                            prompt_type=prompt_type)
     # NEI disagreement
     return _calc_correlation_atomic_reference_based_prec_recall_split(reference=reference, prediction=prediction,
                                                                       results_df=results_df,
                                                                       comparison_dim=properties.EvaluationDimensions(
-                                                                          "nei_disagreement"))
+                                                                          "nei_disagreement"),
+                                                                      prompt_type=prompt_type)
 
 
 def _calc_correlation_atomic_reference_based_prec_recall_split(reference: pd.DataFrame,
                                                                prediction: list[properties.OpenAIResponse],
                                                                results_df: pd.DataFrame,
-                                                               comparison_dim: properties.EvaluationDimensions):
-    # precision
-    results_df = _calc_correlation_append_results(reference=reference, predictions=prediction,
-                                                  results_df=results_df,
-                                                  score_type=properties.ScoreMetrics.PRECISION,
-                                                  comparison_dim=comparison_dim)
+                                                               comparison_dim: properties.EvaluationDimensions,
+                                                               prompt_type: properties.PromptTypes):
+    if prompt_type == properties.PromptTypes.ATOMIC_REFERENCE_FACTS_PREC_RECALL:
+        # precision
+        results_df = _calc_correlation_append_results(reference=reference, predictions=prediction,
+                                                      results_df=results_df,
+                                                      score_type=properties.ScoreMetrics.PRECISION,
+                                                      comparison_dim=comparison_dim)
 
-    # recall
-    return _calc_correlation_append_results(reference=reference, predictions=prediction,
-                                            results_df=results_df,
-                                            score_type=properties.ScoreMetrics.RECALL,
-                                            comparison_dim=comparison_dim)
+        # recall
+        return _calc_correlation_append_results(reference=reference, predictions=prediction,
+                                                results_df=results_df,
+                                                score_type=properties.ScoreMetrics.RECALL,
+                                                comparison_dim=comparison_dim)
+    else:
+        return _calc_correlation_append_results(reference=reference, predictions=prediction,
+                                                results_df=results_df,
+                                                comparison_dim=comparison_dim,
+                                                score_type=None)
 
 
 def main():
@@ -159,7 +173,7 @@ def main():
 
     # calculate scores and correlations
     corr_results = _calc_correlation_atomic_reference_based(reference=df, prediction=model_results_scores,
-                                                            results_df=corr_results)
+                                                            results_df=corr_results, prompt_type=_PROMPT_TYPE)
 
     # save results
     corr_results.to_csv(os.path.join(_OUTPUT_DIR_PATH, _CORRELATION_OUPUT_FILE), index=False)
