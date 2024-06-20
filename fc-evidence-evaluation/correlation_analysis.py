@@ -12,7 +12,7 @@ import utils
 _DATA_MAJORITY_VOTING_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/averitec_manual_eval_majority.csv"
 _OUTPUT_DIR_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/manual_eval_subset"
 _PROMPT_TYPE = properties.PromptTypes("atomic_reference_prec_recall")
-_PROMPTING_MODEL = "gpt-3.5-turbo-1106"
+_PROMPTING_MODEL = "gpt-4o-2024-05-13"
 _OUTPUT_FILE = "predictions_{}_{}.jsonl".format(_PROMPT_TYPE.value, _PROMPTING_MODEL)
 _CORRELATION_OUPUT_FILE = "correlation_{}_{}.csv".format(_PROMPT_TYPE.value, _PROMPTING_MODEL)
 _LOAD_RESULTS = False
@@ -69,6 +69,8 @@ def _calc_correlation(test_df: pd.DataFrame, results: list[properties.OpenAIResp
             score = pred.response['score']
         y.append(score)
 
+    # if error in prompting entry can be None
+    y = [0 if entry is None else entry for entry in y]
     return stats.spearmanr(x, y).correlation, stats.pearsonr(x, y).statistic
 
 
