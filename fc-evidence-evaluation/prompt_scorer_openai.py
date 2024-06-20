@@ -87,14 +87,16 @@ def calculate_prediction_scores(preds: list[properties.OpenAIResponse], prompt_t
             predictions_w_scores.append(calculate_atomic_score_openai_response(pred))
         elif prompt_type == properties.PromptTypes.ATOMIC_REFERENCE_FACTS_PREC_RECALL:
             predictions_w_scores.append(calculate_atomic_score_prec_recall_openai_response(pred))
+        elif prompt_type == properties.PromptTypes.COT:
+            predictions_w_scores.append(calculate_pseudo_score_openai_response(pred))
 
     return predictions_w_scores
 
 
 def prompt_openai_model(dataset: list[properties.AveritecEntry], predictions: list[properties.AveritecEntry],
                         prompt_type: properties.PromptTypes, client, match_system_preds=True, model: str = None) -> \
-list[
-    properties.OpenAIResponse]:
+        list[
+            properties.OpenAIResponse]:
     """Prompts OpenAI models."""
     responses = []
     for i, sample in enumerate(dataset):
@@ -108,7 +110,8 @@ list[
         else:
             pred = predictions[i]
         prompt = _prepare_prompt(sample, pred, prompt_type)
-        while True:
+        counter = 0
+        while counter < 5:
             try:
                 responses.append(
                     _process_output(sample, _query_openai(prompt, client, response_format="json_object", model=model)))
@@ -116,6 +119,7 @@ list[
             except openai.APITimeoutError as e:
                 print(e)
                 time.sleep(60)
+                counter += 1
                 pass
     return responses
 
@@ -166,6 +170,22 @@ def calculate_atomic_score_prec_recall_openai_response(response_openai):
     except Exception:
         response_openai_copy.response['precision'] = None
         response_openai_copy.response['recall'] = None
+    return response_openai_copy
+
+
+def calculate_pseudo_score_openai_response(response_openai):
+    response_openai_copy = copy.deepcopy(response_openai)
+    try:
+        if type(response_openai.response) == str:
+            response = json.loads(response_openai.response)
+        else:
+            response = response_openai.response
+        response_openai_copy.response = response
+        response_openai_copy.response['score'] = 1 if properties.LABEL_DICT[properties.Label(response['label'])] == \
+                                                      properties.LABEL_DICT[
+                                                          properties.Label(response_openai.gold)] else 0
+    except Exception:
+        response_openai_copy.response['score'] = None
     return response_openai_copy
 
 
