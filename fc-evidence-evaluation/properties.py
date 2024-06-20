@@ -136,57 +136,53 @@ information and no additional sources or background knowledge.
 -----
 Examples: 
 Claim: South Africans that drink are amongst the top drinkers in the world. 
-Evidence: What is the global average 
-alcohol consumption in litres of pure alcohol per day? The global averages as of 2016 is 15.1 litres per day. What is 
-the daily average of pure alcohol consumption per day in South africa? 29.9 litres. Where does South Africa rank as a 
-nation in terms of Daily pure Alcohol consumption? 6th out of 189 countries. 
-Answer: Explanation: The claim stays "amongst the top drinkers" not the top first, so since they are 6th, this could be plausible. The answer is support. Label: support.
+Evidence: What is the global average alcohol consumption in litres of pure alcohol per day? The global averages as of 2016 is 15.1 litres per day. What is the daily average of pure alcohol consumption per day in South africa? 29.9 litres. Where does South Africa rank as a nation in terms of Daily pure Alcohol consumption? 6th out of 189 countries. 
+Output: {{
+            'explanation': 'The claim stays amongst the top drinkers not the top first, so since they are 6th, this could be plausible. The answer is support.',
+            'label': 'supported'
+        }}
 
 Claim: All government schools in India are being privatised. 
-Evidence: What did India's Union Education Minister say about the privatisation of governments schools? New Delhi: There is no plan to privatise primary 
-education, the Centre told the Parliament today. This statement was given by Minister of Human Resource Development, 
-Ra mesh Pokhriyal Nishank in the Lok Sabha today in response to Kaushalendra Kumar question on whether it is fact 
-that NITI Aayog has suggested that Primary Education may be given to the private sector to reduce the burden of 
-salary to teachers and other infrastructure. 
-Answer: Explanation: There is no plan by the Indian government to privatize primary education as said by the Minister of Human Resource Development. The claim is clearly refuted and therefore the answer is refute. Label: refute.
+Evidence: What did India's Union Education Minister say about the privatisation of governments schools? New Delhi: There is no plan to privatise primary education, the Centre told the Parliament today. This statement was given by Minister of Human Resource Development, 
+Ra mesh Pokhriyal Nishank in the Lok Sabha today in response to Kaushalendra Kumar question on whether it is fact that NITI Aayog has suggested that Primary Education may be given to the private sector to reduce the burden of salary to teachers and other infrastructure. 
+Output: {{
+            'explanation': 'There is no plan by the Indian government to privatize primary education as said by the Minister of Human Resource Development. The claim is clearly refuted and therefore the answer is refute.',
+            'label': 'refuted'
+        }}
 
 Claim: There is a global average for the number of judges and magistrates to number of people in Kenya. 
-Evidence: How 
-many magistrates were their in Kenya in 2020? No answer could be found. Is there a global average for the number of 
-judges compared to population? No answer could be found. What is the population of Kenya? 47.6 million 
-Answer: Explanation: The evidence does neither support nor refute the claim that a global average for the number of judges and magistrates to number of people exists in Kenya. The answer is not enough information. Label: not enough information
+Evidence: How many magistrates were their in Kenya in 2020? No answer could be found. Is there a global average for the number of judges compared to population? No answer could be found. What is the population of Kenya? 47.6 million 
+Output: {{
+            'explanation': 'The evidence does neither support nor refute the claim that a global average for the number of judges and magistrates to number of people exists in Kenya. The answer is not enough information.',
+            'label': 'not enough information'
+        }}
 
 Claim: An IndyCar race driver drove a Formula 1 car designed by Peter McCool during the 2007 Formula One season.
 Evidence: The Super Aguri SA07 was Super Aguri F1's Formula One car for the 2007 Formula One season. It was designed by Peter McCool and was driven by Takuma Sato and Anthony Davidson. Takuma Sato (佐藤 琢磨, Satō Takuma, born 28 January 1977), nicknamed "Taku", is a Japanese professional racing driver. He competes part-time in the IndyCar Series, driving the No. 11 Honda for Chip Ganassi Racing.
-Answer: Explanation: Takuma Sato is an IndyCar race driver who drove the Super Aguri SA07 for the 2007 Formula One season. The evidence states that this car was designed by Peter McCool. Hence the answer is support.Label: support 
+Output: {{
+            'explanation': 'Takuma Sato is an IndyCar race driver who drove the Super Aguri SA07 for the 2007 Formula One season. The evidence states that this car was designed by Peter McCool. Hence the answer is support.',
+            'label': 'supported'
+        }}
 
 Claim: Rhythm Nation was incapable of being performed on Britain's Got Talent.
 Evidence: It has been covered by Pink , Crystal Kay , and Girls ' Generation and has also been performed on Glee , The X-Factor , and Britain 's Got Talent .
-Answer: Explanation: The Evidence states that the song Rhythm Nation was performed on Britain's Got Talent and therefore clearly refutes the claim that it was incapable to be performed. The answer is refute. Label: refute. 
+Output: {{
+            'explanation': 'The Evidence states that the song Rhythm Nation was performed on Britain's Got Talent and therefore clearly refutes the claim that it was incapable to be performed. The answer is refute.',
+            'label': 'refuted'
+        }}
 
 Claim: Alloy media platforms have a monthly reach of less than 100 million unique visitors .
 Evidence: According to comScore , Alloy media platforms reach over 95 million unique visitors each month , including over half of the age 12-34 internet users .
-Answer: Explanation: While the evidence mentions that the platform reaches over 95 million unique visitors per month, it does not state clearly if the number is lower than 100 million. Hence the evidence does not contain enough information to decide if the claim is supported or refuted. Label: not enough information.
-
-Claim: The American film, television and theater actress who was a star in the film the Matchmaker and also received the 40th AFI Life Achievement Award was born April 24, 1934.
-Evidence: The Matchmaker is a 1958 American comedy film directed by Joseph Anthony. The film stars Shirley Booth in her final film, Anthony Perkins, and Shirley MacLaine. Shirley MacLaine (born Shirley MacLean Beaty; April 24, 1934)[1] is an American film, television and theater actress and author. Known for her portrayals of quirky, strong-willed and eccentric women, she has received numerous accolades over her eight-decade career, including an Academy Award, an Emmy Award, two BAFTA Awards, six Golden Globe Awards, two Volpi Cups, two Silver Bears, and the 40th AFI Life Achievement Award. 
-Answer: Explanation: The actress mentioned in the claim is Shirley Booth as she was starred in the Matchmaker, received the 40th AFI Life Achievement Award and was born on April 24, 1934 as stated in the evidence. The answer is support. Label: support.
-
-Claim: Bambi, is based on a book by the American author Felix Salten, The Country Bears is not.
-Evidence: Bambi, a Life in the Woods (German title: Bambi: Eine Lebensgeschichte aus dem Walde) is a 1923 Austrian coming-of-age novel written by Felix Salten, and originally published in Berlin by Ullstein Verlag. The Country Bears is a 2002 American musical road comedy[2] film directed by Peter Hastings, produced by Walt Disney Pictures, and based on the Disney theme park attraction Country Bear Jamboree.
-Answer: Explanation: The evidence supports that Bambi is a book by Felix Slaten and The Country Bears is not. However, it mentions that Felix Salten is American while the evidence tells us he was Austrian. The claims is refuted. Label: refute.
-
-Claim: The film Deliver Us from Evil , released in 2014 , has Eric Bana , Edgar Ramírez , Sean Harris , Olivia Munn , and Joel McHale as the main stars .
-Evidence: Despite mixed to negative reviews by critics , the film, which was released in 2014, was a box office success , grossing $ 87.9 million against a $ 30 million budget .
-Answer: Explanation: While the evidence confirms that the movie was released in 2014 it misses information about the actors starred in the movie. Hence the answer is not enough information given. Label: not enough information.
-
+Output: {{
+            'explanation': 'While the evidence mentions that the platform reaches over 95 million unique visitors per month, it does not state clearly if the number is lower than 100 million. Hence the evidence does not contain enough information to decide if the claim is supported or refuted.',
+            'label': 'not enough information'
+        }}
 -----
 The answer should be a json with two keys: explanation, label.
 
 Claim: {} 
 Evidence: {}
-Answer:
-"""
+Output:"""
 
 NEI_EXAMPLE = """
 Claim: There is a global average for the number of judges and magistrates to number of people in Kenya. 
@@ -477,9 +473,9 @@ Claim: Mukesh Ambani, richest man in Asia had surgery for pancreatic cancer at S
 Evidence: When was the photograph taken of Mukesh Ambani on the Facebook post claiming he had been diagnosed with pancreatic cancer and had undergone surgery? The photograph was taken on September 5, 2020. When was a video filmed of  Mukesh Ambani at the virtual launch of NK Singh's book Portrait of Power? The video was filmed on October 19, 2020. What date was the  Facebook post which confirmed Mukesh Ambani had lost 30 kgs, been diagnosed with pancreatic cancer and had had liver transplant surgery? The Facebook post was dated November 2, 2020. Where was Mukesh's photo of him supposedly recieving surgery actually taken? It was taken by Manushree Vijayvergiya who shared her experience of meeting Mukesh and Isha Ambani in a cafe in Liechtenstein.
 Output: {{
             "facts": '1. Mukesh Ambani is the richest man in Asia. 2. Mukesh Ambani had surgery for pancreatic cancer. 3. The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US. 4. The surgery occurred on October 30, 2020.',
-            "fact check": '1. Mukesh Ambani is the richest man in Asia. This fact is not supported as the evidence does not mention anything about Ambani's wealth. 2. Mukesh Ambani had surgery for pancreatic cancer. This fact is not supported as the evidence mentions a Facebook post but shortly after that he was seen at a launch event. 3. The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US. This fact is not supported as the evidence does not mention anything about a hospital location. 4. The surgery occurred on October 30, 2020. The evidence shows other appearances by Ambani shortly before and after October 30, 2020. This contradicts with the fact that the surgery occurred on October 30, 2020.',
-            "fact check": '1. Mukesh Ambani is the richest man in Asia. Not enough information given as the evidence does not mention anything about Ambani's wealth. 2. Mukesh Ambani had surgery for pancreatic cancer. Not enough information given as the evidence mentions a Facebook post but shortly after that he was seen at a launch event. 3. The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US. Not enough information given as the evidence does not mention anything about a hospital location. 4. The surgery occurred on October 30, 2020. The evidence shows other appearances by Ambani shortly before and after October 30, 2020. This contradicts with the fact that the surgery occurred on October 30, 2020.',            "support": 0, 
-            "contradict": 0, 
+            "fact check": '1. Mukesh Ambani is the richest man in Asia. Not enough information given as the evidence does not mention anything about Ambani's wealth. 2. Mukesh Ambani had surgery for pancreatic cancer. Not enough information given as the evidence mentions a Facebook post but shortly after that he was seen at a launch event. 3. The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US. Not enough information given as the evidence does not mention anything about a hospital location. 4. The surgery occurred on October 30, 2020. The evidence shows other appearances by Ambani shortly before and after October 30, 2020. This contradicts with the fact that the surgery occurred on October 30, 2020.',            
+            "support": 0, 
+            "contradict": 1, 
             "facts count": 4 
         }}
 
@@ -603,7 +599,8 @@ PROMPT_MAPPING = {
     PromptTypes.COT: COT_PROMPT,  # is the PSEUDO prompt that uses COT prompting
     PromptTypes.TOT: TOT_PROMPT,
     PromptTypes.ATOMIC_FACTS: ATOMIC_PROMPT,  # is the REFERENCE LESS prompt
-    PromptTypes.ATOMIC_REFERENCE_FACTS: ATOMIC_REFERENCE_PROMPT,  # is the REFERENCE LESS prompt
-    PromptTypes.ATOMIC_REFERENCE_FACTS_PREC_RECALL: ATOMIC_REFERENCE_PROMPT_PREC_RECALL,  # is the REFERENCE LESS prompt
+    PromptTypes.ATOMIC_REFERENCE_FACTS: ATOMIC_REFERENCE_PROMPT,
+    PromptTypes.ATOMIC_REFERENCE_FACTS_PREC_RECALL: ATOMIC_REFERENCE_PROMPT_PREC_RECALL,
+    # is the REFERENCE-BASED prompt
     PromptTypes.SCORE: SCORE_PROMPT
 }
