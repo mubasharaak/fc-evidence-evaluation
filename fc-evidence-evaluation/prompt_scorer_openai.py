@@ -28,6 +28,7 @@ def _query_openai(prompt: str, client, keys=None, seed=_SEED, model=_MODEL, max_
         max_tokens=max_tokens,
         response_format={"type": response_format},
         seed=seed,
+        temperature=0,
     )
 
 
@@ -37,8 +38,8 @@ def _get_response_text(response: openai.types.chat.chat_completion.ChatCompletio
 
 def _process_output(dataset_sample: properties.AveritecEntry,
                     response: openai.types.chat.chat_completion.ChatCompletion):
-    return properties.OpenAIResponse(dataset_sample.claim, dataset_sample.evidence, _get_response_text(response),
-                                     dataset_sample.label.lower())
+    return properties.OpenAIResponse(claim=dataset_sample.claim, evidence=dataset_sample.evidence, response=_get_response_text(response),
+                                     gold=dataset_sample.label.lower(), id=dataset_sample.id)
 
 
 def _averitec_qa_to_str(evidence: properties.AveritecQA):

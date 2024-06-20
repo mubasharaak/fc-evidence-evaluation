@@ -26,6 +26,20 @@ class PromptTypes(enum.Enum):
     SCORE = "score"
 
 
+class ScoreMetrics(enum.Enum):
+    PRECISION = "precision"
+    RECALL = "recall"
+
+
+class EvaluationDimensions(enum.Enum):
+    COVERAGE = "semantic_coverage"
+    COHERENCE = "coherence"
+    REDUNDANCY = "redundancy"
+    CONSISTENCY = "consistency"
+    VERDICT_AGREEMENT = "verdict_agreement"
+    NEI_DISAGREEMENT = "nei_disagreement"
+
+
 class Label(MultiValueEnum):
     REFUTED = "refuted", "refutes", "refute", 0, "0", "contradiction", "c", "not_supported", "contradict"
     SUPPORTED = "supported", "supports", "support", 1, "1", "entailment", "e", "entail"
@@ -51,6 +65,7 @@ class OpenAIResponse:
     evidence: str
     response: Union[str, dict]
     gold: str
+    id: Optional[int] = None
 
 
 @dataclass
@@ -70,8 +85,9 @@ class AveritecQA:
 class AveritecEntry:
     claim: str
     label: str
-    justification: str
     evidence: Union[List[AveritecQA], str]
+    justification: Optional[str] = None
+    id: Optional[int] = None
 
 
 FEVER_DATASET_PATH = "shared_task_test_annotations_evidence.jsonl"
@@ -451,7 +467,7 @@ Please verify the correctness of the claim following the following steps.
 1. Break down the claim in independent facts. Each fact should be a separate sentence. 
 2. Only break down the claim into facts, not the evidence!
 3. Evaluate each fact individually using the given evidence only. Do not use additional sources or background knowledge. Explain the evaluation.
-4. Finally summarise how many facts are (1.) supported by the evidence, (2.) how many facts you have in total.
+4. Finally summarise how many facts are (1.) supported by the evidence, (2.) clearly are contradicted by the evidence, (3.) how many facts you have in total.
 
 Generate the output in form of a json as shown in the example below.
 -----
@@ -461,8 +477,9 @@ Claim: Mukesh Ambani, richest man in Asia had surgery for pancreatic cancer at S
 Evidence: When was the photograph taken of Mukesh Ambani on the Facebook post claiming he had been diagnosed with pancreatic cancer and had undergone surgery? The photograph was taken on September 5, 2020. When was a video filmed of  Mukesh Ambani at the virtual launch of NK Singh's book Portrait of Power? The video was filmed on October 19, 2020. What date was the  Facebook post which confirmed Mukesh Ambani had lost 30 kgs, been diagnosed with pancreatic cancer and had had liver transplant surgery? The Facebook post was dated November 2, 2020. Where was Mukesh's photo of him supposedly recieving surgery actually taken? It was taken by Manushree Vijayvergiya who shared her experience of meeting Mukesh and Isha Ambani in a cafe in Liechtenstein.
 Output: {{
             "facts": '1. Mukesh Ambani is the richest man in Asia. 2. Mukesh Ambani had surgery for pancreatic cancer. 3. The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US. 4. The surgery occurred on October 30, 2020.',
-            "fact check": '1. Mukesh Ambani is the richest man in Asia. Not enough information given as the evidence does not mention anything about Ambani's wealth. 2. Mukesh Ambani had surgery for pancreatic cancer. Not enough information given as the evidence mentions a Facebook post but shortly after that he was seen at a launch event. 3. The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US. Not enough information given as the evidence does not mention anything about a hospital location. 4. The surgery occurred on October 30, 2020. The evidence shows other appearances by Ambani shortly before and after October 30, 2020. This contradicts with the fact that the surgery occurred on October 30, 2020.',
-            "support": 0, 
+            "fact check": '1. Mukesh Ambani is the richest man in Asia. This fact is not supported as the evidence does not mention anything about Ambani's wealth. 2. Mukesh Ambani had surgery for pancreatic cancer. This fact is not supported as the evidence mentions a Facebook post but shortly after that he was seen at a launch event. 3. The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US. This fact is not supported as the evidence does not mention anything about a hospital location. 4. The surgery occurred on October 30, 2020. The evidence shows other appearances by Ambani shortly before and after October 30, 2020. This contradicts with the fact that the surgery occurred on October 30, 2020.',
+            "fact check": '1. Mukesh Ambani is the richest man in Asia. Not enough information given as the evidence does not mention anything about Ambani's wealth. 2. Mukesh Ambani had surgery for pancreatic cancer. Not enough information given as the evidence mentions a Facebook post but shortly after that he was seen at a launch event. 3. The surgery took place at Sloan Kettering, a cancer specialty hospital in New York, US. Not enough information given as the evidence does not mention anything about a hospital location. 4. The surgery occurred on October 30, 2020. The evidence shows other appearances by Ambani shortly before and after October 30, 2020. This contradicts with the fact that the surgery occurred on October 30, 2020.',            "support": 0, 
+            "contradict": 0, 
             "facts count": 4 
         }}
 
@@ -472,6 +489,7 @@ Output: {{
             "facts": '1. Donald Trump was US president. 2. Millions of jobs in the US were lost during his US presidency.',
             "fact check": '1. Donald Trump was US president. Supported, the evidence mentions Trump’s presidency indicating that he was president of the US. 2. Millions of jobs in the US were lost during his US presidency. The evidence supports this statement.',
             "support": 2, 
+            "contradict": 0, 
             "facts count": 2 
         }}
 -----
@@ -479,8 +497,7 @@ Input:
 
 Claim: {}
 Evidence: {}
-Output: 
-"""
+Output:"""
 
 SCORE_PROMPT = """
 Score the following claim given evidence on a continual scale from 0 (worst) to 100 (best).

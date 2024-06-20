@@ -139,7 +139,7 @@ def read_hover_dataset(file_path: str, wiki_db):
     return claims, evidences, labels
 
 
-def read_averitec_dataset(file_path):
+def read_averitec_dataset(file_path, filter_conflicting_evid = True):
     # load file
     with open(file_path, "r", encoding="utf-8") as file:
         dataset = json.load(file)
@@ -149,8 +149,9 @@ def read_averitec_dataset(file_path):
     labels = []
     # iterate
     for entry in dataset:
-        if entry["label"] == "Conflicting Evidence/Cherrypicking":
-            continue
+        if filter_conflicting_evid:
+            if entry["label"] == "Conflicting Evidence/Cherrypicking":
+                continue
 
         claims.append(entry["claim"])
         labels.append(properties.LABEL_DICT[properties.Label(entry["label"].lower())])
@@ -160,7 +161,7 @@ def read_averitec_dataset(file_path):
             qa_pair += (qa["question"] + " ")
             for a in qa["answers"]:
                 qa_pair += (a["answer"] + " ")
-                if a["answer_type"] == "Boolean":
+                if "answer_type" in a and a["answer_type"] == "Boolean":
                     qa_pair += ("." + a["boolean_explanation"] + ". ")
         qa_pairs.append(qa_pair)
 
