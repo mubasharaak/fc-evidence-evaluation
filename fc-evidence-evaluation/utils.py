@@ -1,7 +1,9 @@
 import os
-from typing import Optional, Union
+import datasets
+import nltk
+from nltk import word_tokenize
 
-os.environ['KMP_DUPLICATE_LIB_OK']='True'
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 import json
 import sqlite3
@@ -16,6 +18,9 @@ from nltk.tokenize import sent_tokenize
 import properties
 
 metric = evaluate.load("f1")
+metric_meteor = datasets.load_metric("meteor")
+metric_rouge = datasets.load_metric("rouge")
+
 SAMPLE_DICT = {
     'claim': None,
     'evidence': None,
@@ -139,7 +144,7 @@ def read_hover_dataset(file_path: str, wiki_db):
     return claims, evidences, labels
 
 
-def read_averitec_dataset(file_path, filter_conflicting_evid = True):
+def read_averitec_dataset(file_path, filter_conflicting_evid=True):
     # load file
     with open(file_path, "r", encoding="utf-8") as file:
         dataset = json.load(file)
@@ -253,14 +258,23 @@ def load_fever(path: str) -> List[properties.AveritecEntry]:
     return fever_entries
 
 
+def calc_meteor(candidate: str, reference: str):
+    return metric_meteor.compute(predictions=[candidate], references=[reference])['meteor']
+
+
+def calc_rouge(candidate: str, reference: str):
+    return metric_rouge.compute(predictions=[candidate], references=[reference])['rougeL'].mid.fmeasure
+
+
 def _load_hover_evidence(evidences: list, wiki_db):
     evidence_text = ""
     for e in evidences:
         try:
-            doc = wiki_db.execute("SELECT * FROM documents WHERE id=(?)", (unicodedata.normalize('NFD', e[0]),)).fetchall()[
+            doc = \
+            wiki_db.execute("SELECT * FROM documents WHERE id=(?)", (unicodedata.normalize('NFD', e[0]),)).fetchall()[
                 0]
             # retrieve relevant sentence as evidence
-            evidence_text += sent_tokenize(doc[1])[e[1]-1]  # sentence id is 1 or larger (excl. 0)
+            evidence_text += sent_tokenize(doc[1])[e[1] - 1]  # sentence id is 1 or larger (excl. 0)
         except Exception as e:
             print(e)
             continue
