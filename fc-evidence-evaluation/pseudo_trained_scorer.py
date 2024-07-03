@@ -208,6 +208,7 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
         for i, logits in enumerate(results.predictions.tolist()):
             predictions = np.argmax(logits, axis=-1)
             if predictions != results.label_ids.tolist()[i]:
+                # todo change: this only outputs predictions if they are wrong (also in other files!)
                 f.write(f"input: {tokenizer.decode(test_dataset[i]['input_ids'])}\n")
                 f.write(f"label: {properties.LABEL_DICT[properties.Label(results.label_ids.tolist()[i])]}\n")
                 f.write(f"prediction: {properties.LABEL_DICT[properties.Label(predictions)]}\n\n")

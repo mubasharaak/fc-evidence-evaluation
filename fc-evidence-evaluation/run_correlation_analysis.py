@@ -11,7 +11,7 @@ import utils
 
 _DATA_MAJORITY_VOTING_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/averitec_manual_eval_majority.csv"
 _OUTPUT_DIR_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/manual_eval_subset"
-_PROMPT_TYPE = properties.PromptTypes("atomic_reference_prec_recall")
+_PROMPT_TYPE = properties.PromptTypes("atomic")
 _PROMPTING_MODEL = "gpt-4o-2024-05-13"
 # _PROMPTING_MODEL = ""
 if _PROMPTING_MODEL:

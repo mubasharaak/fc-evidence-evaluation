@@ -1,7 +1,8 @@
 import copy
 import json
+import os
 import time
-
+import utils
 import openai
 from sklearn import metrics
 from sklearn.metrics import f1_score
@@ -94,13 +95,21 @@ def calculate_prediction_scores(preds: list[properties.OpenAIResponse], prompt_t
 
 
 def prompt_openai_model(dataset: list[properties.AveritecEntry], predictions: list[properties.AveritecEntry],
-                        prompt_type: properties.PromptTypes, client, match_system_preds=True, model: str = None) -> \
+                        prompt_type: properties.PromptTypes, client, match_system_preds=True, model: str = None,
+                        responses_output_path: str = None) -> \
         list[
             properties.OpenAIResponse]:
     """Prompts OpenAI models."""
-    responses = []
+    # load previously generated responses
+    if os.path.exists(responses_output_path):
+        responses = utils.load_jsonl_file(responses_output_path, dataclass=properties.OpenAIResponse)
+        prev_claims = [x.claim for x in responses]
+    else:
+        responses = []
+        prev_claims = []
     for i, sample in enumerate(dataset):
-        print("running sample")
+        if sample.claim in prev_claims:
+            continue
         if match_system_preds:
             # search in predictions for matching prediction
             pred = _get_system_prediction(sample, predictions)
@@ -115,6 +124,8 @@ def prompt_openai_model(dataset: list[properties.AveritecEntry], predictions: li
             try:
                 responses.append(
                     _process_output(sample, _query_openai(prompt, client, response_format="json_object", model=model)))
+                # save results in between
+                utils.save_jsonl_file(responses, responses_output_path)
                 break
             except openai.APITimeoutError as e:
                 print(e)

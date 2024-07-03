@@ -1,9 +1,28 @@
 import enum
 from dataclasses import dataclass
+from enum import Enum
 from typing import List
 from typing import Optional, Union
 
 from aenum import MultiValueEnum
+
+
+class TestType(Enum):
+    ROBUST_NOISE = "robustness_noise"
+    COHERENCE = "coherence"
+    COVERAGE = "coverage"
+    SYNONYMS = "synonyms"
+    RAND_ORDER = "rand_order"
+    SUMMARY = "summary"
+    CONTRACTION = "contraction"
+    NUM2TEXT = "num2text"
+    TEXT2NUM = "text2num"
+    FLUENCY_TYPOS = "fluency_typos"
+    FLUENCY_WORDS_DROP = "fluency_word_drop"
+    ENTITY_SWAP = "entity_swap"
+    REDUNDANCY_WORDS = "redundancy_words"
+    REDUNDANCY_SENT = "redundancy_sent"
+    NUMBER_REPLACE = "number_replace"
 
 
 class Dataset(enum.Enum):

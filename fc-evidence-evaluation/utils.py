@@ -1,7 +1,6 @@
 import os
 import datasets
-import nltk
-from nltk import word_tokenize
+import random
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
@@ -43,10 +42,31 @@ class CustomDataset(torch.utils.data.Dataset):
         return len(self.labels)
 
 
+def get_random_entry(dataset: list, current_entry: dict) -> dict:
+    """
+    Returns a random entry from dataset 'dataset' which is different from 'current_entry'
+    :param dataset:
+    :param current_entry:
+    :return:
+    """
+    while True:
+        random_entry = random.choice(dataset)
+        if random_entry['claim'] != current_entry['claim']:
+            break
+
+    return random_entry
+
+
 def load_json_file(path: str):
     """Loads data from path."""
     with open(path, "r", encoding="utf-8") as file:
         return json.load(file)
+
+
+def save_json_file(data_sample, path: str):
+    """Saves data in file at given path."""
+    with open(path, "w", encoding="utf-8") as file:
+        json.dump(data_sample, file, indent=4)
 
 
 def _load_fever_evidence(evidences: list, wiki_db):
@@ -225,17 +245,34 @@ def load_jsonl_file(file_path, dataclass=None):
     return content
 
 
-def map_averitec_to_dataclass_format(averitec: dict):
+def _extract_averitec_evidence(averitec_questions: list):
+    evidence = ""
+    for qa in averitec_questions:
+        evidence += (qa["question"] + " ")
+        for a in qa["answers"]:
+            evidence += (a["answer"] + " ")
+            if a["answer_type"] == "Boolean":
+                evidence += (" " + a["boolean_explanation"] + " ")
+    return evidence
+
+
+def map_averitec_to_dataclass_format(averitec: dict, extract_evidence=False):
     """Formats Averitec dataset files to match fields specified in properties.AveritecEntry."""
-    return dacite.from_dict(data_class=properties.AveritecEntry,
-                            data={"claim": averitec["claim"], "label": averitec["label"],
-                                  "justification": averitec["justification"],
-                                  "evidence": averitec["questions"]})
+    if not extract_evidence:
+        return dacite.from_dict(data_class=properties.AveritecEntry,
+                                data={"claim": averitec["claim"], "label": averitec["label"],
+                                      "justification": averitec["justification"],
+                                      "evidence": averitec["questions"]})
+    else:
+        return dacite.from_dict(data_class=properties.AveritecEntry,
+                                data={"claim": averitec["claim"], "label": averitec["label"],
+                                      "justification": averitec["justification"],
+                                      "evidence": _extract_averitec_evidence(averitec['questions'])})
 
 
-def load_averitec_base(path: str) -> List[properties.AveritecEntry]:
+def load_averitec_base(path: str, extract_evidence=False) -> List[properties.AveritecEntry]:
     """Loads and formats Averitec dataset files (train, test, or dev)."""
-    return [map_averitec_to_dataclass_format(entry) for entry in load_json_file(path)]
+    return [map_averitec_to_dataclass_format(entry, extract_evidence) for entry in load_json_file(path)]
 
 
 def map_fever_to_dataclass_format(fever_entry: list):
