@@ -187,6 +187,9 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
     elif dataset == properties.Dataset.VITAMINC:
         # also used for train.jsonl and dev.jsonl => all
         test_claims, test_evidences, test_labels = utils.read_vitaminc_dataset(test_dataset_path)
+    elif dataset == properties.Dataset.AVERITEC_MANUAL_EVAL:
+        # evidence is reference evidence because humans evaluated based on that
+        test_claims, test_evidences, test_labels = utils.read_averitec_manual_eval_data(test_dataset_path)
     else:
         raise Exception("Dataset provided does not match available datasets: {}".format(properties.Dataset))
 
@@ -207,8 +210,7 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
     with open(os.path.join(output_path, samples_filenames), "w") as f:
         for i, logits in enumerate(results.predictions.tolist()):
             predictions = np.argmax(logits, axis=-1)
-            if predictions != results.label_ids.tolist()[i]:
-                # todo change: this only outputs predictions if they are wrong (also in other files!)
-                f.write(f"input: {tokenizer.decode(test_dataset[i]['input_ids'])}\n")
-                f.write(f"label: {properties.LABEL_DICT[properties.Label(results.label_ids.tolist()[i])]}\n")
-                f.write(f"prediction: {properties.LABEL_DICT[properties.Label(predictions)]}\n\n")
+            # if predictions != results.label_ids.tolist()[i]: # this only outputs predictions if they are wrong (also in other files!)
+            f.write(f"input: {tokenizer.decode(test_dataset[i]['input_ids'])}\n")
+            f.write(f"label: {properties.LABEL_DICT[properties.Label(results.label_ids.tolist()[i])]}\n")
+            f.write(f"prediction: {properties.LABEL_DICT[properties.Label(predictions)]}\n\n")

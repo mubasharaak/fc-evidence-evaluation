@@ -2,12 +2,14 @@ import os
 import datasets
 import random
 
+import pandas as pd
+
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 import json
 import sqlite3
 import unicodedata
-from typing import List
+from typing import List, Tuple
 
 import dacite
 import evaluate
@@ -164,11 +166,29 @@ def read_hover_dataset(file_path: str, wiki_db):
     return claims, evidences, labels
 
 
+def read_averitec_manual_eval_data(file_path: str) -> Tuple[list, list, list]:
+    """
+    Reads and processes averitec data from manual evaluation.
+
+    :param file_path: path to the manual eval file after majority voting
+    :return: list of claims, evidence and labels
+    """
+    dataset = pd.read_csv(file_path)
+    claims = []
+    labels = []
+    evidences = []
+
+    for i, row in dataset.iterrows():
+        labels.append(row['label'])
+        claims.append(row['claim'])
+        evidences.append(row['predicted evidence'].replace("\n", " "))
+
+    return claims, evidences, labels
+
+
 def read_averitec_dataset(file_path, filter_conflicting_evid=True):
     # load file
-    with open(file_path, "r", encoding="utf-8") as file:
-        dataset = json.load(file)
-
+    dataset = load_json_file(file_path)
     claims = []
     qa_pairs = []
     labels = []

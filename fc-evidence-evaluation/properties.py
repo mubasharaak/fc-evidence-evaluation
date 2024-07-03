@@ -29,6 +29,7 @@ class Dataset(enum.Enum):
     FEVER = "fever"
     FEVER_REANNOTATION = "fever_reannotation"
     AVERITEC = "averitec"
+    AVERITEC_MANUAL_EVAL = "averitec_manual_eval"
     AVERITEC_SYSTEM_PRED = "averitec_system_pred"
     AVERITEC_AFTER_P4 = "averitec_after_p4"
     HOVER = "hover"

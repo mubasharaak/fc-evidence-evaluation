@@ -134,6 +134,8 @@ def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
         load_best_model_at_end=True,
         learning_rate=lr,
     )
+    # todo preprocess manual eval data to be in the desired format
+
     train_dataset = _prepare_dataset(train_dataset_path, tokenizer=tokenizer)
     test_dataset = _prepare_dataset(test_dataset_path, tokenizer=tokenizer)
     dev_dataset = _prepare_dataset(dev_dataset_path, tokenizer=tokenizer)

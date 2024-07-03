@@ -25,6 +25,11 @@ parser.add_argument(
     help='Path to dev data for reference scorer'
 )
 parser.add_argument(
+    '--test_data_file',
+    default="averitec_manual_eval_majority.csv",
+    help='Path to test data for reference scorer, can be also manual eval data'
+)
+parser.add_argument(
     '--test_data_path',
     default="/scratch/users/k20116188/fc_evidence_evaluation/datasets/averitec/averitec_w_metadata_before_p4.jsonl",
     help='Path to test data for evaluating fine-tuned reference scorer'
@@ -76,14 +81,19 @@ _TRAIN_DATASET_PATH = os.path.join(_DATA_DIR, args.training_data_file)
 _DEV_DATASET_PATH = os.path.join(_DATA_DIR, args.dev_data_file)
 _TEST_DATASET_PATH = args.test_data_path
 
+_DATASET = properties.Dataset(args.dataset)
+
 _OUTPUT_DIR = args.output_dir
-test_file_name = args.test_data_path.split("/")[-1].split(".")[0]
+
+if _DATASET == properties.Dataset.AVERITEC_MANUAL_EVAL:
+    test_file_name = args.test_data_file.split(".")[0]
+else:
+    test_file_name = args.test_data_path.split("/")[-1].split(".")[0]
 _RESULTS_FILENAME = args.results_filename.format(test_file_name)
 _SAMPLES_FILENAME = args.samples_filename.format(test_file_name)
 
 print("Results saved in: {}".format(_RESULTS_FILENAME))
 
-_DATASET = properties.Dataset(args.dataset)
 
 _TRAIN = args.train
 if _TRAIN:
