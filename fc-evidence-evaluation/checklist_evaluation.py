@@ -1,23 +1,22 @@
-import json
 import math
-import os
 import random
 import re
-import en_core_web_sm
 
 import contractions
+import en_core_web_sm
 import nltk
 import numpy as np
 import requests
-from T5_summarization import T5_summarizer
 from nltk.corpus import wordnet
-from nltk.tokenize import sent_tokenize
 from num2words import num2words
-from sentence_transformers import SentenceTransformer, util
+# from sentence_transformers import SentenceTransformer, util
 from word2number import w2n
 
+import utils
+from T5_summarization import T5_summarizer
+
 _SPACY_PIPELINE = en_core_web_sm.load()
-_SBERT = SentenceTransformer('all-MiniLM-L6-v2')
+# _SBERT = SentenceTransformer('all-MiniLM-L6-v2')
 _WIKIDATA_ENTITIES = {
     'FAC': 'Q41176',
     'GPE': 'Q6256',
@@ -27,6 +26,9 @@ _WIKIDATA_ENTITIES = {
     'ORG': 'Q4830453',
     'PERSON': 'Q5',
 }
+
+# DONT CHANGE SEED!
+random.seed(10)
 
 
 def extract_full_comparison_strings(example):
@@ -43,7 +45,7 @@ def extract_full_comparison_strings(example):
 
 
 # create 'relevance' tests
-def robustness_noise_test(dataset: list, rand_dataset: dict) -> list:
+def robustness_noise_test(dataset: list, rand_dataset: dict = None) -> list:
     """
     Add noise by inserting a random evidence piece from another dataset entry
     @param dataset:
@@ -51,14 +53,17 @@ def robustness_noise_test(dataset: list, rand_dataset: dict) -> list:
     @return: list
     """
     test_samples_list = []
-    #  TODO adjust and make rand_dataset optional => if not given, take an entry from 'dataset'
 
     for entry in dataset:
         test_sample = entry.copy()
         # random choice
-        rand_entry = random.choice(random.choice(rand_dataset)["questions"])
+        if not rand_dataset:
+            rand_entry = utils.get_random_entry(dataset, entry)
+        else:
+            rand_entry = random.choice(rand_dataset)
         # add a random QA pair to 'entry'
-        test_sample['questions'].insert(int(len(entry['questions']) / 2), rand_entry)
+        rand_question = random.choice(rand_entry["questions"])
+        test_sample['questions'].insert(int(len(entry['questions']) / 2), rand_question)
         test_samples_list.append(test_sample)
 
     return test_samples_list
@@ -80,29 +85,30 @@ def coherence_test(dataset: list):
     return test_samples_list
 
 
-def find_most_similar_sentence(claim, evidence):
-    claim_emb = _SBERT.encode([claim], convert_to_tensor=True)
-    evidence_tok = sent_tokenize(" ".join(evidence))
-    evid_emb = _SBERT.encode(evidence_tok, convert_to_tensor=True)
-    cosine_scores = util.cos_sim(claim_emb, evid_emb)
-
-    pairs = []
-    for j in range(0, len(evid_emb)):
-        pairs.append({'evidence': evidence_tok[j], 'score': cosine_scores[0][j]})
-
-    # sort scores in decreasing order
-    pairs = sorted(pairs, key=lambda x: x['score'], reverse=True)
-
-    # return sentence with the highest cosine similarity to claim text
-    return [{"question": pairs[0]["evidence"],
-             "answers": [
-                 {
-                     "answer": " ",
-                     "answer_type": "Abstractive",
-                 }
-             ]
-             }]
-    # return None
+# TODO adjust to find similar sentences using ROUGE/METEOR instead
+# def find_most_similar_sentence(claim, evidence):
+#     claim_emb = _SBERT.encode([claim], convert_to_tensor=True)
+#     evidence_tok = sent_tokenize(" ".join(evidence))
+#     evid_emb = _SBERT.encode(evidence_tok, convert_to_tensor=True)
+#     cosine_scores = util.cos_sim(claim_emb, evid_emb)
+#
+#     pairs = []
+#     for j in range(0, len(evid_emb)):
+#         pairs.append({'evidence': evidence_tok[j], 'score': cosine_scores[0][j]})
+#
+#     # sort scores in decreasing order
+#     pairs = sorted(pairs, key=lambda x: x['score'], reverse=True)
+#
+#     # return sentence with the highest cosine similarity to claim text
+#     return [{"question": pairs[0]["evidence"],
+#              "answers": [
+#                  {
+#                      "answer": " ",
+#                      "answer_type": "Abstractive",
+#                  }
+#              ]
+#              }]
+#     # return None
 
 
 def coverage_drop_evidence_part_test(dataset: list, type="one_sentence"):
@@ -154,7 +160,7 @@ def coverage_drop_answers_test(dataset: list):
 
 def replace_by_synonyms(text, by_antonymns=False):
     text_replaced = []
-    is_noun = lambda pos: pos == 'NN'
+    is_noun = lambda pos: 'NN' in pos
     entry_tok = nltk.word_tokenize(text)
     # nouns = [word for (word, pos) in nltk.pos_tag(test_sample_tok) if is_noun(pos)]
 
@@ -185,7 +191,7 @@ def replace_by_synonyms(text, by_antonymns=False):
 
 def invariance_synonym_test(dataset: list):
     """
-    Create relevance tests by changing entities
+    Create relevance tests by replacing parts of text by synonyms
     @param dataset:
     @return: list
     """
@@ -374,7 +380,7 @@ def invariance_text2num_test(dataset: list):
 
 def fluency_typos_test(dataset: list, ratio_typos=0.1):
     """
-    Create tests by introducing typos in X% of words
+    Create tests by introducing typos in 10% (default) of words
     @param dataset:
     @return: list
     """
@@ -598,7 +604,7 @@ def number_replacement(text, num_list):
 
 def informativeness_number_change_test(dataset: list):
     """
-    Create tests by changing numbers in evidence is same number occurs in claim
+    Create tests by changing numbers in evidence to a different number if this same number occurs in the claim
     @param dataset:
     @return: list
     """
