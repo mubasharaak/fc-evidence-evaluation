@@ -51,7 +51,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--dataset',
-    default="averitec_after_p4",  # set to vitaminc if jsonl file with claim, evidence, label entries in dicts.
+    default="averitec_manual_eval",  # set to vitaminc if jsonl file with claim, evidence, label entries in dicts.
     choices=list(properties.Dataset),
     help='Dataset that is used for evaluation.'
 )
@@ -79,7 +79,7 @@ args = parser.parse_args()
 _DATA_DIR = args.data_dir
 _TRAIN_DATASET_PATH = os.path.join(_DATA_DIR, args.training_data_file)
 _DEV_DATASET_PATH = os.path.join(_DATA_DIR, args.dev_data_file)
-_TEST_DATASET_PATH = args.test_data_path
+_TEST_DATASET_PATH = os.path.join(_DATA_DIR, args.test_data_file)
 
 _DATASET = properties.Dataset(args.dataset)
 

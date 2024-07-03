@@ -1,7 +1,7 @@
 import os
-import datasets
 import random
 
+import datasets
 import pandas as pd
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
@@ -173,15 +173,26 @@ def read_averitec_manual_eval_data(file_path: str) -> Tuple[list, list, list]:
     :param file_path: path to the manual eval file after majority voting
     :return: list of claims, evidence and labels
     """
+    print("file_path: {}".format(file_path))
     dataset = pd.read_csv(file_path)
     claims = []
     labels = []
     evidences = []
 
     for i, row in dataset.iterrows():
-        labels.append(row['label'])
+        labels.append(properties.LABEL_DICT[properties.Label(row['label_majority'].replace(
+            "contradicting information (some evidence parts support the claim whereas others refute it)",
+            "not enough information").lower())])
         claims.append(row['claim'])
-        evidences.append(row['predicted evidence'].replace("\n", " "))
+        evidences.append(row['predicted evidence'].replace("\n", " ").replace("\n", " "))
+
+    sample_index = 0
+    print("claim: {}".format(claims[sample_index]))
+    print("predicted evidence: {}".format(evidences[sample_index]))
+    print("maj label df: {}".format(dataset.iloc[sample_index]['label_majority']))
+    print("maj label: {}".format(labels[sample_index]))
+    print("converted label: {}".format(properties.Label(labels[sample_index])))
+    print("converted label 2: {}".format(properties.LABEL_DICT[properties.Label(labels[sample_index])]))
 
     return claims, evidences, labels
 
@@ -328,8 +339,9 @@ def _load_hover_evidence(evidences: list, wiki_db):
     for e in evidences:
         try:
             doc = \
-            wiki_db.execute("SELECT * FROM documents WHERE id=(?)", (unicodedata.normalize('NFD', e[0]),)).fetchall()[
-                0]
+                wiki_db.execute("SELECT * FROM documents WHERE id=(?)",
+                                (unicodedata.normalize('NFD', e[0]),)).fetchall()[
+                    0]
             # retrieve relevant sentence as evidence
             evidence_text += sent_tokenize(doc[1])[e[1] - 1]  # sentence id is 1 or larger (excl. 0)
         except Exception as e:

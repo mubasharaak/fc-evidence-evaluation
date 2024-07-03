@@ -63,9 +63,9 @@ class EvaluationDimensions(enum.Enum):
 
 
 class Label(MultiValueEnum):
-    REFUTED = "refuted", "refutes", "refute", 0, "0", "contradiction", "c", "not_supported", "contradict"
-    SUPPORTED = "supported", "supports", "support", 1, "1", "entailment", "e", "entail"
-    NEI = "not enough evidence", 2, "2", "neutral", "n", "conflicting evidence/cherrypicking", "not enough info", "not enough information", "nei"
+    REFUTED = "refuted", "refutes", "refute", 2, "2", "contradiction", "c", "not_supported", "contradict"
+    SUPPORTED = "supported", "supports", "support", 0, "0", "entailment", "e", "entail"
+    NEI = "not enough evidence", 1, "1", "neutral", "n", "conflicting evidence/cherrypicking", "not enough info", "not enough information", "nei"
 
 
 LABEL_DICT = {
@@ -73,11 +73,16 @@ LABEL_DICT = {
     Label.NEI: 1,
     Label.REFUTED: 2,
 }
+LABEL_DICT_TO_TEXT = {
+    Label.SUPPORTED: "supported",
+    Label.NEI: "not enough information",
+    Label.REFUTED: "refuted",
+}
 
 LABEL_DICT_REVERSE = {
-    0: "support",
+    0: "supported",
     1: "not enough information",
-    2: "refute",
+    2: "refuted",
 }
 
 

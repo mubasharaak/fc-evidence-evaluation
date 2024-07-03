@@ -1,18 +1,19 @@
 import json
 import os
 import re
-import pymysql
 
 import evaluate
-import scorer_utils
 import numpy as np
+import pandas as pd
+import pymysql
 import torch
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from torch.utils.data import DataLoader
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from transformers import TrainingArguments
 
 import properties
+import scorer_utils
 import utils
 
 _MAX_LENGTH = 1024
@@ -214,3 +215,24 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
             f.write(f"input: {tokenizer.decode(test_dataset[i]['input_ids'])}\n")
             f.write(f"label: {properties.LABEL_DICT[properties.Label(results.label_ids.tolist()[i])]}\n")
             f.write(f"prediction: {properties.LABEL_DICT[properties.Label(predictions)]}\n\n")
+
+    if dataset == properties.Dataset.AVERITEC_MANUAL_EVAL:
+        # save predictions as csv (incl. a field telling if prediction and label agree
+        input_dataset = pd.read_csv(test_dataset_path)
+        predictions_df = pd.DataFrame(columns=['id', 'claim', 'label', 'prediction'])
+        for i, logits in enumerate(results.predictions.tolist()):
+            pred = np.argmax(logits, axis=-1)
+            new_row = {
+                'id': input_dataset.iloc[i]['id'],
+                'claim': input_dataset.iloc[i]['claim'],
+                'label': input_dataset.iloc[i]['label_majority'],
+                'prediction': properties.LABEL_DICT_REVERSE[properties.LABEL_DICT[properties.Label(pred)]],
+            }
+            predictions_df = pd.concat([predictions_df, pd.DataFrame([new_row])], ignore_index=True)
+
+        # label_match is used for correlation analysis later
+        predictions_df['label'] = predictions_df['label'].replace("contradicting information (some evidence parts "
+                                                                  "support the claim whereas others refute it)",
+                                                                  "not enough information")
+        predictions_df['label_match'] = (predictions_df['label'] == predictions_df['prediction']).astype(int)
+        predictions_df.to_csv(os.path.join(output_path, samples_filenames.split(".txt")[0] + ".csv"))
