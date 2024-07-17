@@ -45,7 +45,10 @@ class PromptTypes(enum.Enum):
     ATOMIC_REFERENCE_FACTS_PREC_RECALL = "atomic_reference_prec_recall"
     SCORE = "score"
     METEOR = "meteor"
+    BLEU = "bleu"
     ROUGE = "rouge"
+    PSEUDO_TRAINED = "pseudo_trained"
+    REF_TRAINED = "ref_trained"
 
 
 class ScoreMetrics(enum.Enum):
