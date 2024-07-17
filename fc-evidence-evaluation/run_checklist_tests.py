@@ -16,7 +16,7 @@ _OUTPUT_DIR_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondo
 _RESULTS_OUTPUT_FILE = os.path.join(_OUTPUT_DIR_PATH, "results.csv")
 _INIT_DATA_PATH = os.path.join(_TESTS_DIR_PATH, "base_data.json")
 
-_TEST_TYPE = properties.TestType("coherence")
+_TEST_TYPE = properties.TestType("robustness_noise")
 _TEST_FILE_PATH = os.path.join(_TESTS_DIR_PATH, "{}.json".format(_TEST_TYPE.value))
 
 _PROMPT_TYPE = properties.PromptTypes("atomic_reference_prec_recall")

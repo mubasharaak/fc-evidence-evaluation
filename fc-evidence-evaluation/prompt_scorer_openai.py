@@ -97,7 +97,9 @@ def calculate_prediction_scores(input_data: pd.DataFrame, preds: list[properties
         elif prompt_type == properties.PromptTypes.ATOMIC_REFERENCE_FACTS:
             predictions_w_scores.append(calculate_atomic_score_openai_response(pred))
         elif prompt_type == properties.PromptTypes.ATOMIC_REFERENCE_FACTS_PREC_RECALL:
-            predictions_w_scores.append(calculate_atomic_score_prec_recall_openai_response(pred))
+            pred_w_scores = calculate_atomic_score_prec_recall_openai_response(pred)
+            if pred_w_scores:
+                predictions_w_scores.append(pred_w_scores)
         elif prompt_type == properties.PromptTypes.COT:
             predictions_w_scores.append(calculate_pseudo_score_openai_response(input_data.iloc[i], pred))
 
@@ -231,9 +233,9 @@ def calculate_atomic_score_prec_recall_openai_response(response_openai):
             "facts count predicted evidence"]
         response_openai_copy.response['recall'] = response["support reference evidence"] / response[
             "facts count reference evidence"]
-    except Exception:
-        response_openai_copy.response['precision'] = None
-        response_openai_copy.response['recall'] = None
+    except Exception as e:
+        print("Following exception occurred: {}".format(e))
+        return None
     return response_openai_copy
 
 
