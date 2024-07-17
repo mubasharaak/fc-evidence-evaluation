@@ -11,15 +11,19 @@ import utils
 
 _DATA_MAJORITY_VOTING_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/averitec_manual_eval_majority.csv"
 _OUTPUT_DIR_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/manual_eval_subset"
-_PROMPT_TYPE = properties.PromptTypes("atomic")
+_PROMPT_TYPE = properties.PromptTypes("cot")
 _PROMPTING_MODEL = "gpt-4o-2024-05-13"
+
 # _PROMPTING_MODEL = ""
 if _PROMPTING_MODEL:
     _OUTPUT_FILE = "predictions_{}_{}.jsonl".format(_PROMPT_TYPE.value, _PROMPTING_MODEL)
     _CORRELATION_OUPUT_FILE = "correlation_{}_{}.csv".format(_PROMPT_TYPE.value, _PROMPTING_MODEL)
 else:
-    _OUTPUT_FILE = "predictions_{}.jsonl".format(_PROMPT_TYPE.value)
     _CORRELATION_OUPUT_FILE = "correlation_{}.csv".format(_PROMPT_TYPE.value)
+    if _PROMPT_TYPE in [properties.PromptTypes.PSEUDO_TRAINED, properties.PromptTypes.REF_TRAINED]:
+        _OUTPUT_FILE = "predictions_{}.csv".format(_PROMPT_TYPE.value)
+    else:
+        _OUTPUT_FILE = "predictions_{}.jsonl".format(_PROMPT_TYPE.value)
 _LOAD_RESULTS = False
 
 _KEY = open('/Users/user/Desktop/openai_key_fc_eval.txt', 'r').read()
@@ -80,13 +84,15 @@ def _calc_correlation(test_df: pd.DataFrame, results: list[properties.OpenAIResp
 
 
 def _run_prompt_scorer(test_df: pd.DataFrame, prompt_type: properties.PromptTypes,
-                       prev_results: list[properties.OpenAIResponse]) -> list[properties.OpenAIResponse]:
+                       prev_results: list[properties.OpenAIResponse], output_path: str = None) -> list[
+    properties.OpenAIResponse]:
     # prepare data
     input_data, system_predictions = _prepare_dataset(test_df, prev_results)
 
     # run prompt scorer
     return prompt_scorer_openai.prompt_openai_model(input_data, system_predictions, prompt_type, _CLIENT,
-                                                    match_system_preds=False, model=_PROMPTING_MODEL)
+                                                    match_system_preds=False, model=_PROMPTING_MODEL,
+                                                    responses_output_path=output_path)
 
 
 def _calc_correlation_append_results(reference: pd.DataFrame, predictions: list[properties.OpenAIResponse],
@@ -169,18 +175,28 @@ def _calc_correlation_atomic_reference_based_prec_recall_split(reference: pd.Dat
                                                 score_type=None)
 
 
-def _calculate_scores_baseline_metrics(df: pd.DataFrame, prompt_type: properties.PromptTypes) -> list[
+def _calculate_scores_baseline_metrics(df: pd.DataFrame, prompt_type: properties.PromptTypes,
+                                       results_df: pd.DataFrame = None) -> list[
     properties.OpenAIResponse]:
     results = []
     for i, row in df.iterrows():
         if prompt_type == properties.PromptTypes.METEOR:
             score = utils.calc_meteor(candidate=row['predicted evidence'], reference=row['reference evidence'])
-        else:  # rouge
+        elif prompt_type == properties.PromptTypes.BLEU:
+            score = utils.calc_bleu(candidate=row['predicted evidence'], reference=row['reference evidence'])
+        elif prompt_type == properties.PromptTypes.PSEUDO_TRAINED:
+            score = results_df.iloc[i]['label_match']
+        elif prompt_type == properties.PromptTypes.REF_TRAINED:
+            score = results_df.iloc[i]['prediction']
+        elif prompt_type == properties.PromptTypes.ROUGE:
             score = utils.calc_rouge(candidate=row['predicted evidence'], reference=row['reference evidence'])
+        else:
+            raise Exception("prompt_type equal {} not found in enum properties.PromptTypes.".format(prompt_type))
         results.append(properties.OpenAIResponse(claim=row['claim'], evidence=row['reference evidence'],
                                                  response={'reference_evidence': row['reference evidence'],
                                                            'score': score},
                                                  gold=row['gold label'], id=row['id']))
+
     return results
 
 
@@ -193,12 +209,13 @@ def main():
     corr_results = pd.read_csv(os.path.join(_OUTPUT_DIR_PATH, _CORRELATION_OUPUT_FILE))
 
     # run scorer and save results
-    if _LOAD_RESULTS:
-        model_results_scores = utils.load_jsonl_file(scorer_output_path,
-                                                     dataclass=properties.OpenAIResponse)
+    if _PROMPT_TYPE in [properties.PromptTypes.PSEUDO_TRAINED, properties.PromptTypes.REF_TRAINED]:
+        model_results_scores = _calculate_scores_baseline_metrics(df, _PROMPT_TYPE, pd.read_csv(scorer_output_path))
+    elif _PROMPT_TYPE in [properties.PromptTypes.METEOR, properties.PromptTypes.ROUGE, properties.PromptTypes.BLEU]:
+        model_results_scores = _calculate_scores_baseline_metrics(df, _PROMPT_TYPE)
     else:
-        if _PROMPT_TYPE in [properties.PromptTypes.METEOR, properties.PromptTypes.ROUGE]:
-            model_results_scores = _calculate_scores_baseline_metrics(df, _PROMPT_TYPE)
+        if _LOAD_RESULTS:
+            model_results_scores = utils.load_jsonl_file(scorer_output_path, dataclass=properties.OpenAIResponse)
         else:
             # if prev model_results_scores exist, load
             if os.path.exists(scorer_output_path):
@@ -206,8 +223,10 @@ def main():
                                                              dataclass=properties.OpenAIResponse)
             else:
                 model_results_scores = []
-            model_results = _run_prompt_scorer(df, prompt_type=_PROMPT_TYPE, prev_results=model_results_scores)
-            model_results_scores.extend(prompt_scorer_openai.calculate_prediction_scores(model_results, _PROMPT_TYPE))
+            model_results = _run_prompt_scorer(df, prompt_type=_PROMPT_TYPE, prev_results=model_results_scores,
+                                               output_path=scorer_output_path)
+            model_results_scores.extend(
+                prompt_scorer_openai.calculate_prediction_scores(df, model_results, _PROMPT_TYPE))
             utils.save_jsonl_file(model_results_scores, scorer_output_path)
 
     # calculate scores and correlations
