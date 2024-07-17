@@ -90,9 +90,14 @@ def _run_prompt_scorer(test_df: pd.DataFrame, prompt_type: properties.PromptType
     input_data, system_predictions = _prepare_dataset(test_df, prev_results)
 
     # run prompt scorer
-    return prompt_scorer_openai.prompt_openai_model(input_data, system_predictions, prompt_type, _CLIENT,
-                                                    match_system_preds=False, model=_PROMPTING_MODEL,
-                                                    responses_output_path=output_path)
+    if prompt_type == properties.PromptTypes.COT:
+        return prompt_scorer_openai.prompt_openai_model(input_data, system_predictions, prompt_type, _CLIENT,
+                                                        match_system_preds=False, model=_PROMPTING_MODEL,
+                                                        responses_output_path=output_path, logprob=True)
+    else:
+        return prompt_scorer_openai.prompt_openai_model(input_data, system_predictions, prompt_type, _CLIENT,
+                                                        match_system_preds=False, model=_PROMPTING_MODEL,
+                                                        responses_output_path=output_path, logprob=False)
 
 
 def _calc_correlation_append_results(reference: pd.DataFrame, predictions: list[properties.OpenAIResponse],
@@ -225,9 +230,11 @@ def main():
                 model_results_scores = []
             model_results = _run_prompt_scorer(df, prompt_type=_PROMPT_TYPE, prev_results=model_results_scores,
                                                output_path=scorer_output_path)
+            utils.save_jsonl_file(model_results, scorer_output_path)
+
             model_results_scores.extend(
                 prompt_scorer_openai.calculate_prediction_scores(df, model_results, _PROMPT_TYPE))
-            utils.save_jsonl_file(model_results_scores, scorer_output_path)
+            utils.save_jsonl_file(model_results_scores, "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/manual_eval_subset/predictions_cot_gpt-4o-2024-05-13_w_scores.jsonl")
 
     # calculate scores and correlations
     corr_results = _calc_correlation_atomic_reference_based(reference=df, prediction=model_results_scores,

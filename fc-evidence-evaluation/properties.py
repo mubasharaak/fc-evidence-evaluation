@@ -36,6 +36,12 @@ class Dataset(enum.Enum):
     VITAMINC = "vitaminc"
 
 
+class Logprobs(enum.Enum):
+    REFUTED = "ref"
+    SUPPORTED = "supported"
+    NEI = "not"
+
+
 class PromptTypes(enum.Enum):
     BASE = "base"
     COT = "cot"
@@ -96,6 +102,7 @@ class OpenAIResponse:
     response: Union[str, dict]
     gold: str
     id: Optional[int] = None
+    logprobs: Optional[list] = None
 
 
 @dataclass
@@ -625,8 +632,8 @@ Output:
 """
 
 PROMPT_MAPPING = {
-    PromptTypes.BASE: BASE_PROMPT,  # is the PSEUDO prompt
-    PromptTypes.COT: COT_PROMPT,  # is the PSEUDO prompt that uses COT prompting
+    PromptTypes.BASE: BASE_PROMPT,  # is the PSEUDO/PROXY scorer prompt
+    PromptTypes.COT: COT_PROMPT,  # is the PSEUDO/PROXY scorer prompt that uses COT prompting
     PromptTypes.TOT: TOT_PROMPT,
     PromptTypes.ATOMIC_FACTS: ATOMIC_PROMPT,  # is the REFERENCE LESS prompt
     PromptTypes.ATOMIC_REFERENCE_FACTS: ATOMIC_REFERENCE_PROMPT,

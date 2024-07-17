@@ -1,6 +1,7 @@
 import asyncio
 import copy
 import json
+import math
 import os
 import time
 
@@ -25,22 +26,40 @@ _KEY = open('/Users/user/Desktop/openai_key_fc_eval.txt', 'r').read()
 
 
 def _query_openai(prompt: str, client, keys=None, model: str = None, seed=_SEED, max_tokens=_MAX_TOKENS,
-                  response_format="json_object"):
+                  response_format="json_object", logprob=False):
     prompting_model = model if model else _MODEL
-    return client.chat.completions.create(
-        messages=[
-            {
-                "role": "user",
-                "content": prompt,
-            }
-        ],
-        model=prompting_model,
-        max_tokens=max_tokens,
-        response_format={"type": response_format},
-        seed=seed,
-        temperature=0,
-        timeout=_TIMEOUT
-    )
+    if logprob:
+        return client.chat.completions.create(
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ],
+            model=prompting_model,
+            max_tokens=max_tokens,
+            response_format={"type": response_format},
+            seed=seed,
+            temperature=0,
+            timeout=_TIMEOUT,
+            logprobs=True,
+            top_logprobs=5
+        )
+    else:
+        return client.chat.completions.create(
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ],
+            model=prompting_model,
+            max_tokens=max_tokens,
+            response_format={"type": response_format},
+            seed=seed,
+            temperature=0,
+            timeout=_TIMEOUT,
+        )
 
 
 def _get_response_text(response: openai.types.chat.chat_completion.ChatCompletion):
@@ -48,10 +67,15 @@ def _get_response_text(response: openai.types.chat.chat_completion.ChatCompletio
 
 
 def _process_output(dataset_sample: properties.AveritecEntry,
-                    response: openai.types.chat.chat_completion.ChatCompletion):
+                    response: openai.types.chat.chat_completion.ChatCompletion, logprob: bool = False):
+    if logprob:
+        logprob_inp = response.choices[0].logprobs.content
+    else:
+        logprob_inp = None
     return properties.OpenAIResponse(claim=dataset_sample.claim, evidence=dataset_sample.evidence,
                                      response=_get_response_text(response),
-                                     gold=dataset_sample.label.lower(), id=dataset_sample.id)
+                                     gold=dataset_sample.label.lower(), id=dataset_sample.id,
+                                     logprobs=logprob_inp)
 
 
 def _averitec_qa_to_str(evidence: properties.AveritecQA):
@@ -77,7 +101,8 @@ def _prepare_prompt(dataset_sample: properties.AveritecEntry, prediction: proper
                                                                  dataset_sample.evidence,
                                                                  prediction.evidence)
         else:
-            return properties.PROMPT_MAPPING[prompt_type].format(dataset_sample.claim, dataset_sample.evidence)
+            # e.g. proxy based evaluation using the claim and predicted evidence!
+            return properties.PROMPT_MAPPING[prompt_type].format(dataset_sample.claim, prediction.evidence)
 
 
 def _get_system_prediction(sample: properties.AveritecEntry, predictions: list[properties.AveritecEntry]):
@@ -108,7 +133,7 @@ def calculate_prediction_scores(input_data: pd.DataFrame, preds: list[properties
 
 def prompt_openai_model(dataset: list[properties.AveritecEntry], predictions: list[properties.AveritecEntry],
                         prompt_type: properties.PromptTypes, client, match_system_preds=True, model: str = None,
-                        responses_output_path: str = None) -> \
+                        responses_output_path: str = None, logprob: bool = False) -> \
         list[
             properties.OpenAIResponse]:
     """Prompts OpenAI models."""
@@ -135,7 +160,8 @@ def prompt_openai_model(dataset: list[properties.AveritecEntry], predictions: li
         while attempt < _MAX_RETRIES:
             try:
                 responses.append(
-                    _process_output(sample, _query_openai(prompt, client, response_format="json_object", model=model)))
+                    _process_output(sample, _query_openai(prompt, client, response_format="json_object", model=model,
+                                                          logprob=logprob), logprob=logprob))
                 # save results in between
                 utils.save_jsonl_file(responses, responses_output_path)
                 print("One request successfully processed..")
@@ -239,7 +265,35 @@ def calculate_atomic_score_prec_recall_openai_response(response_openai):
     return response_openai_copy
 
 
-def calculate_pseudo_score_openai_response(input_entry: pd.Series, response_openai: properties.OpenAIResponse):
+def get_token_prob(probs: list, proxy: str):
+    """
+    Given a list of logprobs find the entry for search_token
+    :return: entry for search_token
+    """
+    for p in probs[-10:]:
+        if type(p) == dict:
+            if p['token'].lower() in [label.value for label in properties.Logprobs]:
+                if p['token'].lower() == proxy:
+                    return p['logprob']
+                # else iterate through whole list and find a label
+                else:
+                    for entry in p['top_logprobs']:
+                        if entry['token'].lower() == proxy:
+                            return entry['logprob']
+        else:
+            if p.token.lower() in [label.value for label in properties.Logprobs]:
+                if p.token.lower() == proxy:
+                    return p.logprob
+                # else iterate through whole list and find a label
+                else:
+                    for entry in p.top_logprobs:
+                        if entry.token.lower() == proxy:
+                            return entry.logprob
+    return None
+
+
+def calculate_pseudo_score_openai_response(input_entry: pd.Series, response_openai: properties.OpenAIResponse,
+                                           use_logprob=True):
     response_openai_copy = copy.deepcopy(response_openai)
     try:
         if type(response_openai.response) == str:
@@ -247,11 +301,29 @@ def calculate_pseudo_score_openai_response(input_entry: pd.Series, response_open
         else:
             response = response_openai.response
         response_openai_copy.response = response
-        response_openai_copy.response['score'] = 1 if properties.LABEL_DICT[properties.Label(response['label'])] == \
-                                                      properties.LABEL_DICT[
-                                                          properties.Label(
-                                                              input_entry['label_majority'])] else 0
-    except Exception:
+        if use_logprob:
+            if input_entry['label_majority'] == "refuted":
+                proxy = properties.Logprobs.REFUTED.value
+            elif input_entry['label_majority'] == "supported":
+                proxy = properties.Logprobs.SUPPORTED.value
+            else:
+                # if input_entry['label_majority'] == "not enough information":
+                proxy = properties.Logprobs.NEI.value
+
+            proxy_prob = get_token_prob(response_openai_copy.logprobs, proxy)
+            # response_openai_copy.response['score'] = math.exp(proxy_prob) if proxy_prob else 0
+            if proxy_prob or proxy_prob == 0:
+                response_openai_copy.response['score'] = math.exp(proxy_prob)
+            else:
+                response_openai_copy.response['score'] = 0
+
+        else:
+            response_openai_copy.response['score'] = 1 if properties.LABEL_DICT[properties.Label(response['label'])] == \
+                                                          properties.LABEL_DICT[
+                                                              properties.Label(
+                                                                  input_entry['label_majority'])] else 0
+    except Exception as e:
+        print(e)
         response_openai_copy.response['score'] = None
     return response_openai_copy
 
