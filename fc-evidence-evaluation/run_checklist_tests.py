@@ -1,3 +1,6 @@
+"""
+Script to run previously created checklist tests (create_checklist_evaluation_tests.py) against scorers.
+"""
 import os.path
 import statistics
 
@@ -13,7 +16,7 @@ _OUTPUT_DIR_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondo
 _RESULTS_OUTPUT_FILE = os.path.join(_OUTPUT_DIR_PATH, "results.csv")
 _INIT_DATA_PATH = os.path.join(_TESTS_DIR_PATH, "base_data.json")
 
-_TEST_TYPE = properties.TestType("robustness_noise")
+_TEST_TYPE = properties.TestType("coherence")
 _TEST_FILE_PATH = os.path.join(_TESTS_DIR_PATH, "{}.json".format(_TEST_TYPE.value))
 
 _PROMPT_TYPE = properties.PromptTypes("atomic_reference_prec_recall")
@@ -69,18 +72,23 @@ def _calc_test_results(scorer_results, results_df) -> pd.DataFrame:
     :return:
     """
     if _PROMPT_TYPE == properties.PromptTypes.ATOMIC_REFERENCE_FACTS_PREC_RECALL:
-        precision_scores = [x['prec'] for x in scorer_results]
-        recall_scores = [x['recall'] for x in scorer_results]
-        score = "{}/{}".format(statistics.mean(precision_scores), statistics.mean(recall_scores))
+        new_rows = [
+            {
+                'test': _TEST_TYPE.value,
+                'scorer': _PROMPT_TYPE.value.replace("_recall", ""),
+                'score': statistics.mean([x.response['precision'] for x in scorer_results])
+            },
+            {
+                'test': _TEST_TYPE.value,
+                'scorer': _PROMPT_TYPE.value.replace("_prec", ""),
+                'score': statistics.mean([x.response['recall'] for x in scorer_results]),
+            }
+        ]
+        results_df = pd.concat([results_df, pd.DataFrame(new_rows)], ignore_index=True)
     else:
         score = 0
 
-    new_row = {
-        'test': _TEST_TYPE.value,
-        'scorer': _PROMPT_TYPE.value,
-        'score': score,
-    }
-    return pd.concat([results_df, pd.DataFrame([new_row])], ignore_index=True)
+    return results_df
 
 
 def main():
@@ -104,7 +112,9 @@ def main():
         else:
             model_results = _run_prompt_scorer(init_data, tests, prompt_type=_PROMPT_TYPE,
                                                output_path=scorer_output_path)
-            model_results_scores = prompt_scorer_openai.calculate_prediction_scores(model_results, _PROMPT_TYPE)
+            model_results_scores = prompt_scorer_openai.calculate_prediction_scores(input_data=None,
+                                                                                    preds=model_results,
+                                                                                    prompt_type=_PROMPT_TYPE)
             utils.save_jsonl_file(model_results_scores, scorer_output_path)
 
     # calculate changes in scores by comparing to base dataset

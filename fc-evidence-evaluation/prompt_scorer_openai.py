@@ -1,8 +1,10 @@
+import asyncio
 import copy
 import json
 import os
 import time
 
+import aiohttp
 import openai
 import pandas as pd
 from sklearn import metrics
@@ -16,6 +18,10 @@ _SEED = 10
 _MODEL = "gpt-3.5-turbo-1106"
 _MAX_TOKENS = 3000
 _IGNORE_LABELS_DEFAULT = ["conflicting evidence/cherrypicking"]
+_MAX_RETRIES = 10
+_TIMEOUT = 180
+_BASE_URL = "https://api.openai.com/v1/chat/completions"
+_KEY = open('/Users/user/Desktop/openai_key_fc_eval.txt', 'r').read()
 
 
 def _query_openai(prompt: str, client, keys=None, model: str = None, seed=_SEED, max_tokens=_MAX_TOKENS,
@@ -33,6 +39,7 @@ def _query_openai(prompt: str, client, keys=None, model: str = None, seed=_SEED,
         response_format={"type": response_format},
         seed=seed,
         temperature=0,
+        timeout=_TIMEOUT
     )
 
 
@@ -122,19 +129,62 @@ def prompt_openai_model(dataset: list[properties.AveritecEntry], predictions: li
         else:
             pred = predictions[i]
         prompt = _prepare_prompt(sample, pred, prompt_type)
-        counter = 0
-        while counter < 5:
+        attempt = 0
+        while attempt < _MAX_RETRIES:
             try:
                 responses.append(
                     _process_output(sample, _query_openai(prompt, client, response_format="json_object", model=model)))
                 # save results in between
                 utils.save_jsonl_file(responses, responses_output_path)
+                print("One request successfully processed..")
                 break
             except openai.APITimeoutError as e:
-                print(e)
-                time.sleep(60)
-                counter += 1
-                pass
+                attempt += 1
+                wait_time = 10 ** attempt  # Exponential backoff
+                print(f"Request timed out. Retrying in {wait_time} seconds...")
+                time.sleep(wait_time)
+        if attempt >= _MAX_RETRIES:
+            raise Exception("Maximum retries reached. Request failed.")
+    return responses
+
+
+async def prompt_openai_model_asynchron(dataset: list[properties.AveritecEntry],
+                                        predictions: list[properties.AveritecEntry],
+                                        prompt_type: properties.PromptTypes, client, match_system_preds=True,
+                                        model: str = None,
+                                        responses_output_path: str = None) -> \
+        list[
+            properties.OpenAIResponse]:
+    """Prompts OpenAI models."""
+    # load previously generated responses
+    if os.path.exists(responses_output_path):
+        responses = utils.load_jsonl_file(responses_output_path, dataclass=properties.OpenAIResponse)
+        prev_claims = [x.claim for x in responses]
+    else:
+        responses = []
+        prev_claims = []
+    prompts = []
+    for i, sample in enumerate(dataset):
+        if sample.claim in prev_claims:
+            continue
+        if match_system_preds:
+            # search in predictions for matching prediction
+            pred = _get_system_prediction(sample, predictions)
+            if not pred:
+                responses.append("")
+                continue
+        else:
+            pred = predictions[i]
+        prompts.append(_prepare_prompt(sample, pred, prompt_type))
+    #
+    print("Starting processing of ten prompts..")
+    responses_api = await batch_requests(prompts[:10], model, _MAX_TOKENS, "json_object", _SEED)
+    for i, response in enumerate(responses_api):
+        if "error" in response:
+            print(f"Error for prompt {i + 1}: {response['message']}")
+        else:
+            responses.append(_process_output(dataset[i], response))
+            print(f"Response to prompt {i + 1}: {response['choices'][0]['message']['content']}")
     return responses
 
 
@@ -254,3 +304,39 @@ def evaluate_openai_output(output_all, prompt_type: properties.PromptTypes, igno
 
     confusion_matrix = metrics.confusion_matrix(gold_labels, pred_labels)
     return {"f1_micro": f1_micro, "f1_macro": f1_macro, "confusion_metrics": confusion_matrix.tolist()}
+
+
+async def fetch_response(session, prompt, prompting_model, max_tokens, response_format, seed):
+    headers = {
+        "Authorization": f"Bearer {_KEY}",
+        "Content-Type": "application/json",
+    }
+    json_data = {
+        "model": prompting_model,
+        "messages": [
+            {
+                "role": "user",
+                "content": prompt,
+            }
+        ],
+        "max_tokens": max_tokens,
+        "response_format": {"type": response_format},
+        "seed": seed,
+        "temperature": 0,
+        "timeout": _TIMEOUT
+    }
+
+    async with session.post(_BASE_URL, headers=headers, json=json_data) as response:
+        if response.status == 200:
+            return await response.json()
+        else:
+            return {"error": response.status, "message": await response.text()}
+
+
+async def batch_requests(prompts, prompting_model, max_tokens, response_format, seed):
+    async with aiohttp.ClientSession() as session:
+        tasks = [
+            fetch_response(session, prompt, prompting_model, max_tokens, response_format, seed)
+            for prompt in prompts
+        ]
+        return await asyncio.gather(*tasks)
