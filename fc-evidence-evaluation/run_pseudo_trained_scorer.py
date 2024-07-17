@@ -26,7 +26,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--test_data_file',
-    default="averitec_manual_eval_majority.csv",
+    default="base_data.json",
     help='Path to test data for reference scorer, can be also manual eval data'
 )
 parser.add_argument(
@@ -51,7 +51,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--dataset',
-    default="averitec_manual_eval",  # set to vitaminc if jsonl file with claim, evidence, label entries in dicts.
+    default="averitec",  # set to vitaminc if jsonl file with claim, evidence, label entries in dicts.
     choices=list(properties.Dataset),
     help='Dataset that is used for evaluation.'
 )
@@ -85,15 +85,11 @@ _DATASET = properties.Dataset(args.dataset)
 
 _OUTPUT_DIR = args.output_dir
 
-if _DATASET == properties.Dataset.AVERITEC_MANUAL_EVAL:
-    test_file_name = args.test_data_file.split(".")[0]
-else:
-    test_file_name = args.test_data_path.split("/")[-1].split(".")[0]
+test_file_name = args.test_data_file.split(".")[0]
 _RESULTS_FILENAME = args.results_filename.format(test_file_name)
 _SAMPLES_FILENAME = args.samples_filename.format(test_file_name)
 
 print("Results saved in: {}".format(_RESULTS_FILENAME))
-
 
 _TRAIN = args.train
 if _TRAIN:
@@ -112,7 +108,8 @@ def main():
                                          train_dataset_path=_TRAIN_DATASET_PATH, dev_dataset_path=_DEV_DATASET_PATH,
                                          test_dataset_path=_TEST_DATASET_PATH, output_path=_OUTPUT_DIR,
                                          results_filename=_RESULTS_FILENAME, samples_filenames=_SAMPLES_FILENAME,
-                                         train_model=_TRAIN, train_bs=_BATCH_SIZE, test_bs=_BATCH_SIZE_TEST, epoch=_EPOCHS)
+                                         train_model=_TRAIN, train_bs=_BATCH_SIZE, test_bs=_BATCH_SIZE_TEST,
+                                         epoch=_EPOCHS, calc_diff_base_data=True)
 
 
 if __name__ == '__main__':
