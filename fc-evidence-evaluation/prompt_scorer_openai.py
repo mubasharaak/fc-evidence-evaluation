@@ -2,13 +2,15 @@ import copy
 import json
 import os
 import time
-import utils
+
 import openai
+import pandas as pd
 from sklearn import metrics
 from sklearn.metrics import f1_score
 
 import properties
 import scorer_utils
+import utils
 
 _SEED = 10
 _MODEL = "gpt-3.5-turbo-1106"
@@ -78,10 +80,11 @@ def _get_system_prediction(sample: properties.AveritecEntry, predictions: list[p
     return None
 
 
-def calculate_prediction_scores(preds: list[properties.OpenAIResponse], prompt_type: properties.PromptTypes) -> list[
+def calculate_prediction_scores(input_data: pd.DataFrame, preds: list[properties.OpenAIResponse],
+                                prompt_type: properties.PromptTypes) -> list[
     properties.OpenAIResponse]:
     predictions_w_scores = []
-    for pred in preds:
+    for i, pred in enumerate(preds):
         if prompt_type == properties.PromptTypes.ATOMIC_FACTS:
             predictions_w_scores.append(calculate_atomic_score_openai(pred))
         elif prompt_type == properties.PromptTypes.ATOMIC_REFERENCE_FACTS:
@@ -89,7 +92,7 @@ def calculate_prediction_scores(preds: list[properties.OpenAIResponse], prompt_t
         elif prompt_type == properties.PromptTypes.ATOMIC_REFERENCE_FACTS_PREC_RECALL:
             predictions_w_scores.append(calculate_atomic_score_prec_recall_openai_response(pred))
         elif prompt_type == properties.PromptTypes.COT:
-            predictions_w_scores.append(calculate_pseudo_score_openai_response(pred))
+            predictions_w_scores.append(calculate_pseudo_score_openai_response(input_data.iloc[i], pred))
 
     return predictions_w_scores
 
@@ -184,7 +187,7 @@ def calculate_atomic_score_prec_recall_openai_response(response_openai):
     return response_openai_copy
 
 
-def calculate_pseudo_score_openai_response(response_openai):
+def calculate_pseudo_score_openai_response(input_entry: pd.Series, response_openai: properties.OpenAIResponse):
     response_openai_copy = copy.deepcopy(response_openai)
     try:
         if type(response_openai.response) == str:
@@ -194,7 +197,8 @@ def calculate_pseudo_score_openai_response(response_openai):
         response_openai_copy.response = response
         response_openai_copy.response['score'] = 1 if properties.LABEL_DICT[properties.Label(response['label'])] == \
                                                       properties.LABEL_DICT[
-                                                          properties.Label(response_openai.gold)] else 0
+                                                          properties.Label(
+                                                              input_entry['label_majority'])] else 0
     except Exception:
         response_openai_copy.response['score'] = None
     return response_openai_copy
