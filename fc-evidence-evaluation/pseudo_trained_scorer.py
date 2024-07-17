@@ -121,7 +121,7 @@ def check_dataset(dataset):
 
 def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_path: str, dev_dataset_path: str,
                    test_dataset_path: str, output_path: str, results_filename: str, samples_filenames: str,
-                   train_model: bool, train_bs: int, test_bs: int, epoch: int):
+                   train_model: bool, train_bs: int, test_bs: int, epoch: int, calc_diff_base_data: bool = False):
     tokenizer = AutoTokenizer.from_pretrained(_PATH_TOKENIZER)
     model = AutoModelForSequenceClassification.from_pretrained(model_path, torch_dtype="auto")
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -177,9 +177,9 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
     elif dataset == properties.Dataset.FEVER_REANNOTATION:
         test_claims, test_evidences, test_labels = utils.read_fever_dataset_reannotation(test_dataset_path)
     elif dataset in [properties.Dataset.AVERITEC, properties.Dataset.AVERITEC_AFTER_P4]:
-        train_claims, train_evidences, train_labels = utils.read_averitec_dataset(train_dataset_path)
+        # train_claims, train_evidences, train_labels = utils.read_averitec_dataset(train_dataset_path)
         test_claims, test_evidences, test_labels = utils.read_averitec_dataset(test_dataset_path)
-        eval_claims, dev_evidences, eval_labels = utils.read_averitec_dataset(dev_dataset_path)
+        # eval_claims, dev_evidences, eval_labels = utils.read_averitec_dataset(dev_dataset_path)
     elif dataset == properties.Dataset.HOVER:
         wiki_db = utils.connect_to_db(os.path.join(_WIKI_DB_PATH, "hover", 'wiki_wo_links.db'))
         train_claims, train_evidences, train_labels = utils.read_hover_dataset(train_dataset_path, wiki_db)
@@ -206,6 +206,12 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
                     dev_dataset=dev_dataset, test_dataset=test_dataset, output_path=output_path,
                     do_training=train_model)
     with open(os.path.join(output_path, results_filename), "w") as f:
+        if calc_diff_base_data:
+            results_base = utils.load_json_file(os.path.join(output_path, "results_base_data.json"))
+            results.metrics['diff_f1_micro'] = utils.percentage_difference(results_base['test_f1_micro'],
+                                                                      results.metrics['test_f1_micro'])
+            results.metrics['diff_f1_macro'] = utils.percentage_difference(results_base['test_f1_macro'],
+                                                                      results.metrics['test_f1_macro'])
         json.dump(results.metrics, f, indent=2)
 
     with open(os.path.join(output_path, samples_filenames), "w") as f:
