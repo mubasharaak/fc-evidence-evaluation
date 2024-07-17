@@ -1,5 +1,6 @@
 import os
 import random
+import re
 
 import datasets
 import pandas as pd
@@ -21,6 +22,7 @@ import properties
 metric = evaluate.load("f1")
 metric_meteor = datasets.load_metric("meteor")
 metric_rouge = datasets.load_metric("rouge")
+metric_bleu = datasets.load_metric("bleu")
 
 SAMPLE_DICT = {
     'claim': None,
@@ -197,9 +199,34 @@ def read_averitec_manual_eval_data(file_path: str) -> Tuple[list, list, list]:
     return claims, evidences, labels
 
 
-def read_averitec_dataset(file_path, filter_conflicting_evid=True):
-    # load file
-    dataset = load_json_file(file_path)
+def percentage_difference(a: float, b: float) -> float:
+    return ((b - a) / a) * 100
+
+
+def remove_special_characters(text):
+    # Define the pattern to keep only alphanumeric characters and spaces
+    pattern = r'[^A-Za-z0-9 ]+'
+    # Substitute the pattern with an empty string
+    cleaned_text = re.sub(pattern, '', text)
+    return cleaned_text
+
+
+def normalize_text(text):
+    return ' '.join(text.split())
+
+
+def read_averitec_dataset(file_path: str, filter_conflicting_evid: bool = True) -> Tuple[list, list, list]:
+    """
+    Reads averitec dataset from given path.
+    :param file_path: path to .json/.jsonl file containing Averitec data
+    :param filter_conflicting_evid:
+    :return: list of claims, evidences, and labels
+    """
+    print("Filepath is: {}".format(file_path))
+    if file_path.endswith(".jsonl"):
+        dataset = load_jsonl_file(file_path)
+    else:
+        dataset = load_json_file(file_path)
     claims = []
     qa_pairs = []
     labels = []
@@ -328,6 +355,10 @@ def load_fever(path: str) -> List[properties.AveritecEntry]:
 
 def calc_meteor(candidate: str, reference: str):
     return metric_meteor.compute(predictions=[candidate], references=[reference])['meteor']
+
+
+def calc_bleu(candidate: str, reference: str):
+    return metric_bleu.compute(predictions=[candidate.split()], references=[[reference.split()]])['bleu']
 
 
 def calc_rouge(candidate: str, reference: str):
