@@ -1,0 +1,87 @@
+,id,claim,label,prediction
+0,585,"The total population of Kerala, India is 3,56,99,443",0,0.057182759046554565
+1,33,Face masks do not prevent the transmission of Covid-19.,0,0.05571625381708145
+2,439,Kpop stans have taken over the #ImpeachBidenNow hashtag.,0,0.05218520760536194
+3,494,Gov. Tony Evers has the authority and revenue necessary to upgrade the Wisconsin unemployment system without the Legislature.,0,1.023335576057434
+4,591,"Muslim population of Kerala, India is 88,73,472.",0,1.0161685943603516
+5,15,COVID 19 patients don’t need intensive care or ventilators.,1,0.05660621076822281
+6,211,"Combustion, cannot exist without at least 16% of oxygen content to burn, and Mars atmosphere only contains 0'16% of molecular oxygen. So, NASA's Perseverance rover cannot land on Mars.",1,1.0184314250946045
+7,473,"The word ""Guantanamo"" on the website of the Office of Military Commissions had special significance, that something unusual or significant was about to happen.",1,1.0142822265625
+8,832,Kenyan exports within the East African Community jumped to a six-year high in 2019.,0,0.05801841616630554
+9,503,SinoVac COVID-19 vaccine (CoronaVac) has an efficacy rate of 91.25% in Indonesia.,1,0.05340760946273804
+10,843,"In March 2018, Kenya and Ghana were the first countries to not only sign but also ratify the landmark agreement creating the African Continental Free Trade Area.",0,0.05424880236387253
+11,284,"In 2020, there was a 64% drop in cases of GBVF compared to the same period in 2019",0,0.04909084737300873
+12,669,One of the Deadliest Days in American History was the Battle of Antietam.,1,0.06006088852882385
+13,830,The Covid-19 dusk-to-dawn curfew is Kenya’s first ever nationwide curfew since independence.,0,0.04914227873086929
+14,164,The COVID-19 vaccine should not be given to people with neurological issues as it can further aggravate their symptoms.,0,0.061015017330646515
+15,35,"During the final days of the Trump presidency, House Rep. Matt Gaetz (R-Fla.) privately pursued a blanket pardon from then-President Donald Trump, while the U.S. Department of Justice (DOJ), under Trump appointee William Barr, was launching a concurrent investigation into an alleged sexual assault of a minor by the congressman.",0,0.055669546127319336
+16,533,"Parler has gone offline after Amazon suspended it from its server hosting service on Sunday, January 10, 2021.",1,0.055148132145404816
+17,501,Chemtrails are declassified,0,1.0015857219696045
+18,335,"By the end of January 2021, over 430,000 opportunities have already been supported through the [Presidential Employment Stimulus]. A further 180,000 opportunities are currently in the recruitment process.”",0,0.05672632157802582
+19,77,"Kids and body parts were found in the Ever Given, the cargo shipped that blocked Egypt's Suez Canal for multiple days.",1,0.05323096364736557
+20,255,"After one year, there is still no evidence that masks or lockdowns slow the spread of COVID-19.",0,1.0027539730072021
+21,763,Inaccurate early vote count in one Michigan county was a failure of the software used.,1,1.0144721269607544
+22,45,Philippines President Rodrigo Duterte is enraged at Health Secretary Francisco Duque III over ivermectin drug controversy amid current health crisis.,0,0.050027310848236084
+23,430,Tanzania has not been affected by COVID-19.,1,1.0170015096664429
+24,880,"President Donald J. Trump won the election on November 7, 2020",0,0.048617586493492126
+25,142,A research organisation has confirmed Philippine Vice President Leni Robredo received zero votes in the country's Mindanao island.,1,0.05687875300645828
+26,617,"Biden's sister is married to Stephen Owens, who owns Dominion voting systems.",0,0.06353335082530975
+27,363,Former President Donald Trump won a majority of lawsuits targeted at election fraud.,1,0.056596286594867706
+28,431,Biden administration temporarily freezes arms sales to Saudi Arabia and the United Arab Emirates.,1,0.056986257433891296
+29,846,"As of the end of the 2019 calendar year, Nigeria had been able to achieve a textbook-to-pupil ratio of 1:1 for grades 1 through 3.",1,0.06207950413227081
+30,691,"KEM Hospital in Mumbai, India has an automatic machine which can cure paralysis in just a few hours.",0,1.00014066696167
+31,268,"India's Bharatiya Janata Party's Manoj Tiwari tweeted that if Prime Minister Narendra Modi-led government wasn't ruling the country, the petrol prices would have touched Rs 200.",0,0.055401526391506195
+32,467,Biden removed his hand from the fake Bible before his oath was finished,1,0.9487243890762329
+33,178,£37 billion has been spent on NHS Test and Trace so far.,0,0.053831711411476135
+34,702,President Donald Trump can issue pardons for his family members before leaving office.,1,0.05662166327238083
+35,310,"The United Kingdom will be one of the first countries to end the COVID-19 epidemic, and due to herd immunity. The most infectious strain of the virus has already immunized over 60% of the population.",0,0.05673573166131973
+36,677,One of the Deadliest Days in American History was the Galveston Hurricane.,1,0.9891072511672974
+37,371,Covid-19 has a survival rate of 99.8%.,0,0.051103897392749786
+38,136,Tiwa Savage won a GRAMMY at the 63rd Annual GRAMMY Ceremony.,0,0.05933600664138794
+39,901,Voter turnout in Wisconsin jumped from about 67% in 2016 to over 89% in 2020.,0,0.06056688725948334
+40,245,"Katie Porter (D-Calif.) appeared on CNN on Thursday to discuss her criticisms of the child tax credit improvements under the evolving stimulus package, which she said puts one-parent households at an unfair advantage.",0,0.05176577717065811
+41,450,"NASA send first American woman to space, Sally Ride, with 100 tampons.",0,0.05667434632778168
+42,628,"There was 130,000 cases of voter fraud in Nevada.",0,1.0150501728057861
+43,384,Sir Keir Starmer has never said that he wanted the UK to remain in the European Medicines Agency after Brexit.,1,0.5294662714004517
+44,596,Military operations in the Amazon have been a big success.,0,0.04961008578538895
+45,4,"The Chinese biological laboratory in Wuhan is owned by Glaxo. Who, by chance, owns Pfizer (the one who produces the vaccine!",0,0.052380576729774475
+46,241,Joe Biden cured AIDS.,1,0.052629806101322174
+47,137,Armed Conflict Location & Event Data Project to 'push back' at 'leftists' who claim that last year’s protests were “mostly peaceful.”,1,0.0556204691529274
+48,199,All first five education ministers of India were from  one community.,1,0.058064281940460205
+49,898,The Department Of Homeland Security crafted an election fraud sting by printing watermarked ballots.,1,0.051355212926864624
+50,321,"In South Africa, 2.7 million hectares has been transferred through the land restitution process, since 1995.",1,0.05996596813201904
+51,682,"Senator Rand Paul has more credentials than Dr. Deborah Birx, who is on the coronavirus task force",0,1.0110198259353638
+52,562,Boris Johnson has announced  that the UK is going back into lockdown due to COVID-19.,1,0.04826842248439789
+53,461,Biden wasn't rendered a 21 gun salute as costumery for an incoming President,1,0.05818656086921692
+54,446,Users were logged off Facebook so that Facebook could update a feature to track users' bank account or email activity.,1,1.025195837020874
+55,66,Loophole in Georgia election law allows voters to be given drinks other than water.,1,0.9999336004257202
+56,668,China has amassed combat troops in Canada on the U.S. border.,1,0.9923356771469116
+57,332,2.7 million hectares has been transferred through the land restitution process.,0,0.052356936037540436
+58,864,"The @US_FDA and the Democrats didn’t want to have me get a Vaccine WIN, prior to the election, so instead it came out five days later – As I’ve said all along!",0,0.9203481674194336
+59,513,"Presidential candidate joe biden said ""They asked me if I'd like to debate this gentleman, and I said, ''If we were in high school, I'd take him behind the gym and beat the hell out of him"" refering to Donald J. Trump.",1,0.9928003549575806
+60,160,"The COVID-19 vaccine should not be given to anybody who has ever suffered from respiratory disorders like pneumonia, asthma, bronchitis as the vaccine can lead to death due to the side effects",1,1.0237703323364258
+61,862,"If Joe Biden were President, you wouldn’t have the Vaccine for another four years, nor would the @US_FDA have ever approved it so quickly. The bureaucracy would have destroyed millions of lives!",0,1.024673581123352
+62,422,Article 42 of the Magna Carta 'enshrines' the right to free movement at home and across borders in peacetime,0,0.061264120042324066
+63,37,Prince Harry's son Archie isn't a prince because of a rule established by King George V.,1,0.9827207326889038
+64,32,Face masks restrict breathing.,1,0.06388400495052338
+65,508,US security alert warns of ‘national quarantine’ ahead of Biden's inauguration,0,0.05354553461074829
+66,308,Leaked visitor logs show Democratic California Rep. Adam Schiff visited deceased convicted sex offender Jeffrey Epstein’s private island 78 times.,0,0.05643951892852783
+67,837,Kenya's last mile connectivity programme crossed the 7.2 million household connections mark,1,0.5077852010726929
+68,621,The American Medical Association supports the use of hydroxychloroquine as a treatment for COVID-19.,1,0.05465049296617508
+69,673,Meghan Markle and Prince Harry plan an awards scheme to rival Queen Elizabeth II's honors system.,0,0.057013966143131256
+70,73,"Since President Muhammadu Buhari took office in 2015, the number of unemployed Nigerians has fallen.",0,0.05610915273427963
+71,546,"The last man to attack the US Capitol, prior to the events on 6 January 2021, was a British Army Major General from Northern Ireland, in 1814.",0,0.06090035289525986
+72,82,"During February 2021, the vast majority of families who were attempting to cross the southwest land border into the US were sent back.",0,0.05615647882223129
+73,153,Dr. Anthony Fauci admits he isn’t listening to COVID-19 science when advocating policy.,1,1.0219504833221436
+74,393,mRNA vaccines are a form of gene therapy.,1,0.056255802512168884
+75,580,Baringo [has] gone beyond the 35% ceiling on personnel emoluments as set in the constitution. We are at 55.7%.,0,0.04973265528678894
+76,383,"Face masks, recommended to help curb the spread of COVID-19, cause lung cancer.",0,0.054640114307403564
+77,615,Coronavirus vaccines are primarily designed to improve survival rates of those infected.,0,0.051144711673259735
+78,849,"During Kenyatta's administration, 4.5 million title deeds have been issued in the seven years since 2013",1,0.05361734330654144
+79,115,The filibuster was created so that slave owners could hold power over the US government,0,1.0095405578613281
+80,794,The Covid-19 dusk-to-dawn curfew is Kenya’s first ever nationwide curfew since independence.,0,0.05172298103570938
+81,791,Kenya's last mile connectivity programme crossed the 7.2 million household connections mark.,0,0.05611322075128555
+82,98,Boulder supermarket in Colo shooting suspect  came to the US during the Obama administration as a Syrian refugee via Obama-era asylum programs,1,0.9317165613174438
+83,452,COVID-19 can cause worse lung damage than heavy smoking.,1,0.05020643025636673
+84,170,Meghan Markle once worked at Humphrey Yogart,1,0.057071417570114136
+85,826,"Kenya currently ranks 56th globally and third in sub-Saharan Africa on the ease of doing business report,",1,0.05306432396173477

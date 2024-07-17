@@ -1,0 +1,7 @@
+scorer,dimension,metrics,spearman_corr,pearson_corr
+ref_trained,semantic_coverage,,0.1310346219302753,-0.08809860939981184
+ref_trained,coherence,,-0.025738484425162453,-0.22518693766888315
+ref_trained,redundancy,,0.18191966276303465,0.0639767329486294
+ref_trained,consistency,,-0.143449474161074,-0.1254139532239355
+ref_trained,verdict_agreement,,0.20660237191982994,0.1743617454231072
+ref_trained,nei_disagreement,,0.10306030882103591,0.07869714059650681
