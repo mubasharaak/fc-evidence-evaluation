@@ -2,12 +2,14 @@ import json
 import os
 
 import numpy as np
+import pandas as pd
 import torch
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from transformers import Trainer
 from transformers import TrainingArguments
 
+import properties
 import utils
 
 _MAX_LENGTH = 512
@@ -19,20 +21,40 @@ _LABELS = {
 }
 _PATH_TOKENIZER = "Elron/bleurt-base-512"
 
-def _load_data(path):
+
+def _load_data(path, dataset: properties.Dataset = None):
     """
     Loads data for finetuning BLEURT model for FC evidence evaluation.
     :return:
     """
-    data = utils.load_jsonl_file(path)
-    references = [entry['reference'] for entry in data]
-    targets = [entry['target'] for entry in data]
-    labels = [_LABELS[entry['score']] for entry in data]
+    if dataset == properties.Dataset.AVERITEC_MANUAL_EVAL:
+        if path.endswith(".csv"):
+            references = []
+            targets = []
+            labels = []
+            dataset_manual_eval = pd.read_csv(path)
+            for i, row in dataset_manual_eval.iterrows():
+                labels.append(row['verdict_agreement'])
+                references.append(row['reference evidence'].replace("\n", " ").replace("\n", " "))
+                targets.append(row['predicted evidence'].replace("\n", " ").replace("\n", " "))
+        else:  # json file for checklist tests
+            _, targets, _ = utils.read_averitec_dataset(path)
+            path_base_data = os.path.join(os.path.dirname(path), "base_data.json")
+            print("Path base data is: {}".format(path_base_data))
+            _, references, _ = utils.read_averitec_dataset(path_base_data)
+            labels = [1] * len(references)
+            targets = [utils.normalize_text(utils.remove_special_characters(t)) for t in targets]
+            references = [utils.normalize_text(utils.remove_special_characters(r)) for r in references]
+    else:
+        data = utils.load_jsonl_file(path)
+        references = [entry['reference'] for entry in data]
+        targets = [entry['target'] for entry in data]
+        labels = [_LABELS[entry['score']] for entry in data]
     return references, targets, labels
 
 
-def _prepare_dataset(path, tokenizer):
-    references, targets, labels = _load_data(path)
+def _prepare_dataset(path, tokenizer, dataset: properties.Dataset = None):
+    references, targets, labels = _load_data(path, dataset)
     print("First reference: {}".format(references[0]))
     print("First target: {}".format(targets[0]))
     print("First label: {}".format(labels[0]))
@@ -105,7 +127,7 @@ def _train(model, training_args, train_dataset, dev_dataset, test_dataset, outpu
 def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
                          test_dataset_path: str, output_path: str, results_filename: str, samples_filenames: str,
                          _model_path: str, train=bool, continue_train=bool, epoch=5, train_bs=32, test_bs=64,
-                         lr=1e-5):
+                         lr=1e-5, dataset: properties.Dataset = None, calc_diff_base_data: bool = False):
     # tokenizer = BleurtTokenizer.from_pretrained(hg_model_hub_name)
     # model = BleurtForSequenceClassification.from_pretrained(hg_model_hub_name, torch_dtype="auto")
     tokenizer = AutoTokenizer.from_pretrained(_PATH_TOKENIZER)
@@ -137,7 +159,7 @@ def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
     # todo preprocess manual eval data to be in the desired format
 
     train_dataset = _prepare_dataset(train_dataset_path, tokenizer=tokenizer)
-    test_dataset = _prepare_dataset(test_dataset_path, tokenizer=tokenizer)
+    test_dataset = _prepare_dataset(test_dataset_path, tokenizer=tokenizer, dataset=dataset)
     dev_dataset = _prepare_dataset(dev_dataset_path, tokenizer=tokenizer)
 
     if continue_train:
@@ -149,6 +171,13 @@ def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
                          dev_dataset=dev_dataset, test_dataset=test_dataset, output_path=output_path,
                          do_training=train)
     with open(os.path.join(output_path, results_filename), "w") as f:
+        if calc_diff_base_data:
+            print("outputpath: {}".format(os.path.join(output_path, "results_base_data.json")))
+            results_base = utils.load_json_file(os.path.join(output_path, "results_base_data.json"))
+            results.metrics['diff_f1_micro'] = utils.percentage_difference(results_base['test_f1_micro'],
+                                                                      results.metrics['test_f1_micro'])
+            results.metrics['diff_avg_bleurt'] = utils.percentage_difference(results_base['test_avg_bleurt'],
+                                                                      results.metrics['test_avg_bleurt'])
         json.dump(results.metrics, f, indent=2)
 
     with open(os.path.join(output_path, samples_filenames), "w") as f:
@@ -158,3 +187,18 @@ def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
             f.write(f"input: {tokenizer.decode(test_dataset[i]['input_ids'])}\n")
             f.write(f"label: {_LABELS[results.label_ids.tolist()[i]]}\n")
             f.write(f"prediction: {prediction}\n\n")
+
+    if dataset == properties.Dataset.AVERITEC_MANUAL_EVAL and test_dataset_path.endswith(".csv"):
+        # save predictions as csv (incl. a field telling if prediction and label agree
+        input_dataset = pd.read_csv(test_dataset_path)
+        predictions_df = pd.DataFrame(columns=['id', 'claim', 'label', 'prediction'])
+        for i, logits in enumerate(results.predictions.tolist()):
+            pred = np.array(logits)[0]
+            new_row = {
+                'id': input_dataset.iloc[i]['id'],
+                'claim': input_dataset.iloc[i]['claim'],
+                'label': input_dataset.iloc[i]['verdict_agreement'],
+                'prediction': pred,
+            }
+            predictions_df = pd.concat([predictions_df, pd.DataFrame([new_row])], ignore_index=True)
+        predictions_df.to_csv(os.path.join(output_path, samples_filenames.split(".txt")[0] + ".csv"))
