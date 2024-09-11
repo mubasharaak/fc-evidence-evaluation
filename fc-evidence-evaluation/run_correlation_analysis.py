@@ -1,3 +1,4 @@
+import math
 import os.path
 from typing import Tuple
 
@@ -9,13 +10,20 @@ import prompt_scorer_openai
 import properties
 import utils
 
-_DATA_MAJORITY_VOTING_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/averitec_manual_eval_majority.csv"
-_OUTPUT_DIR_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/manual_eval_subset"
-_PROMPT_TYPE = properties.PromptTypes("cot")
-_PROMPTING_MODEL = "gpt-4o-2024-05-13"
+# _DATA_MAJORITY_VOTING_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/averitec_manual_eval_majority.csv"
+_DATA_MAJORITY_VOTING_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec_shared_task/AVERITEC_FC_Evidence_Evaluation_Responses_no_gold.xlsx"
+_OUTPUT_DIR_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/averitec_shared_task"
+# _PATH_MODEL_RESULTS_SCORES = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/manual_eval_subset/predictions_cot_gpt-4o-2024-05-13_w_scores.jsonl"
 
-# _PROMPTING_MODEL = ""
-if _PROMPTING_MODEL:
+_PROMPT_TYPE = properties.PromptTypes("rouge")
+# _PROMPTING_MODEL = "gpt-4o-2024-05-13"
+_PROMPTING_MODEL = ""
+_KEY = open('/Users/user/Desktop/openai_key_fc_eval.txt', 'r').read()
+_LOAD_RESULTS = False
+
+if _PROMPT_TYPE in [properties.PromptTypes.COT, properties.PromptTypes.ATOMIC_FACTS,
+                    properties.PromptTypes.ATOMIC_REFERENCE_FACTS,
+                    properties.PromptTypes.ATOMIC_REFERENCE_FACTS_PREC_RECALL]:
     _OUTPUT_FILE = "predictions_{}_{}.jsonl".format(_PROMPT_TYPE.value, _PROMPTING_MODEL)
     _CORRELATION_OUPUT_FILE = "correlation_{}_{}.csv".format(_PROMPT_TYPE.value, _PROMPTING_MODEL)
 else:
@@ -24,9 +32,7 @@ else:
         _OUTPUT_FILE = "predictions_{}.csv".format(_PROMPT_TYPE.value)
     else:
         _OUTPUT_FILE = "predictions_{}.jsonl".format(_PROMPT_TYPE.value)
-_LOAD_RESULTS = False
 
-_KEY = open('/Users/user/Desktop/openai_key_fc_eval.txt', 'r').read()
 _CLIENT = openai.OpenAI(
     api_key=_KEY,
     timeout=10,
@@ -79,7 +85,8 @@ def _calc_correlation(test_df: pd.DataFrame, results: list[properties.OpenAIResp
         y.append(score)
 
     # if error in prompting entry can be None
-    y = [0 if entry is None else entry for entry in y]
+    y = [0 if (entry is None or math.isnan(entry)) else entry for entry in y]
+    x = [0 if (entry is None or math.isnan(entry)) else entry for entry in x]
     return stats.spearmanr(x, y).correlation, stats.pearsonr(x, y).statistic
 
 
@@ -117,43 +124,16 @@ def _calc_correlation_append_results(reference: pd.DataFrame, predictions: list[
 
 
 def _calc_correlation_atomic_reference_based(reference: pd.DataFrame, prediction: list[properties.OpenAIResponse],
-                                             results_df: pd.DataFrame, prompt_type: properties.PromptTypes):
-    # Coverage
-    results_df = _calc_correlation_atomic_reference_based_prec_recall_split(reference=reference, prediction=prediction,
-                                                                            results_df=results_df,
-                                                                            comparison_dim=properties.EvaluationDimensions(
-                                                                                "semantic_coverage"),
-                                                                            prompt_type=prompt_type)
-    # Coherence
-    results_df = _calc_correlation_atomic_reference_based_prec_recall_split(reference=reference, prediction=prediction,
-                                                                            results_df=results_df,
-                                                                            comparison_dim=properties.EvaluationDimensions(
-                                                                                "coherence"),
-                                                                            prompt_type=prompt_type)
-    # Redundancy
-    results_df = _calc_correlation_atomic_reference_based_prec_recall_split(reference=reference, prediction=prediction,
-                                                                            results_df=results_df,
-                                                                            comparison_dim=properties.EvaluationDimensions(
-                                                                                "redundancy"),
-                                                                            prompt_type=prompt_type)
-    # Consistency
-    results_df = _calc_correlation_atomic_reference_based_prec_recall_split(reference=reference, prediction=prediction,
-                                                                            results_df=results_df,
-                                                                            comparison_dim=properties.EvaluationDimensions(
-                                                                                "consistency"),
-                                                                            prompt_type=prompt_type)
-    # Verdict agreement
-    results_df = _calc_correlation_atomic_reference_based_prec_recall_split(reference=reference, prediction=prediction,
-                                                                            results_df=results_df,
-                                                                            comparison_dim=properties.EvaluationDimensions(
-                                                                                "verdict_agreement"),
-                                                                            prompt_type=prompt_type)
-    # NEI disagreement
-    return _calc_correlation_atomic_reference_based_prec_recall_split(reference=reference, prediction=prediction,
-                                                                      results_df=results_df,
-                                                                      comparison_dim=properties.EvaluationDimensions(
-                                                                          "nei_disagreement"),
-                                                                      prompt_type=prompt_type)
+                                             results_df: pd.DataFrame, prompt_type: properties.PromptTypes,
+                                             evaluation_dimensions: list[properties.EvaluationDimensions]):
+    results_df_copy = results_df.copy(deep=True)
+    for evaluation_dimension in evaluation_dimensions:
+        results_df_copy = _calc_correlation_atomic_reference_based_prec_recall_split(reference=reference,
+                                                                                     prediction=prediction,
+                                                                                     results_df=results_df_copy,
+                                                                                     comparison_dim=evaluation_dimension,
+                                                                                     prompt_type=prompt_type)
+    return results_df_copy
 
 
 def _calc_correlation_atomic_reference_based_prec_recall_split(reference: pd.DataFrame,
@@ -186,18 +166,21 @@ def _calculate_scores_baseline_metrics(df: pd.DataFrame, prompt_type: properties
     results = []
     for i, row in df.iterrows():
         if prompt_type == properties.PromptTypes.METEOR:
-            score = utils.calc_meteor(candidate=row['predicted evidence'], reference=row['reference evidence'])
+            score = utils.calc_meteor(reference=row['reference evidence'], candidate=row['predicted evidence'])
+        elif prompt_type == properties.PromptTypes.HMETEOR:
+            score = utils.calc_hungarian_meteor(candidate=row['predicted evidence'],
+                                                reference=row['reference evidence'])
         elif prompt_type == properties.PromptTypes.BLEU:
             score = utils.calc_bleu(candidate=row['predicted evidence'], reference=row['reference evidence'])
         elif prompt_type == properties.PromptTypes.PSEUDO_TRAINED:
-            score = results_df.iloc[i]['label_match']
+            score = results_df.iloc[i]['score']
         elif prompt_type == properties.PromptTypes.REF_TRAINED:
             score = results_df.iloc[i]['prediction']
         elif prompt_type == properties.PromptTypes.ROUGE:
             score = utils.calc_rouge(candidate=row['predicted evidence'], reference=row['reference evidence'])
         else:
             raise Exception("prompt_type equal {} not found in enum properties.PromptTypes.".format(prompt_type))
-        results.append(properties.OpenAIResponse(claim=row['claim'], evidence=row['reference evidence'],
+        results.append(properties.OpenAIResponse(claim=row['claim'], evidence=row['predicted evidence'],
                                                  response={'reference_evidence': row['reference evidence'],
                                                            'score': score},
                                                  gold=row['gold label'], id=row['id']))
@@ -208,16 +191,22 @@ def _calculate_scores_baseline_metrics(df: pd.DataFrame, prompt_type: properties
 def main():
     scorer_output_path = os.path.join(_OUTPUT_DIR_PATH, _OUTPUT_FILE)
     # load csv file with majority voting
-    df = pd.read_csv(_DATA_MAJORITY_VOTING_PATH)
-
+    if _DATA_MAJORITY_VOTING_PATH.endswith(".csv"):
+        df = pd.read_csv(_DATA_MAJORITY_VOTING_PATH)
+    elif _DATA_MAJORITY_VOTING_PATH.endswith(".xlsx"):
+        df = pd.read_excel(_DATA_MAJORITY_VOTING_PATH, header=0)
+    else:
+        raise ValueError("Filepath of variable '_DATA_MAJORITY_VOTING_PATH' must end with '.csv' or '.xlsx'.")
     # load results file and add a new row r = (scorer, spearman, pearson)
     corr_results = pd.read_csv(os.path.join(_OUTPUT_DIR_PATH, _CORRELATION_OUPUT_FILE))
 
     # run scorer and save results
     if _PROMPT_TYPE in [properties.PromptTypes.PSEUDO_TRAINED, properties.PromptTypes.REF_TRAINED]:
         model_results_scores = _calculate_scores_baseline_metrics(df, _PROMPT_TYPE, pd.read_csv(scorer_output_path))
-    elif _PROMPT_TYPE in [properties.PromptTypes.METEOR, properties.PromptTypes.ROUGE, properties.PromptTypes.BLEU]:
+    elif _PROMPT_TYPE in [properties.PromptTypes.METEOR, properties.PromptTypes.ROUGE, properties.PromptTypes.BLEU,
+                          properties.PromptTypes.HMETEOR]:
         model_results_scores = _calculate_scores_baseline_metrics(df, _PROMPT_TYPE)
+        utils.save_jsonl_file(model_results_scores, scorer_output_path)
     else:
         if _LOAD_RESULTS:
             model_results_scores = utils.load_jsonl_file(scorer_output_path, dataclass=properties.OpenAIResponse)
@@ -234,11 +223,17 @@ def main():
 
             model_results_scores.extend(
                 prompt_scorer_openai.calculate_prediction_scores(df, model_results, _PROMPT_TYPE))
-            utils.save_jsonl_file(model_results_scores, "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/manual_eval_subset/predictions_cot_gpt-4o-2024-05-13_w_scores.jsonl")
+            utils.save_jsonl_file(model_results_scores, scorer_output_path)
 
     # calculate scores and correlations
     corr_results = _calc_correlation_atomic_reference_based(reference=df, prediction=model_results_scores,
-                                                            results_df=corr_results, prompt_type=_PROMPT_TYPE)
+                                                            results_df=corr_results, prompt_type=_PROMPT_TYPE,
+                                                            evaluation_dimensions=[
+                                                                properties.EvaluationDimensions("semantic_coverage"),
+                                                                properties.EvaluationDimensions("coherence"),
+                                                                properties.EvaluationDimensions("redundancy"),
+                                                                properties.EvaluationDimensions("consistency"),
+                                                                properties.EvaluationDimensions("relevance")])
 
     # save results
     corr_results.to_csv(os.path.join(_OUTPUT_DIR_PATH, _CORRELATION_OUPUT_FILE), index=False)
