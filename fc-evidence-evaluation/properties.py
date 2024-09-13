@@ -23,6 +23,7 @@ class TestType(Enum):
     REDUNDANCY_WORDS = "redundancy_words"
     REDUNDANCY_SENT = "redundancy_sent"
     NUMBER_REPLACE = "number_replace"
+    BASE_DATA = "base_data"
 
 
 class Dataset(enum.Enum):
@@ -51,6 +52,7 @@ class PromptTypes(enum.Enum):
     ATOMIC_REFERENCE_FACTS_PREC_RECALL = "atomic_reference_prec_recall"
     SCORE = "score"
     METEOR = "meteor"
+    HMETEOR = "hmeteor"
     BLEU = "bleu"
     ROUGE = "rouge"
     PSEUDO_TRAINED = "pseudo_trained"
@@ -69,29 +71,34 @@ class EvaluationDimensions(enum.Enum):
     CONSISTENCY = "consistency"
     VERDICT_AGREEMENT = "verdict_agreement"
     NEI_DISAGREEMENT = "nei_disagreement"
+    RELEVANCE = "relevance"
 
 
 class Label(MultiValueEnum):
     REFUTED = "refuted", "refutes", "refute", 2, "2", "contradiction", "c", "not_supported", "contradict"
     SUPPORTED = "supported", "supports", "support", 0, "0", "entailment", "e", "entail"
-    NEI = "not enough evidence", 1, "1", "neutral", "n", "conflicting evidence/cherrypicking", "not enough info", "not enough information", "nei"
+    NEI = "not enough evidence", 1, "1", "neutral", "n", "not enough info", "not enough information", "nei", "contradicting information (some evidence parts support the claim whereas others refute it)"
+    CONF = "conflicting evidence/cherrypicking"
 
 
 LABEL_DICT = {
     Label.SUPPORTED: 0,
     Label.NEI: 1,
     Label.REFUTED: 2,
+    Label.CONF: 3,
 }
 LABEL_DICT_TO_TEXT = {
     Label.SUPPORTED: "supported",
     Label.NEI: "not enough information",
     Label.REFUTED: "refuted",
+    Label.CONF: "conflicting evidence/cherrypicking",
 }
 
 LABEL_DICT_REVERSE = {
     0: "supported",
     1: "not enough information",
     2: "refuted",
+    3: "conflicting evidence/cherrypicking",
 }
 
 

@@ -16,7 +16,7 @@ _OUTPUT_DIR_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondo
 _RESULTS_OUTPUT_FILE = os.path.join(_OUTPUT_DIR_PATH, "results.csv")
 _INIT_DATA_PATH = os.path.join(_TESTS_DIR_PATH, "base_data.json")
 
-_TEST_TYPE = properties.TestType("robustness_noise")
+_TEST_TYPE = properties.TestType("base_data")
 _TEST_FILE_PATH = os.path.join(_TESTS_DIR_PATH, "{}.json".format(_TEST_TYPE.value))
 
 _PROMPT_TYPE = properties.PromptTypes("atomic_reference_prec_recall")
@@ -57,11 +57,11 @@ def _prepare_dataset(test_df: pd.DataFrame, prev_results: list[properties.OpenAI
 
 def _run_prompt_scorer(init_data_samples: list[properties.AveritecEntry], test_samples: list[properties.AveritecEntry],
                        prompt_type: properties.PromptTypes,
-                       output_path: str) -> list[properties.OpenAIResponse]:
+                       output_path: str, logprob=False) -> list[properties.OpenAIResponse]:
     # run prompt scorer
     return prompt_scorer_openai.prompt_openai_model(init_data_samples, test_samples, prompt_type,
                                                     _CLIENT, match_system_preds=False, model=_PROMPTING_MODEL,
-                                                    responses_output_path=output_path)
+                                                    responses_output_path=output_path, logprob=logprob)
 
 
 def _calc_test_results(scorer_results, results_df) -> pd.DataFrame:

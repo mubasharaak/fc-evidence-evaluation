@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import statistics
 
 import evaluate
 import numpy as np
@@ -42,6 +43,44 @@ class PseudoTrainedScorerDataset(torch.utils.data.Dataset):
         return len(self.labels)
 
 
+def _softmax(logits):
+    """Apply softmax to each row"""
+    exp_logits = np.exp(logits - np.max(logits, axis=-1, keepdims=True))  # Stability improvement
+    return exp_logits / np.sum(exp_logits, axis=-1, keepdims=True)
+
+
+def _compute_metrics_conf(eval_preds):
+    """
+    get the probabilities of gold labels
+    :param eval_preds:
+    :return:
+    """
+    logits, labels = eval_preds
+    # Example logits array
+    # logits = np.array([[2.5, 1.2, 0.3],
+    #                    [0.1, 3.8, 1.1],
+    #                    [1.1, 0.2, 2.3]])
+
+    # Gold list indicating the class for which to get the probability
+    # gold = [0, 0, 2]
+    gold = labels
+
+    # Get softmax probabilities
+    probabilities = _softmax(logits)
+
+    # Extract the probability for the specified class for each sample
+    specified_class_probabilities = np.array([probabilities[i, gold[i]] for i in range(len(gold))])
+
+    avg_score = statistics.mean(specified_class_probabilities)
+    return {
+        'accuracy': avg_score,
+        'precision': avg_score,
+        'recall': avg_score,
+        'f1_macro': avg_score,
+        'f1_micro': avg_score,
+    }
+
+
 def _compute_metrics(eval_preds):
     logits, labels = eval_preds
     predictions = np.argmax(logits, axis=-1)
@@ -64,12 +103,13 @@ def _compute_metrics(eval_preds):
 
 
 def train(model, training_args, train_dataset, dev_dataset, test_dataset, output_path, do_training=False):
+    score_calc = _compute_metrics if do_training else _compute_metrics_conf
     trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=dev_dataset,
-        compute_metrics=_compute_metrics,
+        compute_metrics=score_calc,
     )
 
     if do_training:
@@ -177,6 +217,7 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
     elif dataset == properties.Dataset.FEVER_REANNOTATION:
         test_claims, test_evidences, test_labels = utils.read_fever_dataset_reannotation(test_dataset_path)
     elif dataset in [properties.Dataset.AVERITEC, properties.Dataset.AVERITEC_AFTER_P4]:
+        # select also for checkist tests properties.Dataset.AVERITEC
         # train_claims, train_evidences, train_labels = utils.read_averitec_dataset(train_dataset_path)
         test_claims, test_evidences, test_labels = utils.read_averitec_dataset(test_dataset_path)
         # eval_claims, dev_evidences, eval_labels = utils.read_averitec_dataset(dev_dataset_path)
@@ -209,9 +250,9 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
         if calc_diff_base_data:
             results_base = utils.load_json_file(os.path.join(output_path, "results_base_data.json"))
             results.metrics['diff_f1_micro'] = utils.percentage_difference(results_base['test_f1_micro'],
-                                                                      results.metrics['test_f1_micro'])
+                                                                           results.metrics['test_f1_micro'])
             results.metrics['diff_f1_macro'] = utils.percentage_difference(results_base['test_f1_macro'],
-                                                                      results.metrics['test_f1_macro'])
+                                                                           results.metrics['test_f1_macro'])
         json.dump(results.metrics, f, indent=2)
 
     with open(os.path.join(output_path, samples_filenames), "w") as f:
@@ -225,14 +266,18 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
     if dataset == properties.Dataset.AVERITEC_MANUAL_EVAL:
         # save predictions as csv (incl. a field telling if prediction and label agree
         input_dataset = pd.read_csv(test_dataset_path)
-        predictions_df = pd.DataFrame(columns=['id', 'claim', 'label', 'prediction'])
+        predictions_df = pd.DataFrame(columns=['id', 'claim', 'label', 'prediction', 'score'])
         for i, logits in enumerate(results.predictions.tolist()):
             pred = np.argmax(logits, axis=-1)
+            probabilities = _softmax(logits)
+            label_ind = properties.LABEL_DICT[properties.Label(input_dataset.iloc[i]['label_majority'])]
+
             new_row = {
                 'id': input_dataset.iloc[i]['id'],
                 'claim': input_dataset.iloc[i]['claim'],
                 'label': input_dataset.iloc[i]['label_majority'],
                 'prediction': properties.LABEL_DICT_REVERSE[properties.LABEL_DICT[properties.Label(pred)]],
+                'score': probabilities[label_ind],
             }
             predictions_df = pd.concat([predictions_df, pd.DataFrame([new_row])], ignore_index=True)
 

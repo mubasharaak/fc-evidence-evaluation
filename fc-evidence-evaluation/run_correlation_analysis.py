@@ -15,7 +15,7 @@ _DATA_MAJORITY_VOTING_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCo
 _OUTPUT_DIR_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/averitec_shared_task"
 # _PATH_MODEL_RESULTS_SCORES = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/manual_eval_subset/predictions_cot_gpt-4o-2024-05-13_w_scores.jsonl"
 
-_PROMPT_TYPE = properties.PromptTypes("rouge")
+_PROMPT_TYPE = properties.PromptTypes("meteor")
 # _PROMPTING_MODEL = "gpt-4o-2024-05-13"
 _PROMPTING_MODEL = ""
 _KEY = open('/Users/user/Desktop/openai_key_fc_eval.txt', 'r').read()
@@ -95,6 +95,9 @@ def _run_prompt_scorer(test_df: pd.DataFrame, prompt_type: properties.PromptType
     properties.OpenAIResponse]:
     # prepare data
     input_data, system_predictions = _prepare_dataset(test_df, prev_results)
+    # subset = 10
+    # input_data = input_data[:subset]
+    # system_predictions = system_predictions[:subset]
 
     # run prompt scorer
     if prompt_type == properties.PromptTypes.COT:
@@ -233,7 +236,9 @@ def main():
                                                                 properties.EvaluationDimensions("coherence"),
                                                                 properties.EvaluationDimensions("redundancy"),
                                                                 properties.EvaluationDimensions("consistency"),
-                                                                properties.EvaluationDimensions("relevance")])
+                                                                properties.EvaluationDimensions("relevance"),
+                                                                properties.EvaluationDimensions("verdict_agreement"),
+                                                            ])
 
     # save results
     corr_results.to_csv(os.path.join(_OUTPUT_DIR_PATH, _CORRELATION_OUPUT_FILE), index=False)

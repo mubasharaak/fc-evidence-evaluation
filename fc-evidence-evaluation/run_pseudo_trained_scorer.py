@@ -26,7 +26,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--test_data_file',
-    default="base_data.json",
+    default="coverage.json",
     help='Path to test data for reference scorer, can be also manual eval data'
 )
 parser.add_argument(

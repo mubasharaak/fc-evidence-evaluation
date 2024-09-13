@@ -3,7 +3,11 @@ import random
 import re
 
 import datasets
+import nltk
+import numpy as np
 import pandas as pd
+import scipy
+from nltk import word_tokenize
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
@@ -232,20 +236,36 @@ def read_averitec_dataset(file_path: str, filter_conflicting_evid: bool = True) 
     labels = []
     # iterate
     for entry in dataset:
-        if filter_conflicting_evid:
-            if entry["label"] == "Conflicting Evidence/Cherrypicking":
-                continue
+        # if filter_conflicting_evid:
+            # if entry["label"] == "Conflicting Evidence/Cherrypicking":
+            #     continue
 
+        if "label" in entry:
+            labels.append(properties.LABEL_DICT[properties.Label(entry["label"].lower())])
+        else:
+            try:
+                labels.append(properties.LABEL_DICT[properties.Label(entry["pred_label"].lower())])
+            except Exception as e:
+                print(e)
+                continue
         claims.append(entry["claim"])
-        labels.append(properties.LABEL_DICT[properties.Label(entry["label"].lower())])
 
         qa_pair = ""
-        for qa in entry["questions"]:
+        if "questions" in entry:
+            evidence_field = "questions"
+        else:
+            evidence_field = "evidence"
+        # for qa in entry["questions"]: todo uncomment later
+        for qa in entry[evidence_field]:
             qa_pair += (qa["question"] + " ")
-            for a in qa["answers"]:
-                qa_pair += (a["answer"] + " ")
-                if "answer_type" in a and a["answer_type"] == "Boolean":
-                    qa_pair += ("." + a["boolean_explanation"] + ". ")
+            if "answers" in qa:
+                for a in qa["answers"]:
+                    qa_pair += (a["answer"] + " ")
+                    if "answer_type" in a and a["answer_type"] == "Boolean":
+                        qa_pair += ("." + a["boolean_explanation"] + ". ")
+            else:
+                qa_pair += (qa["answer"] + " ")
+
         qa_pairs.append(qa_pair)
 
     return claims, qa_pairs, labels
@@ -353,7 +373,41 @@ def load_fever(path: str) -> List[properties.AveritecEntry]:
     return fever_entries
 
 
-def calc_meteor(candidate: str, reference: str):
+def calc_meteor(reference: str, candidate: str):
+    return metric_meteor.compute(predictions=[candidate], references=[reference])['meteor']
+
+
+def _pairwise_meteor(reference, candidate):  # Todo this is not thread safe, no idea how to make it so
+    return nltk.translate.meteor_score.single_meteor_score(word_tokenize(reference), word_tokenize(candidate))
+
+
+def _compute_all_pairwise_scores(src_data, tgt_data, metric):
+    X = np.empty((len(src_data), len(tgt_data)))
+
+    for i in range(len(src_data)):
+        for j in range(len(tgt_data)):
+            X[i][j] = (metric(src_data[i], tgt_data[j]))
+
+    return X
+
+
+def calc_hungarian_meteor(candidate: str, reference: str):
+    """
+    Computation of hungarian metrics as per Schlichtkrull et al. (2023)
+    :param candidate:
+    :param reference:
+    :return:
+    """
+    src_data = ["Question"+x.strip() for x in reference.split("Question") if x]
+    tgt_data = ["Question"+x.strip() for x in candidate.split("Question") if x]
+    pairwise_scores = _compute_all_pairwise_scores(src_data, tgt_data, calc_meteor)
+    assignment = scipy.optimize.linear_sum_assignment(pairwise_scores, maximize=True)
+    assignment_utility = pairwise_scores[assignment[0], assignment[1]].sum()
+
+    # Reweight to account for unmatched target questions
+    reweight_term = 1 / float(len(candidate))
+    assignment_utility *= reweight_term
+    return assignment_utility
     return metric_meteor.compute(predictions=[candidate], references=[reference])['meteor']
 
 

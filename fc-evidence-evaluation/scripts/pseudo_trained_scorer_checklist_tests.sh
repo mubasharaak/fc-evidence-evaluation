@@ -1,0 +1,14 @@
+#python run_pseudo_trained_scorer.py --test_data_file=coverage.json
+python run_pseudo_trained_scorer.py --test_data_file=coherence.json
+python run_pseudo_trained_scorer.py --test_data_file=contraction.json
+python run_pseudo_trained_scorer.py --test_data_file=entity_swap.json
+python run_pseudo_trained_scorer.py --test_data_file=fluency_typos.json
+python run_pseudo_trained_scorer.py --test_data_file=fluency_word_drop.json
+python run_pseudo_trained_scorer.py --test_data_file=num2text.json
+python run_pseudo_trained_scorer.py --test_data_file=number_replace.json
+python run_pseudo_trained_scorer.py --test_data_file=rand_order.json
+python run_pseudo_trained_scorer.py --test_data_file=redundancy_sent.json
+python run_pseudo_trained_scorer.py --test_data_file=redundancy_words.json
+python run_pseudo_trained_scorer.py --test_data_file=robustness_noise.json
+python run_pseudo_trained_scorer.py --test_data_file=synonyms.json
+#python run_pseudo_trained_scorer.py --test_data_file=text2num.json

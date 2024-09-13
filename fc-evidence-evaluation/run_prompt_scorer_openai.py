@@ -20,17 +20,18 @@ parser.add_argument(
 )
 parser.add_argument(
     '--system_pred_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/baseline_pred_averitec_test.json",
+    # default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/baseline_pred_averitec_test.json",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec_shared_task/1_HUMANE_evalai.json",
     help='Path to system predictions for reference-based evaluation.'
 )
 parser.add_argument(
     '--predictions_output_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_atomic/prediction_averitec_test.jsonl",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_atomic_reference_prec_recall/prediction_1_HUMANE_evalai.jsonl",
     help='Path to output file for predictions.'
 )
 parser.add_argument(
     '--scores_output_path',
-    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_atomic/results_averitec_test.json",
+    default="/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/gpt3.5_atomic_reference_prec_recall/results_1_HUMANE_evalai.json",
     help='Path to output file for scores.'
 )
 parser.add_argument(
@@ -47,7 +48,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--prompt_type',
-    default="atomic",
+    default="atomic_reference_prec_recall",
     choices=[prompt.value for prompt in properties.PromptTypes],
     type=str.lower
 )
@@ -67,7 +68,7 @@ _CLIENT = openai.OpenAI(
     timeout=10,
 )
 _SEED = 10
-_RANDOM_SUBSET = 3
+_RANDOM_SUBSET = 10
 random.seed(_SEED)
 _WIKI_DB_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data"
 _FEVER_DB_PW = open('/Users/user/Desktop/fever_db_pw.txt', 'r').read()
@@ -114,14 +115,15 @@ def main():
         # load system predictions
         test_predictions = _load_dataset(properties.Dataset.AVERITEC_SYSTEM_PRED, _SYSTEM_PRED_PATH)
         # predict using OpenAI API and store results
-        predictions = prompt_scorer_openai.prompt_openai_model(input_data, test_predictions, _PROMPT_TYPE, _CLIENT)
+        predictions = prompt_scorer_openai.prompt_openai_model(input_data, test_predictions, _PROMPT_TYPE, _CLIENT, responses_output_path=_PREDICTIONS_OUTPUT_PATH)
 
     # add scores to predictions
-    utils.save_jsonl_file(prompt_scorer_openai.calculate_prediction_scores(predictions, _PROMPT_TYPE),
+    utils.save_jsonl_file(prompt_scorer_openai.calculate_prediction_scores(input_data, predictions, prompt_type=_PROMPT_TYPE),
                           _PREDICTIONS_OUTPUT_PATH)
 
     scores = prompt_scorer_openai.evaluate_openai_output(predictions, _PROMPT_TYPE,
-                                                         ignore_labels=["conflicting evidence/cherrypicking"],
+                                                         # ignore_labels=["conflicting evidence/cherrypicking"],
+                                                         ignore_labels=[],
                                                          is_two_classes=_IS_HOVER_DATASET)
     with open(_SCORES_OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(scores, f, indent=4)
