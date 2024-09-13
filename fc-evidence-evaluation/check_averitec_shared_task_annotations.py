@@ -66,6 +66,11 @@ def _format_evidence_pred(questions) -> str:
     return "\n".join(qa_text)
 
 
+def _label_matching(gold, annotated):
+    annotated = annotated.replace("information", "evidence")
+    return int(gold.lower().strip() == annotated.lower().strip())
+
+
 def main():
     # load relevant data
     annotations = pd.read_excel(PATH_ANNOTATIONS, header=0)
@@ -99,8 +104,11 @@ def main():
             row['predicted evidence'] = _format_evidence_pred(eval_entry['predicted_evidence'])
             row['pred_label'] = eval_entry['pred_label']
 
-            # adjust label majority to remove "a.", etc.
-            # row['label_majority'] = "".join(row['label_majority'].split("a. ").split("b. ").split("c. ").split("d. "))
+            row['label_majority'] = row['label_majority'][2:]
+
+            # add verdict_agreement and nei_disagreement flags
+            row["verdict_agreement"] = _label_matching(row['gold label'], row['label_majority'])
+            # row["nei_disagreement"]
 
             annotations_no_gold = annotations_no_gold.append(row, ignore_index=True)
 
