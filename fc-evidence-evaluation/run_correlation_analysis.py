@@ -1,7 +1,6 @@
 import math
 import os.path
 from typing import Tuple
-
 import openai
 import pandas as pd
 from scipy import stats
@@ -11,30 +10,41 @@ import properties
 import utils
 
 # _DATA_MAJORITY_VOTING_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec/averitec_manual_eval_majority.csv"
-_DATA_MAJORITY_VOTING_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec_shared_task/AVERITEC_FC_Evidence_Evaluation_Responses_no_gold.xlsx"
+_DATA_MAJORITY_VOTING_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data/averitec_shared_task/AVERITEC_FC_Evidence_Evaluation_Responses_no_gold_no_conf_label.xlsx"
+
 _OUTPUT_DIR_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/averitec_shared_task"
+# _OUTPUT_DIR_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/manual_eval_averitec_subset"
 # _PATH_MODEL_RESULTS_SCORES = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/results/manual_eval_subset/predictions_cot_gpt-4o-2024-05-13_w_scores.jsonl"
 
-_PROMPT_TYPE = properties.PromptTypes("meteor")
-# _PROMPTING_MODEL = "gpt-4o-2024-05-13"
-_PROMPTING_MODEL = ""
-_KEY = open('/Users/user/Desktop/openai_key_fc_eval.txt', 'r').read()
-_LOAD_RESULTS = False
+_OPENAI_KEY = open('/Users/user/Desktop/openai_key_fc_eval.txt', 'r').read()
+_API = properties.ModelApi.GPT4o
+
+_PROMPT_TYPE = properties.PromptTypes("cot")
+_LOAD_RESULTS = True
+_ONLY_QUESTION = False
+
 
 if _PROMPT_TYPE in [properties.PromptTypes.COT, properties.PromptTypes.ATOMIC_FACTS,
                     properties.PromptTypes.ATOMIC_REFERENCE_FACTS,
                     properties.PromptTypes.ATOMIC_REFERENCE_FACTS_PREC_RECALL]:
-    _OUTPUT_FILE = "predictions_{}_{}.jsonl".format(_PROMPT_TYPE.value, _PROMPTING_MODEL)
-    _CORRELATION_OUPUT_FILE = "correlation_{}_{}.csv".format(_PROMPT_TYPE.value, _PROMPTING_MODEL)
+    _OUTPUT_FILE = "predictions_{}_{}.jsonl".format(_PROMPT_TYPE.value, _API.value)
+    _CORRELATION_OUPUT_FILE = "correlation_{}_{}.csv".format(_PROMPT_TYPE.value, _API.value)
 else:
-    _CORRELATION_OUPUT_FILE = "correlation_{}.csv".format(_PROMPT_TYPE.value)
-    if _PROMPT_TYPE in [properties.PromptTypes.PSEUDO_TRAINED, properties.PromptTypes.REF_TRAINED]:
-        _OUTPUT_FILE = "predictions_{}.csv".format(_PROMPT_TYPE.value)
+    if _ONLY_QUESTION:
+        _CORRELATION_OUPUT_FILE = "correlation_{}_only_questions.csv".format(_PROMPT_TYPE.value)
+        if _PROMPT_TYPE in [properties.PromptTypes.PSEUDO_TRAINED, properties.PromptTypes.REF_TRAINED]:
+            _OUTPUT_FILE = "predictions_{}_only_questions.csv".format(_PROMPT_TYPE.value)
+        else:
+            _OUTPUT_FILE = "predictions_{}_only_questions.jsonl".format(_PROMPT_TYPE.value)
     else:
-        _OUTPUT_FILE = "predictions_{}.jsonl".format(_PROMPT_TYPE.value)
+        _CORRELATION_OUPUT_FILE = "correlation_{}.csv".format(_PROMPT_TYPE.value)
+        if _PROMPT_TYPE in [properties.PromptTypes.PSEUDO_TRAINED, properties.PromptTypes.REF_TRAINED]:
+            _OUTPUT_FILE = "predictions_{}.csv".format(_PROMPT_TYPE.value)
+        else:
+            _OUTPUT_FILE = "predictions_{}.jsonl".format(_PROMPT_TYPE.value)
 
 _CLIENT = openai.OpenAI(
-    api_key=_KEY,
+    api_key=_OPENAI_KEY,
     timeout=10,
 )
 
@@ -71,18 +81,21 @@ def _calc_correlation(test_df: pd.DataFrame, results: list[properties.OpenAIResp
     x = []
     y = []
     for pred in results:
+        # get score
+        try:
+            if score_type == properties.ScoreMetrics.PRECISION:
+                score = pred.response['precision']
+            elif score_type == properties.ScoreMetrics.RECALL:
+                score = pred.response['recall']
+            else:
+                score = pred.response['score']
+            y.append(score)
+        except Exception as e:
+            print(e)
+            continue
         # get the correct entry from dataframe row
         row = test_df[test_df['id'] == pred.id]
         x.append(row[comparison_dim.value].values[0])
-
-        # get score
-        if score_type == properties.ScoreMetrics.PRECISION:
-            score = pred.response['precision']
-        elif score_type == properties.ScoreMetrics.RECALL:
-            score = pred.response['recall']
-        else:
-            score = pred.response['score']
-        y.append(score)
 
     # if error in prompting entry can be None
     y = [0 if (entry is None or math.isnan(entry)) else entry for entry in y]
@@ -101,13 +114,13 @@ def _run_prompt_scorer(test_df: pd.DataFrame, prompt_type: properties.PromptType
 
     # run prompt scorer
     if prompt_type == properties.PromptTypes.COT:
-        return prompt_scorer_openai.prompt_openai_model(input_data, system_predictions, prompt_type, _CLIENT,
-                                                        match_system_preds=False, model=_PROMPTING_MODEL,
-                                                        responses_output_path=output_path, logprob=True)
+        return prompt_scorer_openai.prompt_api_model(input_data, system_predictions, prompt_type, _CLIENT,
+                                                     match_system_preds=False,
+                                                     responses_output_path=output_path, logprob=True, api=_API)
     else:
-        return prompt_scorer_openai.prompt_openai_model(input_data, system_predictions, prompt_type, _CLIENT,
-                                                        match_system_preds=False, model=_PROMPTING_MODEL,
-                                                        responses_output_path=output_path, logprob=False)
+        return prompt_scorer_openai.prompt_api_model(input_data, system_predictions, prompt_type, _CLIENT,
+                                                     match_system_preds=False,
+                                                     responses_output_path=output_path, logprob=False, api=_API)
 
 
 def _calc_correlation_append_results(reference: pd.DataFrame, predictions: list[properties.OpenAIResponse],
@@ -164,7 +177,7 @@ def _calc_correlation_atomic_reference_based_prec_recall_split(reference: pd.Dat
 
 
 def _calculate_scores_baseline_metrics(df: pd.DataFrame, prompt_type: properties.PromptTypes,
-                                       results_df: pd.DataFrame = None) -> list[
+                                       results_df: pd.DataFrame = None, only_question=False) -> list[
     properties.OpenAIResponse]:
     results = []
     for i, row in df.iterrows():
@@ -172,7 +185,7 @@ def _calculate_scores_baseline_metrics(df: pd.DataFrame, prompt_type: properties
             score = utils.calc_meteor(reference=row['reference evidence'], candidate=row['predicted evidence'])
         elif prompt_type == properties.PromptTypes.HMETEOR:
             score = utils.calc_hungarian_meteor(candidate=row['predicted evidence'],
-                                                reference=row['reference evidence'])
+                                                reference=row['reference evidence'], only_question=only_question)
         elif prompt_type == properties.PromptTypes.BLEU:
             score = utils.calc_bleu(candidate=row['predicted evidence'], reference=row['reference evidence'])
         elif prompt_type == properties.PromptTypes.PSEUDO_TRAINED:
@@ -200,6 +213,8 @@ def main():
         df = pd.read_excel(_DATA_MAJORITY_VOTING_PATH, header=0)
     else:
         raise ValueError("Filepath of variable '_DATA_MAJORITY_VOTING_PATH' must end with '.csv' or '.xlsx'.")
+
+    # df = df.head(3)
     # load results file and add a new row r = (scorer, spearman, pearson)
     corr_results = pd.read_csv(os.path.join(_OUTPUT_DIR_PATH, _CORRELATION_OUPUT_FILE))
 
@@ -208,11 +223,16 @@ def main():
         model_results_scores = _calculate_scores_baseline_metrics(df, _PROMPT_TYPE, pd.read_csv(scorer_output_path))
     elif _PROMPT_TYPE in [properties.PromptTypes.METEOR, properties.PromptTypes.ROUGE, properties.PromptTypes.BLEU,
                           properties.PromptTypes.HMETEOR]:
-        model_results_scores = _calculate_scores_baseline_metrics(df, _PROMPT_TYPE)
+        model_results_scores = _calculate_scores_baseline_metrics(df, _PROMPT_TYPE, only_question=_ONLY_QUESTION)
         utils.save_jsonl_file(model_results_scores, scorer_output_path)
     else:
         if _LOAD_RESULTS:
             model_results_scores = utils.load_jsonl_file(scorer_output_path, dataclass=properties.OpenAIResponse)
+            # if "score" not in model_results_scores[0].response:
+                # scorer prompted but score not calculated yet
+            model_results_scores = prompt_scorer_openai.calculate_prediction_scores(df, model_results_scores,
+                                                                                    _PROMPT_TYPE)
+                # utils.save_jsonl_file(model_results_scores, scorer_output_path)
         else:
             # if prev model_results_scores exist, load
             if os.path.exists(scorer_output_path):
@@ -236,8 +256,9 @@ def main():
                                                                 properties.EvaluationDimensions("coherence"),
                                                                 properties.EvaluationDimensions("redundancy"),
                                                                 properties.EvaluationDimensions("consistency"),
-                                                                properties.EvaluationDimensions("relevance"),
+                                                                # properties.EvaluationDimensions("relevance"),
                                                                 properties.EvaluationDimensions("verdict_agreement"),
+                                                                # properties.EvaluationDimensions("nei_disagreement"),
                                                             ])
 
     # save results

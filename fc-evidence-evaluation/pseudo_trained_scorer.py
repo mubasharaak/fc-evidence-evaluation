@@ -9,7 +9,6 @@ import pandas as pd
 import pymysql
 import torch
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-from torch.utils.data import DataLoader
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer
 from transformers import TrainingArguments
 
@@ -26,21 +25,6 @@ _WIKI_DB_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/P
 _METRIC = evaluate.load("glue", "mrpc")
 _PATH_TOKENIZER = "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli"
 _FEVER_DB_PW = open('/scratch/users/k20116188/fc_evidence_evaluation/credentials/fever_db_pw.txt', 'r').read()
-
-
-class PseudoTrainedScorerDataset(torch.utils.data.Dataset):
-    def __init__(self, encodings, labels):
-        self.encodings = encodings
-        self.labels = labels
-
-    def __getitem__(self, idx):
-        item = {key: torch.tensor(val[idx]) for key, val in self.encodings.items()}
-        item['labels'] = torch.tensor(self.labels[idx])
-
-        return item
-
-    def __len__(self):
-        return len(self.labels)
 
 
 def _softmax(logits):
@@ -84,9 +68,6 @@ def _compute_metrics_conf(eval_preds):
 def _compute_metrics(eval_preds):
     logits, labels = eval_preds
     predictions = np.argmax(logits, axis=-1)
-    # print("labels: {}".format(labels))
-    # print("logits: {}".format(logits))
-    # print("predictions: {}".format(predictions))
 
     accuracy = accuracy_score(y_true=labels, y_pred=predictions)
     precision = precision_score(y_true=labels, y_pred=predictions, average='weighted')
@@ -102,7 +83,7 @@ def _compute_metrics(eval_preds):
     }
 
 
-def train(model, training_args, train_dataset, dev_dataset, test_dataset, output_path, do_training=False):
+def _train(model, training_args, train_dataset, dev_dataset, test_dataset, output_path, do_training=False):
     score_calc = _compute_metrics if do_training else _compute_metrics_conf
     trainer = Trainer(
         model=model,
@@ -137,16 +118,6 @@ def continue_training(model, training_args, train_dataset, dev_dataset, test_dat
     result_dict = trainer.predict(test_dataset)
     print(result_dict.metrics)
     return result_dict
-
-
-def prepare_dataset(claims, evidence, labels, tokenizer):
-    data_tokenized = tokenizer(evidence, claims,
-                               max_length=_MAX_LENGTH,
-                               truncation=True,
-                               padding=True, return_tensors="pt")
-
-    # print("data_tokenized: {}".format(data_tokenized))
-    return PseudoTrainedScorerDataset(data_tokenized, labels)
 
 
 def check_dataset(dataset):
@@ -189,23 +160,6 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
         fp16=True,  # mixed precision training
         # debug="underflow_overflow",
     )
-    # training_args = TrainingArguments(
-    #     output_dir=output_path,  # output directory
-    #     num_train_epochs=4,  # total number of training epochs
-    #     learning_rate=4e-04,
-    #     per_device_train_batch_size=4,  # batch size per device during training
-    #     gradient_accumulation_steps=2,  # doubles the effective batch_size to 32, while decreasing memory requirements
-    #     per_device_eval_batch_size=64,  # batch size for evaluation
-    #     warmup_ratio=0.06,  # number of warmup steps for learning rate scheduler
-    #     weight_decay=0.01,  # strength of weight decay
-    #     # fp16=True,  # mixed precision training
-    #     evaluation_strategy="steps",
-    #     eval_steps = 25,
-    #     save_steps = 25,
-    #     metric_for_best_model = "eval_f1_micro",
-    #     save_total_limit = 1,
-    #     load_best_model_at_end = True,
-    # )
     train_claims, train_evidences, train_labels = utils.read_vitaminc_dataset(train_dataset_path)
     eval_claims, dev_evidences, eval_labels = utils.read_vitaminc_dataset(dev_dataset_path)
 
@@ -235,17 +189,13 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
     else:
         raise Exception("Dataset provided does not match available datasets: {}".format(properties.Dataset))
 
-    train_dataset = prepare_dataset(train_claims, train_evidences, train_labels, tokenizer)
-    dev_dataset = prepare_dataset(eval_claims, dev_evidences, eval_labels, tokenizer)
-    test_dataset = prepare_dataset(test_claims, test_evidences, test_labels, tokenizer)
+    train_dataset = utils.prepare_dataset(train_claims, train_evidences, train_labels, tokenizer)
+    dev_dataset = utils.prepare_dataset(eval_claims, dev_evidences, eval_labels, tokenizer)
+    test_dataset = utils.prepare_dataset(test_claims, test_evidences, test_labels, tokenizer)
 
-    # check_dataset(train_dataset)
-    # check_dataset(test_dataset)
-    # check_dataset(dev_dataset)
-
-    results = train(model, training_args, train_dataset=train_dataset,
-                    dev_dataset=dev_dataset, test_dataset=test_dataset, output_path=output_path,
-                    do_training=train_model)
+    results = _train(model, training_args, train_dataset=train_dataset,
+                     dev_dataset=dev_dataset, test_dataset=test_dataset, output_path=output_path,
+                     do_training=train_model)
     with open(os.path.join(output_path, results_filename), "w") as f:
         if calc_diff_base_data:
             results_base = utils.load_json_file(os.path.join(output_path, "results_base_data.json"))
@@ -265,17 +215,24 @@ def run_nli_scorer(model_path: str, dataset: properties.Dataset, train_dataset_p
 
     if dataset == properties.Dataset.AVERITEC_MANUAL_EVAL:
         # save predictions as csv (incl. a field telling if prediction and label agree
-        input_dataset = pd.read_csv(test_dataset_path)
+        if test_dataset_path.endswith(".csv"):
+            input_dataset = pd.read_csv(test_dataset_path)
+        elif test_dataset_path.endswith(".xlsx"):
+            input_dataset = pd.read_excel(test_dataset_path, header=0)
+        else:
+            raise ValueError(
+                "Exception while reading Averitec manual eval data, 'test_dataset_path' should either be a .csv or a .xlsx file.")
+
         predictions_df = pd.DataFrame(columns=['id', 'claim', 'label', 'prediction', 'score'])
         for i, logits in enumerate(results.predictions.tolist()):
             pred = np.argmax(logits, axis=-1)
             probabilities = _softmax(logits)
-            label_ind = properties.LABEL_DICT[properties.Label(input_dataset.iloc[i]['label_majority'])]
+            label_ind = properties.LABEL_DICT[properties.Label(input_dataset.iloc[i]['label_majority'].strip().lower())]
 
             new_row = {
                 'id': input_dataset.iloc[i]['id'],
                 'claim': input_dataset.iloc[i]['claim'],
-                'label': input_dataset.iloc[i]['label_majority'],
+                'label': input_dataset.iloc[i]['label_majority'].strip(),
                 'prediction': properties.LABEL_DICT_REVERSE[properties.LABEL_DICT[properties.Label(pred)]],
                 'score': probabilities[label_ind],
             }

@@ -1,0 +1,3 @@
+test,scorer,score
+redundancy_words,bleu,0.67305622436049
+base_data,bleu,1.0

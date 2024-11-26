@@ -9,6 +9,8 @@ import pandas as pd
 import scipy
 from nltk import word_tokenize
 
+from properties import PseudoTrainedScorerDataset
+
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 import json
@@ -180,15 +182,19 @@ def read_averitec_manual_eval_data(file_path: str) -> Tuple[list, list, list]:
     :return: list of claims, evidence and labels
     """
     print("file_path: {}".format(file_path))
-    dataset = pd.read_csv(file_path)
+    if file_path.endswith(".csv"):
+        dataset = pd.read_csv(file_path)
+    elif file_path.endswith(".xlsx"):
+        dataset = pd.read_excel(file_path, header=0)
+    else:
+        raise ValueError(
+            "Exception while reading averitec manual eval data, 'file_path' should either be a .csv or a .xlsx file.")
     claims = []
     labels = []
     evidences = []
 
     for i, row in dataset.iterrows():
-        labels.append(properties.LABEL_DICT[properties.Label(row['label_majority'].replace(
-            "contradicting information (some evidence parts support the claim whereas others refute it)",
-            "not enough information").lower())])
+        labels.append(properties.LABEL_DICT[properties.Label(row['label_majority'].strip().lower())])
         claims.append(row['claim'])
         evidences.append(row['predicted evidence'].replace("\n", " ").replace("\n", " "))
 
@@ -237,8 +243,8 @@ def read_averitec_dataset(file_path: str, filter_conflicting_evid: bool = True) 
     # iterate
     for entry in dataset:
         # if filter_conflicting_evid:
-            # if entry["label"] == "Conflicting Evidence/Cherrypicking":
-            #     continue
+        # if entry["label"] == "Conflicting Evidence/Cherrypicking":
+        #     continue
 
         if "label" in entry:
             labels.append(properties.LABEL_DICT[properties.Label(entry["label"].lower())])
@@ -312,7 +318,11 @@ def load_jsonl_file(file_path, dataclass=None):
     with open(file_path, "r", encoding="utf-8") as f:
         for entry in f.readlines():
             if dataclass:
-                content.append(dacite.from_dict(data_class=dataclass, data=json.loads(entry)))
+                try:
+                    content.append(dacite.from_dict(data_class=dataclass, data=json.loads(entry)))
+                except Exception as e:
+                    print("Exception during loading data into dataclass {}: {}".format(type(dataclass), e))
+                    continue
             else:
                 entry = json.loads(entry)
                 if type(entry) == dict:
@@ -391,15 +401,29 @@ def _compute_all_pairwise_scores(src_data, tgt_data, metric):
     return X
 
 
-def calc_hungarian_meteor(candidate: str, reference: str):
+def prepare_dataset(claims, evidence, labels, tokenizer):
+    data_tokenized = tokenizer(evidence, claims,
+                               max_length=1024,
+                               truncation=True,
+                               padding=True, return_tensors="pt")
+
+    return PseudoTrainedScorerDataset(data_tokenized, labels)
+
+
+def calc_hungarian_meteor(candidate: str, reference: str, only_question=False):
     """
     Computation of hungarian metrics as per Schlichtkrull et al. (2023)
     :param candidate:
     :param reference:
     :return:
     """
-    src_data = ["Question"+x.strip() for x in reference.split("Question") if x]
-    tgt_data = ["Question"+x.strip() for x in candidate.split("Question") if x]
+    if only_question:
+        src_data = ["".join(x.split("Question:")) for x in reference.split("\n") if "Question" in x]
+        tgt_data = ["".join(x.split("Question:")) for x in candidate.split("\n") if "Question" in x]
+    else:
+        src_data = ["Question" + x.strip() for x in reference.split("Question") if x]
+        tgt_data = ["Question" + x.strip() for x in candidate.split("Question") if x]
+
     pairwise_scores = _compute_all_pairwise_scores(src_data, tgt_data, calc_meteor)
     assignment = scipy.optimize.linear_sum_assignment(pairwise_scores, maximize=True)
     assignment_utility = pairwise_scores[assignment[0], assignment[1]].sum()

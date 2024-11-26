@@ -1,0 +1,13 @@
+scorer,dimension,metrics,spearman_corr,pearson_corr
+atomic_reference_prec_recall,semantic_coverage,precision,0.08641072942228896,0.23181526644509276
+atomic_reference_prec_recall,semantic_coverage,recall,0.1317009215737036,0.27013439359220476
+atomic_reference_prec_recall,coherence,precision,0.10514887802400748,-0.00427241204390412
+atomic_reference_prec_recall,coherence,recall,0.10302443927398634,0.10592062827179625
+atomic_reference_prec_recall,redundancy,precision,-0.4812254483075115,-0.4495233365561941
+atomic_reference_prec_recall,redundancy,recall,-0.5773502691896257,-0.6185399421166045
+atomic_reference_prec_recall,consistency,precision,0.3370469239302113,0.18085983626508065
+atomic_reference_prec_recall,consistency,recall,0.33023719320146977,0.2905959874812538
+atomic_reference_prec_recall,relevance,precision,0.48966080005963747,0.3678807489237341
+atomic_reference_prec_recall,relevance,recall,0.5268036862948144,0.5306211302704023
+atomic_reference_prec_recall,verdict_agreement,precision,-0.2904737509655563,-0.20536040805438055
+atomic_reference_prec_recall,verdict_agreement,recall,-0.18973665961010278,-0.039314645832667805

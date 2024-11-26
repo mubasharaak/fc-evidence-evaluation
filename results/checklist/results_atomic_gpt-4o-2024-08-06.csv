@@ -1,0 +1,16 @@
+test,scorer,score
+base_data,atomic,0.3033333333333333
+robustness_noise,atomic,0.2983333333333333
+coherence,atomic,0.3083333333333333
+coverage,atomic,0.025
+contraction,atomic,0.3033333333333333
+entity_swap,atomic,0.2366666666666666
+fluency_typos,atomic,0.2966666666666667
+fluency_word_drop,atomic,0.3016666666666666
+num2text,atomic,0.2916666666666667
+number_replace,atomic,0.245
+rand_order,atomic,0.305
+redundancy_sent,atomic,0.3133333333333333
+redundancy_words,atomic,0.295
+synonyms,atomic,0.295
+text2num,atomic,0.29

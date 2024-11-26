@@ -1,0 +1,11 @@
+scorer,dimension,metrics,spearman_corr,pearson_corrs,pearson_corr
+atomic_reference_prec_recall,semantic_coverage,precision,0.1776699340229698,,0.15696132749193287
+atomic_reference_prec_recall,semantic_coverage,recall,-0.028295718915200378,,0.0024122550953807054
+atomic_reference_prec_recall,coherence,precision,0.04759543722786829,,0.08773150169799782
+atomic_reference_prec_recall,coherence,recall,0.035896014154664944,,0.012204976719074515
+atomic_reference_prec_recall,redundancy,precision,-0.14128135316193255,,-0.09342554037341591
+atomic_reference_prec_recall,redundancy,recall,-0.2399113520322092,,-0.22952254956533247
+atomic_reference_prec_recall,consistency,precision,0.0909924170824113,,0.11242995160700855
+atomic_reference_prec_recall,consistency,recall,0.12524159840586327,,0.10512986843158403
+atomic_reference_prec_recall,verdict_agreement,precision,0.23279925482060718,,0.24649585773990204
+atomic_reference_prec_recall,verdict_agreement,recall,0.1477740645303039,,0.14054173493796837

@@ -1,0 +1,7 @@
+scorer,dimension,metrics,spearman_corr,pearson_corr
+pseudo_trained,semantic_coverage,,0.33812130660963063,0.34784308968392386
+pseudo_trained,coherence,,0.2300802272653737,0.285554939690994
+pseudo_trained,redundancy,,-0.011087670582076456,-0.057351696461351326
+pseudo_trained,consistency,,0.29291916614509994,0.3292801448135265
+pseudo_trained,relevance,,0.29807277913004354,0.373705560610363
+pseudo_trained,verdict_agreement,,0.48675563464916366,0.45878343421263595

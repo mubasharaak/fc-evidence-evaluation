@@ -1,0 +1,15 @@
+test,scorer,score
+base_data,hmeteor,0.0024589946195423
+coherence,hmeteor,0.0024042754355821
+coverage,hmeteor,0.0023393933160967
+contraction,hmeteor,0.0024497063537317
+fluency_typos,hmeteor,0.0021220349199923
+fluency_word_drop,hmeteor,0.0020726637342076
+num2text,hmeteor,0.0020390461627652
+number_replace,hmeteor,0.0023327554633366
+rand_order,hmeteor,0.0014018220901806
+redundancy_sent,hmeteor,0.0014346483763534
+redundancy_words,hmeteor,0.0018738319019233
+robustness_noise,hmeteor,0.0011930979605071
+synonyms,hmeteor,0.001856011771717
+text2num,hmeteor,0.002461569242022251

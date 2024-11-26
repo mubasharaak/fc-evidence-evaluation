@@ -1,0 +1,2 @@
+This directory contains results for reference-based scorer (using "Elron/bleurt-base-512")
+Trained on bleurt_finetune_train.jsonl and evaluated on bleurt_finetune_test.jsonl.

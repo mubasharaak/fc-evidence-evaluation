@@ -72,6 +72,7 @@ _RANDOM_SUBSET = 10
 random.seed(_SEED)
 _WIKI_DB_PATH = "/Users/user/Library/CloudStorage/OneDrive-King'sCollegeLondon/PycharmProjects/fc-evidence-evaluation/data"
 _FEVER_DB_PW = open('/Users/user/Desktop/fever_db_pw.txt', 'r').read()
+_MODEL_API = properties.ModelApi.GPT4o
 
 
 def _prepare_dataset_samples(claims: list, evidences: list, labels: list):
@@ -115,11 +116,14 @@ def main():
         # load system predictions
         test_predictions = _load_dataset(properties.Dataset.AVERITEC_SYSTEM_PRED, _SYSTEM_PRED_PATH)
         # predict using OpenAI API and store results
-        predictions = prompt_scorer_openai.prompt_openai_model(input_data, test_predictions, _PROMPT_TYPE, _CLIENT, responses_output_path=_PREDICTIONS_OUTPUT_PATH)
+        predictions = prompt_scorer_openai.prompt_api_model(input_data, test_predictions, _PROMPT_TYPE, _CLIENT,
+                                                            responses_output_path=_PREDICTIONS_OUTPUT_PATH,
+                                                            api=_MODEL_API)
 
     # add scores to predictions
-    utils.save_jsonl_file(prompt_scorer_openai.calculate_prediction_scores(input_data, predictions, prompt_type=_PROMPT_TYPE),
-                          _PREDICTIONS_OUTPUT_PATH)
+    utils.save_jsonl_file(
+        prompt_scorer_openai.calculate_prediction_scores(input_data, predictions, prompt_type=_PROMPT_TYPE),
+        _PREDICTIONS_OUTPUT_PATH)
 
     scores = prompt_scorer_openai.evaluate_openai_output(predictions, _PROMPT_TYPE,
                                                          # ignore_labels=["conflicting evidence/cherrypicking"],

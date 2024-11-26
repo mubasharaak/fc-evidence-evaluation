@@ -1,0 +1,14 @@
+{
+  "test_loss": 0.8069474101066589,
+  "test_accuracy": 0.07291666666666667,
+  "test_precision": 1.0,
+  "test_recall": 0.07291666666666667,
+  "test_f1_macro": 0.06796116504854369,
+  "test_f1_micro": 0.07291666666666667,
+  "test_avg_bleurt": 0.12532976269721985,
+  "test_runtime": 1.4331,
+  "test_samples_per_second": 66.987,
+  "test_steps_per_second": 16.747,
+  "diff_f1_micro": -89.85507246376812,
+  "diff_avg_bleurt": -82.67700528714845
+}

@@ -24,7 +24,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--test_data_file',
-    default="base_data.json",
+    default="AVERITEC_FC_Evidence_Evaluation_Responses_no_gold_no_conf_label.xlsx",
     help='Path to test data for evaluating fine-tuned reference scorer'
 )
 parser.add_argument(

@@ -28,11 +28,18 @@ def _load_data(path, dataset: properties.Dataset = None):
     :return:
     """
     if dataset == properties.Dataset.AVERITEC_MANUAL_EVAL:
-        if path.endswith(".csv"):
+        if path.endswith(".csv") or path.endswith(".xlsx"):
             references = []
             targets = []
             labels = []
-            dataset_manual_eval = pd.read_csv(path)
+            if path.endswith(".csv"):
+                dataset_manual_eval = pd.read_csv(path)
+            elif path.endswith(".xlsx"):
+                dataset_manual_eval = pd.read_excel(path, header=0)
+            else:
+                raise ValueError(
+                    "Exception while reading Averitec manual eval data, 'dataset_manual_eval' should either be a .csv or a .xlsx file.")
+
             for i, row in dataset_manual_eval.iterrows():
                 labels.append(row['verdict_agreement'])
                 references.append(row['reference evidence'].replace("\n", " ").replace("\n", " "))
@@ -188,9 +195,16 @@ def run_reference_scorer(train_dataset_path: str, dev_dataset_path: str,
             f.write(f"label: {_LABELS[results.label_ids.tolist()[i]]}\n")
             f.write(f"prediction: {prediction}\n\n")
 
-    if dataset == properties.Dataset.AVERITEC_MANUAL_EVAL and test_dataset_path.endswith(".csv"):
+    if dataset == properties.Dataset.AVERITEC_MANUAL_EVAL and (test_dataset_path.endswith(".csv") or test_dataset_path.endswith(".xlsx")):
         # save predictions as csv (incl. a field telling if prediction and label agree
-        input_dataset = pd.read_csv(test_dataset_path)
+        if test_dataset_path.endswith(".csv"):
+            input_dataset = pd.read_csv(test_dataset_path)
+        elif test_dataset_path.endswith(".xlsx"):
+            input_dataset = pd.read_excel(test_dataset_path, header=0)
+        else:
+            raise ValueError(
+                "Exception while reading Averitec manual eval data, 'file_path' should either be a .csv or a .xlsx file.")
+
         predictions_df = pd.DataFrame(columns=['id', 'claim', 'label', 'prediction'])
         for i, logits in enumerate(results.predictions.tolist()):
             pred = np.array(logits)[0]

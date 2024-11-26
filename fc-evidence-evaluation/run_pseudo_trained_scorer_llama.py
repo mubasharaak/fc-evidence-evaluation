@@ -4,10 +4,10 @@ import os
 import evaluate
 
 import properties
-import pseudo_trained_scorer
+import pseudo_trained_scorer_llama
 
 parser = argparse.ArgumentParser(
-    description='NLI Scorer arguments'
+    description='NLI Scorer (Llama-based) arguments'
 )
 parser.add_argument(
     '--data_dir',
@@ -30,13 +30,8 @@ parser.add_argument(
     help='Path to test data for reference scorer, can be also manual eval data'
 )
 parser.add_argument(
-    '--test_data_path',
-    default="/scratch/users/k20116188/fc_evidence_evaluation/datasets/averitec/averitec_w_metadata_before_p4.jsonl",
-    help='Path to test data for evaluating fine-tuned reference scorer'
-)
-parser.add_argument(
     '--output_dir',
-    default="/scratch/users/k20116188/fc_evidence_evaluation/results/pseudo_trained_scorer",
+    default="/scratch/users/k20116188/fc_evidence_evaluation/results/pseudo_trained_scorer_llama",
     help='Output path for NLI scorer evaluation results.'
 )
 parser.add_argument(
@@ -57,20 +52,17 @@ parser.add_argument(
 )
 parser.add_argument(
     '--hf_model',
-    default="/scratch/users/k20116188/fc_evidence_evaluation/results/pseudo_trained_scorer/checkpoint-10000",
-    # default="MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
-    # default="ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli",
-    # hg_model_hub_name = "stanleychu2/roberta-fever"
+    default="unsloth/Llama-3.2-1B-bnb-4bit",
     help='Dataset that is used for evaluation.'
 )
 parser.add_argument(
     '--finetuned_model',
-    default="/scratch/users/k20116188/fc_evidence_evaluation/results/pseudo_trained_scorer/checkpoint-140000",
+    default="",
     help='Path to fine-tuned model.'
 )
 parser.add_argument(
     '--train',
-    default=False,
+    default=True,
     action="store_true",
     help='If set, fine-tunes scorer with data specified through --training_data_path'
 )
@@ -82,14 +74,11 @@ _DEV_DATASET_PATH = os.path.join(_DATA_DIR, args.dev_data_file)
 _TEST_DATASET_PATH = os.path.join(_DATA_DIR, args.test_data_file)
 
 _DATASET = properties.Dataset(args.dataset)
-
 _OUTPUT_DIR = args.output_dir
 
 test_file_name = args.test_data_file.split(".")[0]
 _RESULTS_FILENAME = args.results_filename.format(test_file_name)
 _SAMPLES_FILENAME = args.samples_filename.format(test_file_name)
-
-print("Results saved in: {}".format(_RESULTS_FILENAME))
 
 _TRAIN = args.train
 if _TRAIN:
@@ -104,12 +93,15 @@ _METRIC = evaluate.load("glue", "mrpc")
 
 
 def main():
-    pseudo_trained_scorer.run_nli_scorer(model_path=_MODEL_PATH, dataset=_DATASET,
-                                         train_dataset_path=_TRAIN_DATASET_PATH, dev_dataset_path=_DEV_DATASET_PATH,
-                                         test_dataset_path=_TEST_DATASET_PATH, output_path=_OUTPUT_DIR,
-                                         results_filename=_RESULTS_FILENAME, samples_filenames=_SAMPLES_FILENAME,
-                                         train_model=_TRAIN, train_bs=_BATCH_SIZE, test_bs=_BATCH_SIZE_TEST,
-                                         epoch=_EPOCHS, calc_diff_base_data=True)
+    pseudo_trained_scorer_llama.run_scorer(model_path=_MODEL_PATH, dataset=_DATASET,
+                                           train_dataset_path=_TRAIN_DATASET_PATH,
+                                           dev_dataset_path=_DEV_DATASET_PATH,
+                                           test_dataset_path=_TEST_DATASET_PATH, output_path=_OUTPUT_DIR,
+                                           results_filename=_RESULTS_FILENAME,
+                                           samples_filenames=_SAMPLES_FILENAME,
+                                           train_model=_TRAIN, train_bs=_BATCH_SIZE,
+                                           test_bs=_BATCH_SIZE_TEST,
+                                           epoch=_EPOCHS, calc_diff_base_data=True)
 
 
 if __name__ == '__main__':
